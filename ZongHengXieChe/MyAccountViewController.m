@@ -9,6 +9,10 @@
 #import "MyAccountViewController.h"
 #import "Option.h"
 #import "OptionCell.h"
+#import "Shop.h"
+#import "LoginViewController.h"
+
+
 
 #define kCategoryCellIdentifier @"CategoryCellIdentifier"
 
@@ -50,6 +54,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self initUI];
     [self prepareData];
 }
 
@@ -87,6 +92,22 @@
 
 
 #pragma mark- custom methods
+- (void)initUI
+{
+    [super changeTitleView];
+    UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeContactAdd];
+    [userBtn setFrame:CGRectMake(290, 10, 30, 30)];
+    [userBtn addTarget:self action:@selector(calloutUserView) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:userBtn];
+}
+
+- (void)calloutUserView
+{
+    LoginViewController *loginVC = [[[LoginViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:loginVC animated:YES];
+    
+}
+
 - (void)prepareData
 {
     _kvImageArray = [[NSMutableArray alloc] init];
@@ -96,6 +117,17 @@
         [_optionArray addObject:option];
         [option release];
     }
+    
+    [self loadHttpURL:@"http://www.xieche.net/index.php/App/get_shops"
+           withParams:nil
+  withCompletionBlock:^(id data) {
+//      DLog(@"%@",data);
+      [self convertXml2Obj:(NSString *)data withClass:[Shop class]];
+      
+  }
+       withErrorBlock:^(NSError *error) {
+//        DLog(@"%@",[error description]);
+    }];
 
 }
 
