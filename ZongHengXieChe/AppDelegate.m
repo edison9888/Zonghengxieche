@@ -13,6 +13,7 @@
 #import "BookingViewController.h"
 #import "SettingViewController.h"
 #import "MoreViewController.h"
+#import "CoreService.h"
 
 @interface AppDelegate()
 @property (nonatomic, strong) CustomNavigationBar *customNavigationBar;
@@ -38,6 +39,9 @@
     self.tabbarController.viewControllers = [self prepareViewControllers];
     
     self.window.rootViewController = self.tabbarController;
+
+    [[CoreService sharedCoreService] startLocationManger];
+    
     [self.window makeKeyAndVisible];
     return YES;
 }

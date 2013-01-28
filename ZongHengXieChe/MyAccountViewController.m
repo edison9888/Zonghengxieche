@@ -11,8 +11,14 @@
 #import "OptionCell.h"
 #import "Shop.h"
 #import "LoginViewController.h"
+#import "UpKeepViewController.h"
 
-
+enum {
+    UPKEEP,
+    MY_BOOKING,
+    COUPON,
+    AFTER_SALE
+};
 
 #define kCategoryCellIdentifier @"CategoryCellIdentifier"
 
@@ -90,8 +96,34 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger row = indexPath.row;
+    switch (row) {
+        case UPKEEP:
+        {
+            UpKeepViewController *vc = [[[UpKeepViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        case MY_BOOKING:
+            
+            break;
+        case COUPON:
+            
+            break;
+        case AFTER_SALE:
+
+            break;
+        default:
+            break;
+    }
+
+}
 
 #pragma mark- custom methods
+
 - (void)initUI
 {
     [super changeTitleView];
@@ -117,18 +149,6 @@
         [_optionArray addObject:option];
         [option release];
     }
-    
-    [self loadHttpURL:@"http://www.xieche.net/index.php/App/get_shops"
-           withParams:nil
-  withCompletionBlock:^(id data) {
-//      DLog(@"%@",data);
-      [self convertXml2Obj:(NSString *)data withClass:[Shop class]];
-      
-  }
-       withErrorBlock:^(NSError *error) {
-//        DLog(@"%@",[error description]);
-    }];
-
 }
 
 

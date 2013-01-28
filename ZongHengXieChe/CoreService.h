@@ -7,11 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface CoreService : NSObject
+@interface CoreService : NSObject <CLLocationManagerDelegate>
 
-
+@property (nonatomic, strong) NSMutableArray *shopArray;
 
 + (CoreService *)sharedCoreService;
-
+- (CLLocation *)getMyCurrentLocation;
+- (void)startLocationManger;
 @end

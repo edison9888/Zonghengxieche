@@ -37,6 +37,14 @@
 		17AA970B16B3C43700911DE2 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA970916B3C43700911DE2 /* LoginViewController.m */; };
 		17AA970C16B3C43700911DE2 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17AA970A16B3C43700911DE2 /* LoginViewController.xib */; };
 		17AA971616B3E27700911DE2 /* CoreService.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA971516B3E27700911DE2 /* CoreService.m */; };
+		17AA971B16B4005000911DE2 /* LocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA971916B4005000911DE2 /* LocationViewController.m */; };
+		17AA971C16B4005000911DE2 /* LocationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17AA971A16B4005000911DE2 /* LocationViewController.xib */; };
+		17AA971E16B402C100911DE2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AA971D16B402C000911DE2 /* MapKit.framework */; };
+		17AA972016B4079200911DE2 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AA971F16B4079200911DE2 /* CoreLocation.framework */; };
+		17AA972516B40A6600911DE2 /* UpKeepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA972316B40A6600911DE2 /* UpKeepViewController.m */; };
+		17AA972616B40A6600911DE2 /* UpKeepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17AA972416B40A6600911DE2 /* UpKeepViewController.xib */; };
+		17AA972916B4CD7400911DE2 /* ShopAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA972816B4CD7400911DE2 /* ShopAnnotationView.m */; };
+		17AA973016B4D84B00911DE2 /* ShopPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 17AA972F16B4D84A00911DE2 /* ShopPinAnnotation.m */; };
 		17E77D3B16AED33E000F59D2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E77D3A16AED33E000F59D2 /* UIKit.framework */; };
 		17E77D3D16AED33E000F59D2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E77D3C16AED33E000F59D2 /* Foundation.framework */; };
 		17E77D3F16AED33E000F59D2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E77D3E16AED33E000F59D2 /* CoreGraphics.framework */; };
@@ -132,6 +140,18 @@
 		17AA970A16B3C43700911DE2 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
 		17AA971416B3E27700911DE2 /* CoreService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreService.h; sourceTree = "<group>"; };
 		17AA971516B3E27700911DE2 /* CoreService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreService.m; sourceTree = "<group>"; };
+		17AA971816B4005000911DE2 /* LocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationViewController.h; sourceTree = "<group>"; };
+		17AA971916B4005000911DE2 /* LocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationViewController.m; sourceTree = "<group>"; };
+		17AA971A16B4005000911DE2 /* LocationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LocationViewController.xib; sourceTree = "<group>"; };
+		17AA971D16B402C000911DE2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		17AA971F16B4079200911DE2 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		17AA972216B40A6600911DE2 /* UpKeepViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpKeepViewController.h; sourceTree = "<group>"; };
+		17AA972316B40A6600911DE2 /* UpKeepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpKeepViewController.m; sourceTree = "<group>"; };
+		17AA972416B40A6600911DE2 /* UpKeepViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UpKeepViewController.xib; sourceTree = "<group>"; };
+		17AA972716B4CD7400911DE2 /* ShopAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopAnnotationView.h; sourceTree = "<group>"; };
+		17AA972816B4CD7400911DE2 /* ShopAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopAnnotationView.m; sourceTree = "<group>"; };
+		17AA972E16B4D84900911DE2 /* ShopPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopPinAnnotation.h; sourceTree = "<group>"; };
+		17AA972F16B4D84A00911DE2 /* ShopPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopPinAnnotation.m; sourceTree = "<group>"; };
 		17E77D3616AED33E000F59D2 /* ZongHengXieChe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZongHengXieChe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E77D3A16AED33E000F59D2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		17E77D3C16AED33E000F59D2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -188,9 +208,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				179F359516B181AA00A396FE /* CFNetwork.framework in Frameworks */,
+				17AA972016B4079200911DE2 /* CoreLocation.framework in Frameworks */,
 				17E77D3F16AED33E000F59D2 /* CoreGraphics.framework in Frameworks */,
 				17E77D3D16AED33E000F59D2 /* Foundation.framework in Frameworks */,
 				179F35A616B1826D00A396FE /* QuartzCore.framework in Frameworks */,
+				17AA971E16B402C100911DE2 /* MapKit.framework in Frameworks */,
 				179F359916B181F800A396FE /* MobileCoreServices.framework in Frameworks */,
 				179F359716B181D100A396FE /* SystemConfiguration.framework in Frameworks */,
 				17E77D3B16AED33E000F59D2 /* UIKit.framework in Frameworks */,
@@ -301,6 +323,30 @@
 			name = User;
 			sourceTree = "<group>";
 		};
+		17AA971716B4001B00911DE2 /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				17AA971816B4005000911DE2 /* LocationViewController.h */,
+				17AA971916B4005000911DE2 /* LocationViewController.m */,
+				17AA971A16B4005000911DE2 /* LocationViewController.xib */,
+				17AA972716B4CD7400911DE2 /* ShopAnnotationView.h */,
+				17AA972816B4CD7400911DE2 /* ShopAnnotationView.m */,
+				17AA972E16B4D84900911DE2 /* ShopPinAnnotation.h */,
+				17AA972F16B4D84A00911DE2 /* ShopPinAnnotation.m */,
+			);
+			name = Location;
+			sourceTree = "<group>";
+		};
+		17AA972116B40A5500911DE2 /* Upkeep */ = {
+			isa = PBXGroup;
+			children = (
+				17AA972216B40A6600911DE2 /* UpKeepViewController.h */,
+				17AA972316B40A6600911DE2 /* UpKeepViewController.m */,
+				17AA972416B40A6600911DE2 /* UpKeepViewController.xib */,
+			);
+			name = Upkeep;
+			sourceTree = "<group>";
+		};
 		17E77D2B16AED33E000F59D2 = {
 			isa = PBXGroup;
 			children = (
@@ -321,6 +367,8 @@
 		17E77D3916AED33E000F59D2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				17AA971F16B4079200911DE2 /* CoreLocation.framework */,
+				17AA971D16B402C000911DE2 /* MapKit.framework */,
 				179F35A716B1828500A396FE /* libz.dylib */,
 				179F35A016B1823500A396FE /* MessageUI.framework */,
 				179F359E16B1822800A396FE /* CoreTelephony.framework */,
@@ -458,6 +506,7 @@
 		17E77D7416AED3BA000F59D2 /* Account */ = {
 			isa = PBXGroup;
 			children = (
+				17AA972116B40A5500911DE2 /* Upkeep */,
 				17E77D7F16AED3E9000F59D2 /* MyAccountViewController.h */,
 				17E77D8016AED3E9000F59D2 /* MyAccountViewController.m */,
 				17E77D8116AED3E9000F59D2 /* MyAccountViewController.xib */,
@@ -465,6 +514,7 @@
 				17E77D8316AED3E9000F59D2 /* OptionCell.m */,
 				17E77D8416AED3E9000F59D2 /* OptionCell.xib */,
 				17AA96FC16B3C2EC00911DE2 /* User */,
+				17AA971716B4001B00911DE2 /* Location */,
 			);
 			name = Account;
 			sourceTree = "<group>";
@@ -579,6 +629,8 @@
 				17AA970216B3C32E00911DE2 /* UserViewController.xib in Resources */,
 				17AA970716B3C41800911DE2 /* RegisterViewController.xib in Resources */,
 				17AA970C16B3C43700911DE2 /* LoginViewController.xib in Resources */,
+				17AA971C16B4005000911DE2 /* LocationViewController.xib in Resources */,
+				17AA972616B40A6600911DE2 /* UpKeepViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,6 +674,10 @@
 				17AA970616B3C41800911DE2 /* RegisterViewController.m in Sources */,
 				17AA970B16B3C43700911DE2 /* LoginViewController.m in Sources */,
 				17AA971616B3E27700911DE2 /* CoreService.m in Sources */,
+				17AA971B16B4005000911DE2 /* LocationViewController.m in Sources */,
+				17AA972516B40A6600911DE2 /* UpKeepViewController.m in Sources */,
+				17AA972916B4CD7400911DE2 /* ShopAnnotationView.m in Sources */,
+				17AA973016B4D84B00911DE2 /* ShopPinAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
