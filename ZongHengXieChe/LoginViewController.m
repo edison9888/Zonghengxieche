@@ -7,6 +7,8 @@
 //
 
 #import "LoginViewController.h"
+#import "CoreService.h"
+#import "User.h"
 enum USER_INFO_TEXTFIELD {
     USERNAME = 1,
     PWD
@@ -79,11 +81,22 @@ enum USER_INFO_TEXTFIELD {
         [paramsDic setValue:_usernameField.text forKey:@"username"];
         [paramsDic setValue:_pwdField.text forKey:@"password"];
         
-        
         [super loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
                 withParams:paramsDic
        withCompletionBlock:^(id data) {
-        DLog(@"%@",data);
+           DLog(@"%@",data);
+           NSDictionary *dic = [super convertXml2Dic:data withError:nil];
+           NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+           NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"token"];
+           
+           if ([status isEqualToString:@"0"]) {
+               User *currentUser = [[User alloc]init];
+               [currentUser setUsername:[paramsDic objectForKey:@"username"]];
+               [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+               [currentUser setToken:token];
+               [[CoreService sharedCoreService] setCurrentUser:currentUser];
+               [currentUser release];
+           }
        }    withErrorBlock:^(NSError *error) {
         
        }];
@@ -96,13 +109,6 @@ enum USER_INFO_TEXTFIELD {
     }
     
     
-}
-
-- (BOOL)isLoginInfoLegal
-{
-    
-    
-
 }
 
 #pragma mark-

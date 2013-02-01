@@ -29,20 +29,20 @@
 - (CLLocationCoordinate2D)coordinate;
 {
     CLLocationCoordinate2D theCoordinate;
-    theCoordinate.latitude = self.shop.latitude;
-    theCoordinate.longitude = self.shop.longitude;
+//    theCoordinate.latitude = self.shop.latitude;
+//    theCoordinate.longitude = self.shop.longitude;
     return theCoordinate;
 }
 
 // required if you set the MKPinAnnotationView's "canShowCallout" property to YES
 - (NSString *)title
 {
-    return _shop.name;
+//    return _shop.name;
 }
 
 // optional
 - (NSString *)subtitle
 {
-    return _shop.address;
+//    return _shop.address;
 }
 @end

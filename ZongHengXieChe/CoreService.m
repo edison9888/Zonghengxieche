@@ -34,6 +34,7 @@
         coreService = [[CoreService alloc] init];
     }
     [coreService startLocationManger];
+    [coreService getStoredInfo];
     return coreService;
 }
 
@@ -102,6 +103,15 @@
     
     DLog(@"longitude=%f , latitude=%f", _myCurrentLocation.coordinate.longitude, _myCurrentLocation.coordinate.latitude);
 }
+
+- (void)getStoredInfo
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    self.currentUser = [userDefaults objectForKey:NSLocalizedString(@"CURRENT_USER", nil)];
+
+    
+}
+
 
 
 @end

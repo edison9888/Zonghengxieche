@@ -14,6 +14,7 @@
 #import <objc/runtime.h>
 #import "Shop.h"
 #import "GDataXMLNode.h"
+#import "XMLReader.h"
 
 #define MaxConcurrentOperationCount 3
 
@@ -88,11 +89,12 @@
 
     NSURL *url = [NSURL URLWithString:urlString];
     
-    __block ASIHTTPRequest *request;
+    ASIHTTPRequest *request;
     if (dic && [dic.allKeys count]>0) {
         request = [ASIFormDataRequest requestWithURL:url];
+        [request setRequestMethod:@"POST"];
         for (NSString *key in dic.allKeys) {
-            [request setValue:[dic objectForKey:key] forKey:key];
+            [((ASIFormDataRequest *)request) addPostValue:[dic objectForKey:key] forKey:key];
         }
     }else{
         request = [ASIHTTPRequest requestWithURL:url];
@@ -145,7 +147,10 @@
         NSMutableArray *propertyList = [self getPropertyList:clazz];
         for (NSString *propertyName in propertyList) {
             id propertyValue = [[[childElement elementsForName:propertyName] objectAtIndex:0]stringValue];
-            [obj setValue:propertyValue forKey:propertyName];
+            if (propertyValue) {
+                [obj setValue:propertyValue forKey:propertyName];
+            }
+
         }
         [objectArray addObject:obj];
         [obj release];
@@ -153,6 +158,11 @@
     return objectArray;
 }
 
+
+- (NSDictionary *)convertXml2Dic:(NSString *)xmlString withError:(NSError **)errorPointer
+{
+   return [XMLReader dictionaryForXMLString:xmlString error:errorPointer];
+}
 
 
 @end

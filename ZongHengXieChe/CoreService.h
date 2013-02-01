@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-
+#import "User.h"
 @interface CoreService : NSObject <CLLocationManagerDelegate>
 
+@property (nonatomic, strong) User *currentUser;
 @property (nonatomic, strong) NSMutableArray *shopArray;
+
+
 
 + (CoreService *)sharedCoreService;
 - (CLLocation *)getMyCurrentLocation;

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		173326DE16BA34990025515E /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 173326DD16BA34990025515E /* User.m */; };
+		173326E116BA380E0025515E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 173326E016BA380E0025515E /* Localizable.strings */; };
 		177E504016B23CCB001D0B2D /* Shop.m in Sources */ = {isa = PBXBuildFile; fileRef = 177E503F16B23CCB001D0B2D /* Shop.m */; };
 		177E504D16B240D2001D0B2D /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 177E504C16B240D2001D0B2D /* GDataXMLNode.m */; };
 		177E505116B299D9001D0B2D /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 177E505016B299D9001D0B2D /* XMLReader.m */; };
@@ -82,6 +84,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		173326DC16BA34990025515E /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		173326DD16BA34990025515E /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		173326E016BA380E0025515E /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		177E503E16B23CCB001D0B2D /* Shop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shop.h; sourceTree = "<group>"; };
 		177E503F16B23CCB001D0B2D /* Shop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shop.m; sourceTree = "<group>"; };
 		177E504B16B240D2001D0B2D /* GDataXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataXMLNode.h; sourceTree = "<group>"; };
@@ -405,6 +410,7 @@
 				17E77D4C16AED33E000F59D2 /* Default.png */,
 				17E77D4E16AED33E000F59D2 /* Default@2x.png */,
 				17E77D5016AED33E000F59D2 /* Default-568h@2x.png */,
+				173326E016BA380E0025515E /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -539,6 +545,8 @@
 				17E77DA116AED433000F59D2 /* Option.m */,
 				177E503E16B23CCB001D0B2D /* Shop.h */,
 				177E503F16B23CCB001D0B2D /* Shop.m */,
+				173326DC16BA34990025515E /* User.h */,
+				173326DD16BA34990025515E /* User.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -631,6 +639,7 @@
 				17AA970C16B3C43700911DE2 /* LoginViewController.xib in Resources */,
 				17AA971C16B4005000911DE2 /* LocationViewController.xib in Resources */,
 				17AA972616B40A6600911DE2 /* UpKeepViewController.xib in Resources */,
+				173326E116BA380E0025515E /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -678,6 +687,7 @@
 				17AA972516B40A6600911DE2 /* UpKeepViewController.m in Sources */,
 				17AA972916B4CD7400911DE2 /* ShopAnnotationView.m in Sources */,
 				17AA973016B4D84B00911DE2 /* ShopPinAnnotation.m in Sources */,
+				173326DE16BA34990025515E /* User.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

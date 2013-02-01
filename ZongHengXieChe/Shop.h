@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CLLocation.h>
 
 @interface Shop : NSObject
 
@@ -23,8 +24,8 @@
 @property (nonatomic, copy) NSString *product_sale;
 @property (nonatomic, copy) NSString *workhours_sale;
 
-@property (nonatomic, assign) float *latitude;
-@property (nonatomic, assign) float *longitude;
+@property (nonatomic, assign) CLLocationDegrees latitude;
+@property (nonatomic, assign) CLLocationDegrees longitude;
 
 
 @end

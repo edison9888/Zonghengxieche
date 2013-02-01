@@ -28,6 +28,21 @@
     [super dealloc];
 }
 
+- (void)setArea:(NSString *)area
+{
+    if (_area != area){
+        if (_area) {
+            [_area release];
+        }
+        _area = [area copy];
+    }
+    NSArray *stringArray = [self.area componentsSeparatedByString:@","];
+    if ([stringArray count]>0) {
+        self.longitude = [[stringArray objectAtIndex:0] doubleValue];
+        self.latitude = [[stringArray objectAtIndex:1] doubleValue];
+    }
+}
+
 
 
 @end
