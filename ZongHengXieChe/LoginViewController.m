@@ -81,11 +81,11 @@ enum USER_INFO_TEXTFIELD {
         [paramsDic setValue:_usernameField.text forKey:@"username"];
         [paramsDic setValue:_pwdField.text forKey:@"password"];
         
-        [super loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
+        [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
                 withParams:paramsDic
        withCompletionBlock:^(id data) {
            DLog(@"%@",data);
-           NSDictionary *dic = [super convertXml2Dic:data withError:nil];
+           NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
            NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
            NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"token"];
            
@@ -125,7 +125,7 @@ enum USER_INFO_TEXTFIELD {
         default:
             break;
     }
-
+    return YES;
 }
 
 @end

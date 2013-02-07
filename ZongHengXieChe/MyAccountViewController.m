@@ -10,8 +10,12 @@
 #import "Option.h"
 #import "OptionCell.h"
 #import "Shop.h"
+#import "KeyVision.h"
 #import "LoginViewController.h"
 #import "UpKeepViewController.h"
+#import "CoreService.h"
+
+#define KV_SWITCH_INTERVAL      2
 
 enum {
     UPKEEP,
@@ -27,8 +31,11 @@ enum {
     IBOutlet    UIScrollView    *_kvScrollView;
     IBOutlet    UIPageControl   *_kvPageControl;
     IBOutlet    UITableView     *_optionTableView;
+    NSMutableArray      *_kvImageViewArray;
+    NSInteger           _currentPage;
+    BOOL                _isKVAnimating;
 }
-@property (nonatomic, strong) NSMutableArray *kvImageArray;
+@property (nonatomic, strong) NSMutableArray *kvArray;
 @property (nonatomic, strong) NSMutableArray *optionArray;
 
 @end
@@ -41,7 +48,7 @@ enum {
     [_kvPageControl release];
     [_optionTableView release];
     
-    [self.kvImageArray release];
+    [self.kvArray release];
     [self.optionArray release];
     
     [super dealloc];
@@ -122,6 +129,16 @@ enum {
 
 }
 
+#pragma mark- scrollview delegate
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    _isKVAnimating = NO;
+    CGFloat x = scrollView.contentOffset.x;
+    DLog(@"%f",x);
+    NSInteger pageIndex = x/320;
+    [_kvPageControl setCurrentPage:pageIndex];
+}
+
 #pragma mark- custom methods
 
 - (void)initUI
@@ -142,8 +159,18 @@ enum {
 
 - (void)prepareData
 {
-    _kvImageArray = [[NSMutableArray alloc] init];
-    _optionArray = [[NSMutableArray alloc] init];
+    _currentPage = 0;
+    _kvImageViewArray = [[NSMutableArray alloc] init];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/index_inner"
+            withParams:nil
+   withCompletionBlock:^(id data) {
+       self.kvArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[KeyVision class]];
+       [self loadKVImage];
+   }withErrorBlock:nil];
+    
+    if (!self.optionArray) {
+        self.optionArray = [[NSMutableArray alloc] init];
+    }
     for (NSInteger i=0; i<4; i++) {
         Option *option = [[Option alloc] init];
         [_optionArray addObject:option];
@@ -151,5 +178,63 @@ enum {
     }
 }
 
+- (void)loadKVImage
+{
+    [_kvScrollView setContentSize:CGSizeMake(320*[self.kvArray count], _kvScrollView.bounds.size.height)];
+    [self setKVAutoSwitch];
+    [_kvPageControl setNumberOfPages:[self.kvArray count]];
+    for (NSInteger index = 0; index < [self.kvArray count]; index++) {
+        UIImageView *kvImageView = [[UIImageView alloc] initWithFrame:CGRectMake(320*index, 0, 320, _kvScrollView.bounds.size.height)];
+        [kvImageView setBackgroundColor:[UIColor redColor]];
+        [_kvScrollView addSubview:kvImageView];
+        [kvImageView release];
+        
+        KeyVision *kv = [self.kvArray objectAtIndex:index];
+        
+        DLog(@"%@",kv.pic);
+        [[CoreService sharedCoreService] loadDataWithURL:kv.pic
+                    withParams:nil
+           withCompletionBlock:^(id data) {
+               UIImage *image = [UIImage imageWithData:data];
+               [kvImageView  setImage:image];
+           } withErrorBlock:nil];
+    }
+}
 
+- (IBAction)pageControllerValueChanged
+{
+    _currentPage = [_kvPageControl currentPage];
+    [self scrollKV];
+}
+
+- (void)switchKV
+{
+    if (_currentPage < [self.kvArray count]) {
+        _currentPage++;
+    }else{
+        _currentPage = 0;
+    }
+    [self scrollKV];
+}
+
+- (void)scrollKV
+{
+    CGRect rect = CGRectMake(_currentPage * 320.0f, 0, 320.0f, _kvScrollView.bounds.size.height);
+    if (_currentPage == 0) {
+        [_kvScrollView scrollRectToVisible:rect animated:NO];
+    }else{
+        [_kvScrollView scrollRectToVisible:rect animated:YES];
+    }
+    [_kvPageControl setCurrentPage:_currentPage];
+}
+
+- (void)setKVAutoSwitch
+{
+    [NSTimer scheduledTimerWithTimeInterval:KV_SWITCH_INTERVAL target:self selector:@selector(switchKV) userInfo:nil repeats:YES];
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+
+}
 @end

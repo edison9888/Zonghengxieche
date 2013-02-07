@@ -7,6 +7,9 @@
 //
 
 #import "Shop.h"
+#import <CoreLocation/CoreLocation.h>
+#import "CoreService.h"
+
 
 @implementation Shop
 
@@ -19,12 +22,14 @@
     [self.shop_phone release];
     [self.area release];
     [self.logo release];
+    [self.logoImage release];
     [self.region release];
     [self.comment_rate release];
     [self.comment_number release];
     [self.product_sale release];
     [self.workhours_sale release];
-
+    [self.shop_class release];
+    
     [super dealloc];
 }
 
@@ -40,9 +45,31 @@
     if ([stringArray count]>0) {
         self.longitude = [[stringArray objectAtIndex:0] doubleValue];
         self.latitude = [[stringArray objectAtIndex:1] doubleValue];
+        [self setDistance];
     }
 }
 
+- (void)setDistance
+{
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    self.distanceFromMyLocation = [myCurrentLocation distanceFromLocation:[[[CLLocation alloc] initWithLatitude:self.latitude longitude:self.longitude] autorelease]];
+    DLog(@"distance = %f", ((double)self.distanceFromMyLocation));
+}
 
+- (void)setLogo:(NSString *)logo
+{
+    if (_logo != logo) {
+        if (_logo) {
+            [_logo release];
+        }
+        _logo = [logo copy];
+    }
+
+    [[CoreService sharedCoreService]loadDataWithURL:self.logo
+                                         withParams:nil
+                                withCompletionBlock:^(id data) {
+        self.logoImage = [UIImage imageWithData:data];
+    } withErrorBlock:nil];
+}
 
 @end

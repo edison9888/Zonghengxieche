@@ -19,4 +19,13 @@
 + (CoreService *)sharedCoreService;
 - (CLLocation *)getMyCurrentLocation;
 - (void)startLocationManger;
+
+
+
+- (void)loadHttpURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
+- (void)loadDataWithURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
+
+- (NSMutableArray *)convertXml2Obj:(NSString *)xmlString withClass:(Class)clazz;
+- (NSDictionary *)convertXml2Dic:(NSString *)xmlString withError:(NSError **)errorPointer;
+
 @end

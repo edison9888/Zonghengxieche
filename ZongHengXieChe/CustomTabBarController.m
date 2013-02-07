@@ -213,7 +213,7 @@
     self.newTagIndexArray = indexArray;
 }
 
-- (void) resumeState
+- (void)resumeState
 {
     if (_newTagIndexArray && [_newTagIndexArray count]>0) {
         [self showNewIconByIndexArray:_newTagIndexArray];

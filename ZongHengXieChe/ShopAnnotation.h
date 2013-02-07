@@ -10,8 +10,10 @@
 #import <MapKit/MapKit.h>
 #import "Shop.h"
 
-@interface ShopPinAnnotation : NSObject<MKAnnotation>
+@interface ShopAnnotation : NSObject<MKAnnotation>
 
 @property (nonatomic, strong) Shop *shop;
+
+- (id)initWithShopInfo:(Shop *)shop;
 
 @end

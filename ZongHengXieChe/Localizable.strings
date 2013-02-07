@@ -1,2 +1,6 @@
-
+//用户
 "CURRENT_USER" = "currentUser";
+
+
+//tableview indentifier
+"SHOP_CELL_INDENTIFIER" = "ShopCellIdentifier";

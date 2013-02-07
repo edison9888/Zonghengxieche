@@ -18,14 +18,17 @@
 @property (nonatomic, copy) NSString *shop_phone;
 @property (nonatomic, copy) NSString *area;
 @property (nonatomic, copy) NSString *logo;
+@property (nonatomic, copy) UIImage  *logoImage;
 @property (nonatomic, copy) NSString *region;
 @property (nonatomic, copy) NSString *comment_rate;
 @property (nonatomic, copy) NSString *comment_number;
 @property (nonatomic, copy) NSString *product_sale;
 @property (nonatomic, copy) NSString *workhours_sale;
+@property (nonatomic, copy) NSString *shop_class;
 
 @property (nonatomic, assign) CLLocationDegrees latitude;
 @property (nonatomic, assign) CLLocationDegrees longitude;
+@property (nonatomic, assign) CLLocationDistance distanceFromMyLocation;
 
 
 @end

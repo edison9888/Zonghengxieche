@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 
-@interface UpKeepViewController : BaseViewController
+@interface UpKeepViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end

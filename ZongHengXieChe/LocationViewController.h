@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
-@interface LocationViewController : UIViewController
+@interface LocationViewController : UIViewController<MKMapViewDelegate>
+
+
+@property (nonatomic, strong) NSArray *shopArray;
 
 @end

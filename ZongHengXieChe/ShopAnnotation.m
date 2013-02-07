@@ -6,9 +6,9 @@
 //  Copyright (c) 2013年 kiddz. All rights reserved.
 //
 
-#import "ShopPinAnnotation.h"
+#import "ShopAnnotation.h"
 
-@implementation ShopPinAnnotation
+@implementation ShopAnnotation
 
 - (void)dealloc
 {
@@ -17,7 +17,8 @@
 }
 
 
-- (id)initWithShopInfo:(Shop *)shop{
+- (id)initWithShopInfo:(Shop *)shop
+{
     self.shop = shop;
     if ([super init]) {
         
@@ -29,20 +30,20 @@
 - (CLLocationCoordinate2D)coordinate;
 {
     CLLocationCoordinate2D theCoordinate;
-//    theCoordinate.latitude = self.shop.latitude;
-//    theCoordinate.longitude = self.shop.longitude;
+    theCoordinate.latitude = self.shop.latitude;
+    theCoordinate.longitude = self.shop.longitude;
     return theCoordinate;
 }
 
 // required if you set the MKPinAnnotationView's "canShowCallout" property to YES
 - (NSString *)title
 {
-//    return _shop.name;
+    return _shop.show_title;
 }
 
 // optional
 - (NSString *)subtitle
 {
-//    return _shop.address;
+    return _shop.shop_address;
 }
 @end
