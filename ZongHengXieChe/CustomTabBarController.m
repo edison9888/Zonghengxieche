@@ -11,6 +11,7 @@
 
 
 #define BUTTON_COUNT        4
+#define TEL_NUMBER          @"4006602822"
 
 #define YOFFSET IS_IPHONE_5 ? 518 : 430
 
@@ -27,7 +28,7 @@
 @property (nonatomic, strong) NSMutableArray *imageViewArray;
 
 @property (nonatomic, strong) NSCountedSet *tabClickCountSet;
-@property (nonatomic, strong) NSArray  *newTagIndexArray;
+@property (nonatomic, strong) NSArray  *freshTagIndexArray;
 
 @end
 
@@ -35,7 +36,7 @@
 
 - (void)dealloc
 {
-    [_newTagIndexArray release];
+    [_freshTagIndexArray release];
     [tabbarBg release];
     [slideBg release];
     [selectedTab release];
@@ -154,13 +155,24 @@
 
 - (void)selectedTab:(UIButton *)button
 {
-    if (currentSelectedIndex == button.tag) {
+    if (button.tag == 1) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"电话预约?" message:@"拨打电话4006602822" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
+        [alert show];
+        [alert release];
+        
+    }else{
+        if (currentSelectedIndex == button.tag) {
+        }
+        currentSelectedIndex = button.tag;
+        self.selectedIndex = currentSelectedIndex;
+        [self hideBtnWhenBeTapped:currentSelectedIndex];
+        [self performSelector:@selector(slideTabBg:) withObject:button];
+        [self.selectedViewController.navigationController popToRootViewControllerAnimated:NO];
+    
     }
-    currentSelectedIndex = button.tag;
-    self.selectedIndex = currentSelectedIndex;
-    [self hideBtnWhenBeTapped:currentSelectedIndex];
-    [self performSelector:@selector(slideTabBg:) withObject:button];
-    [self.selectedViewController.navigationController popToRootViewControllerAnimated:NO];
+    
+    
+    
 }
 
 - (void)setSelectedTab:(NSUInteger)index
@@ -196,7 +208,6 @@
                      } completion:^(BOOL finished) {
                          [self addTabClickCount:index];
                      }];
-    
 }
 
 
@@ -206,18 +217,18 @@
     return [[self viewControllers] objectAtIndex:currentSelectedIndex];
 }
 
-- (void) saveState:(NSInteger)locatIndex withNewTagIndexArray:(NSArray *)indexArray
+- (void) saveState:(NSInteger)locatIndex withFreshTagIndexArray:(NSArray *)indexArray
 {
     lastLocatIndex = locatIndex;
     
-    self.newTagIndexArray = indexArray;
+    self.freshTagIndexArray = indexArray;
 }
 
 - (void)resumeState
 {
-    if (_newTagIndexArray && [_newTagIndexArray count]>0) {
-        [self showNewIconByIndexArray:_newTagIndexArray];
-        self.newTagIndexArray = nil;
+    if (_freshTagIndexArray && [_freshTagIndexArray count]>0) {
+        [self showNewIconByIndexArray:_freshTagIndexArray];
+        self.freshTagIndexArray = nil;
     }
     if (lastLocatIndex != -1) {
         [self setSelectedTabWithoutAnimation:lastLocatIndex];
@@ -225,5 +236,12 @@
     }
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1) {
+        NSString *tel = [NSString stringWithFormat:@"tel://%@",TEL_NUMBER];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:tel]];
+    }
+}
 
 @end

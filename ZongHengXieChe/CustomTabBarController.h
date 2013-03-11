@@ -7,11 +7,11 @@
 //
 #import <UIKit/UIKit.h>
 
-@interface CustomTabBarController : UITabBarController
+@interface CustomTabBarController : UITabBarController<UIAlertViewDelegate>
 
 - (UIViewController *)currentViewController;
 - (void)setSelectedTab:(NSUInteger)index;
 - (NSUInteger)getTabClickCount:(NSUInteger)index;
-- (void) saveState:(NSInteger)locatIndex withNewTagIndexArray:(NSArray *)indexArray;
-- (void) resumeState;
+- (void)saveState:(NSInteger)locatIndex withFreshTagIndexArray:(NSArray *)indexArray;
+- (void)resumeState;
 @end

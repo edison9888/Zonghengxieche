@@ -38,7 +38,7 @@
 // required if you set the MKPinAnnotationView's "canShowCallout" property to YES
 - (NSString *)title
 {
-    return _shop.show_title;
+    return _shop.shop_name;
 }
 
 // optional

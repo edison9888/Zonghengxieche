@@ -12,11 +12,18 @@
 #import "ShopCell.h"
 #import "CoreService.h"
 #import "ShopDetailsViewController.h"
+#import "CarInfoViewController.h"
 
 enum {
     CAR_TYPE = 0,
     RATE,
     DISTANCE
+};
+
+
+enum {
+    MY_TYPE = 1,
+    ALL_TYPE
 };
 
 @interface UpKeepViewController ()
@@ -25,8 +32,9 @@ enum {
     IBOutlet    UIButton    *_ratingBtn;
     IBOutlet    UIButton    *_distanceBtn;
     IBOutlet    UITableView *_shopTableView;
+    IBOutlet    UIView      *_carTypeView;
     
-    NSArray                 *_btnArray;
+    NSArray                 *_TopBtnArray;
 }
 @property (nonatomic, strong) NSArray *shopArray;
 
@@ -41,7 +49,7 @@ enum {
     [_ratingBtn release];
     [_distanceBtn release];
     [_shopTableView release];
-    [_btnArray release];
+    [_TopBtnArray release];
     
     [super dealloc];
 }
@@ -100,6 +108,7 @@ enum {
 {
     Shop *shop = [self.shopArray objectAtIndex:indexPath.row];
     ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
     [vc setShop:shop];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -108,11 +117,19 @@ enum {
 
 - (void)initUI
 {
+    [self setTitle:@"上海"];
     [super changeTitleView];
-    UIButton *locationBtn = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    [locationBtn setFrame:CGRectMake(290, 10, 30, 30)];
+    UIButton *locationBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [locationBtn setFrame:CGRectMake(280, 5, 35, 35)];
+    [locationBtn setImage:[UIImage imageNamed:@"map_btn"] forState:UIControlStateNormal];
     [locationBtn addTarget:self action:@selector(calloutLocationViewController) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:locationBtn];
+    
+    UIButton *homeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [homeBtn setFrame:CGRectMake(0, 5, 35, 35)];
+    [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
+    [homeBtn addTarget:self action:@selector(backToHome) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:homeBtn];
     
     [_carTypeBtn setImage:[UIImage imageNamed:@"choose_car_off"] forState:UIControlStateNormal];
     [_carTypeBtn setImage:[UIImage imageNamed:@"choose_car_on"] forState:UIControlStateHighlighted];
@@ -128,12 +145,11 @@ enum {
     [_distanceBtn setImage:[UIImage imageNamed:@"distance_on"] forState:UIControlStateHighlighted];
     [_distanceBtn setImage:[UIImage imageNamed:@"distance_on"] forState:UIControlStateSelected];
     [_distanceBtn setSelected:NO];
-    
 }
 
 - (void)prepareData
 {
-    _btnArray = [[NSArray alloc] initWithObjects:_carTypeBtn, _ratingBtn, _distanceBtn, nil];
+    _TopBtnArray = [[NSArray alloc] initWithObjects:_carTypeBtn, _ratingBtn, _distanceBtn, nil];
     
     [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/get_shops"
            withParams:nil
@@ -150,25 +166,31 @@ enum {
    
 }
 
+- (void)backToHome
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 - (void)calloutLocationViewController
 {
     DLog(@"%d", [self.shopArray count]);
     LocationViewController *vc = [[[LocationViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];    
     [vc setShopArray:self.shopArray];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (IBAction)buttonPressed:(id)sender
 {
-    NSInteger index = [_btnArray indexOfObject:sender];
-    for (UIButton *btn in _btnArray) {
+    NSInteger index = [_TopBtnArray indexOfObject:sender];
+    for (UIButton *btn in _TopBtnArray) {
         [btn setSelected:NO];
     }
     [(UIButton *)sender setSelected:YES];
     
     switch (index) {
         case CAR_TYPE:
-
+            [_carTypeView setHidden:NO];
             break;
         case RATE:
             [self sortShopsByRate];
@@ -209,6 +231,37 @@ enum {
         return NSOrderedDescending;
     }];
     [_shopTableView reloadData];
+}
+
+- (IBAction)carTypeBtnPressed:(UIButton *)btn
+{
+    switch (btn.tag) {
+        case MY_TYPE:
+        {
+            CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
+            [vc setCarInfo:BRAND];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        case ALL_TYPE:
+        {
+            CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
+            [vc setCarInfo:BRAND];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        default:
+            break;
+    }
+
+
+}
+
+- (IBAction)hideCarTypeView
+{
+    [_carTypeView setHidden:YES];
 }
 
 @end

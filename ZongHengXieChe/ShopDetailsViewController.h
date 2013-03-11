@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "BaseViewController.h"
 #import "Shop.h"
 @interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>

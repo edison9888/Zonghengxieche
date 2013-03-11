@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "GDataXMLNode.h"
+enum CAR_INFO {
+    BRAND = 1,
+    SERIES,
+    MODEL
+};
 
 @interface BaseViewController : UIViewController
 

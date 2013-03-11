@@ -34,12 +34,12 @@
         [self.networkQueue release];
     }
     [_locationManager release];
+    [_currentCity release];
     [super dealloc];
 }
 
 
 #pragma mark- custom methods
-
 + (CoreService *)sharedCoreService
 {
     static CoreService *coreService = nil;
@@ -65,11 +65,52 @@
     }
 }
 
+- (BOOL)isGPSValid
+{
+    return [CLLocationManager locationServicesEnabled];
+}
+
+- (void)setLocationUpdates:(BOOL)updateStatus
+{
+    if (updateStatus) {
+        [_locationManager startUpdatingLocation];
+    }else{
+        [_locationManager stopUpdatingLocation];
+    }
+}
+
 - (CLLocation *)getMyCurrentLocation
 {
     [self startLocationManger];
     
     return _myCurrentLocation;
+}
+
+
+
+- (NSString *)getCurrentCity
+{
+    if (_currentCity) {
+        return _currentCity;
+    }else{
+        
+        NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+        if ([userdefaults objectForKey:@"CURRENT_CITY"]) {
+            return [userdefaults objectForKey:@"CURRENT_CITY"];
+        }
+        return @"上海";
+    }
+}
+
+- (void)setCurrentCity:(NSString *)currentCity
+{
+    if (_currentCity) {
+        if (_currentCity != currentCity) {
+            [_currentCity release];
+            _currentCity = [currentCity retain];
+        }
+    }
+    
 }
 
 #pragma mark- location delegate
@@ -240,11 +281,10 @@
         id obj = [[clazz alloc] init];
         NSMutableArray *propertyList = [self getPropertyList:clazz];
         for (NSString *propertyName in propertyList) {
-            id propertyValue = [[[childElement elementsForName:propertyName] objectAtIndex:0]stringValue];
-            if (propertyValue) {
+            if ([childElement elementsForName:propertyName]) {
+                id propertyValue = [[[childElement elementsForName:propertyName] objectAtIndex:0]stringValue];
                 [obj setValue:propertyValue forKey:propertyName];
             }
-            
         }
         [objectArray addObject:obj];
         [obj release];

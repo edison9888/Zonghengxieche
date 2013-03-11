@@ -45,15 +45,16 @@
     if ([stringArray count]>0) {
         self.longitude = [[stringArray objectAtIndex:0] doubleValue];
         self.latitude = [[stringArray objectAtIndex:1] doubleValue];
-        [self setDistance];
+        [self resetDistance];
     }
 }
 
-- (void)setDistance
+- (void)resetDistance
 {
     CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-    self.distanceFromMyLocation = [myCurrentLocation distanceFromLocation:[[[CLLocation alloc] initWithLatitude:self.latitude longitude:self.longitude] autorelease]];
-    DLog(@"distance = %f", ((double)self.distanceFromMyLocation));
+    if (myCurrentLocation) {
+        self.distanceFromMyLocation = [myCurrentLocation distanceFromLocation:[[[CLLocation alloc] initWithLatitude:self.latitude longitude:self.longitude] autorelease]];
+    }
 }
 
 - (void)setLogo:(NSString *)logo
@@ -64,12 +65,22 @@
         }
         _logo = [logo copy];
     }
-
-    [[CoreService sharedCoreService]loadDataWithURL:self.logo
-                                         withParams:nil
-                                withCompletionBlock:^(id data) {
-        self.logoImage = [UIImage imageWithData:data];
-    } withErrorBlock:nil];
+    [self resetLogoImage:nil];
 }
+
+- (void)resetLogoImage:(void (^)(UIImage *image))completionHandler
+{
+    if (self.logo) {
+        [[CoreService sharedCoreService]loadDataWithURL:self.logo
+                                             withParams:nil
+                                    withCompletionBlock:^(id data) {
+                                        self.logoImage = [UIImage imageWithData:data];
+                                        if (completionHandler) {
+                                            completionHandler(self.logoImage);
+                                        }
+                                    } withErrorBlock:nil];
+    }
+}
+
 
 @end

@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import "CoreService.h"
 #import "User.h"
+#import "RegisterViewController.h"
 enum USER_INFO_TEXTFIELD {
     USERNAME = 1,
     PWD
@@ -48,6 +49,7 @@ enum USER_INFO_TEXTFIELD {
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self initUI];
 }
 
 - (void)didReceiveMemoryWarning
@@ -56,14 +58,40 @@ enum USER_INFO_TEXTFIELD {
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark-
+#pragma textfield delegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    switch (textField.tag) {
+        case USERNAME:
+            [_usernameField resignFirstResponder];
+            [_pwdField becomeFirstResponder];
+            break;
+        case PWD:
+            [self login];
+        default:
+            break;
+    }
+    return YES;
+}
 
 #pragma mark-
 #pragma custom methods
 - (void)initUI
 {
+    self.title = @"登录我的携车";
+    [super changeTitleView];
     [_pwdField setSecureTextEntry:YES];
-
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
+    [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:backBtn];
+    
 }
+
+
+
 - (IBAction)login
 {
     BOOL isLegal = NO;
@@ -82,50 +110,40 @@ enum USER_INFO_TEXTFIELD {
         [paramsDic setValue:_pwdField.text forKey:@"password"];
         
         [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
-                withParams:paramsDic
-       withCompletionBlock:^(id data) {
-           DLog(@"%@",data);
-           NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-           NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
-           NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"token"];
-           
-           if ([status isEqualToString:@"0"]) {
-               User *currentUser = [[User alloc]init];
-               [currentUser setUsername:[paramsDic objectForKey:@"username"]];
-               [currentUser setPassword:[paramsDic objectForKey:@"password"]];
-               [currentUser setToken:token];
-               [[CoreService sharedCoreService] setCurrentUser:currentUser];
-               [currentUser release];
-           }
-       }    withErrorBlock:^(NSError *error) {
+                                          withParams:paramsDic
+                                 withCompletionBlock:^(id data) {
+                                     DLog(@"%@",data);
+                                     NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                     NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                     NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"token"];
+                                     
+                                     if ([status isEqualToString:@"0"]) {
+                                         User *currentUser = [[User alloc]init];
+                                         [currentUser setUsername:[paramsDic objectForKey:@"username"]];
+                                         [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+                                         [currentUser setToken:token];
+                                         [[CoreService sharedCoreService] setCurrentUser:currentUser];
+                                         [currentUser release];
+                                     }
+                                 }    withErrorBlock:^(NSError *error) {
+                                     
+                                 }];
         
-       }];
-        
- 
     }else{
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:tipString delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         [alert release];
     }
-    
-    
 }
 
-#pragma mark-
-#pragma textfield delegate
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+- (void)popToParent
 {
-    switch (textField.tag) {
-        case USERNAME:
-            [_usernameField resignFirstResponder];
-            [_pwdField becomeFirstResponder];
-            break;
-        case PWD:
-            [self login];
-        default:
-            break;
-    }
-    return YES;
+    [self.navigationController popViewControllerAnimated:YES];
+}
+- (IBAction)Register:(id)sender {
+    RegisterViewController *vc = [[[RegisterViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

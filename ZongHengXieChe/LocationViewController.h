@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "BaseViewController.h"
 
-@interface LocationViewController : UIViewController<MKMapViewDelegate>
-
-
+@interface LocationViewController : BaseViewController<MKMapViewDelegate, MKReverseGeocoderDelegate>
 @property (nonatomic, strong) NSArray *shopArray;
+
+- (void)setMapCenter:(CLLocationCoordinate2D)coordinate;
 
 @end

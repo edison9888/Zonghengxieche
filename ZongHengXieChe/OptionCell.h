@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "Option.h"
 @interface OptionCell : UITableViewCell
+
+- (void)applyCell:(Option *)option;
 
 @end

@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "CustomNavigationBar.h"
 #import "CustomTabBarController.h"
-#import "MyAccountViewController.h"
+#import "HomeViewController.h"
 #import "BookingViewController.h"
 #import "SettingViewController.h"
 #import "MoreViewController.h"
@@ -121,7 +121,7 @@
 {
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    MyAccountViewController *viewController1 = [[[MyAccountViewController alloc] initWithNibName:@"MyAccountViewController" bundle:nil] autorelease];
+    HomeViewController *viewController1 = [[[HomeViewController alloc] initWithNibName:@"MyAccountViewController" bundle:nil] autorelease];
     viewController1.view.frame = viewBounds;
     
     BookingViewController *viewController2 = [[[BookingViewController alloc] initWithNibName:@"BookingViewController" bundle:nil] autorelease];
@@ -135,7 +135,7 @@
         [viewController setHidesBottomBarWhenPushed:YES];
         
         UILabel *titleView = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 44)] autorelease];
-        [titleView setTextColor:[UIColor redColor]];
+        [titleView setTextColor:[UIColor whiteColor]];
         
 //        UINavigationController *navController = [self customizedNavigationController];
         UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:viewController] autorelease];

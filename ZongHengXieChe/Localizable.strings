@@ -4,3 +4,24 @@
 
 //tableview indentifier
 "SHOP_CELL_INDENTIFIER" = "ShopCellIdentifier";
+
+/* No comment provided by engineer. */
+"一" = "Mon";
+
+/* No comment provided by engineer. */
+"三" = "Wed";
+
+/* No comment provided by engineer. */
+"二" = "Tue";
+
+/* No comment provided by engineer. */
+"五" = "Fri";
+
+/* No comment provided by engineer. */
+"六" = "Sat";
+
+/* No comment provided by engineer. */
+"四" = "Thu";
+
+/* No comment provided by engineer. */
+"日" = "Sun";

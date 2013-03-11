@@ -22,6 +22,7 @@
     IBOutlet    UILabel     *_cityLabel;
     IBOutlet    MKMapView   *_mapView;
     NSMutableArray          *_shopAnnotationArray;
+    MKReverseGeocoder       *_geocoder;
 }
 @end
 
@@ -29,6 +30,9 @@
 
 - (void)dealloc
 {
+    
+    [_geocoder setDelegate:nil];
+    [_geocoder release];
     [self.shopArray release];
     [_shopAnnotationArray release];
     [_cityLabel release];
@@ -92,9 +96,28 @@
     }
 }
 
+#pragma mark- MKReverseGeocoderDelegate
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
+{
+    [_cityLabel setText:[NSString stringWithFormat:@"当前位置 %@%@", placemark.thoroughfare, placemark.subThoroughfare]];
+    [self setTitle:[NSString stringWithFormat:@"%@ %@", placemark.locality, placemark.subLocality]];
+    [self initUI];
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
+{
+    DLog(@"%@",[error description]);
+}
+
+
 #pragma mark- custom methods
 - (void)prepareData
 {
+    _geocoder = [[MKReverseGeocoder alloc] initWithCoordinate:[[[CoreService sharedCoreService] getMyCurrentLocation] coordinate]];
+    [_geocoder setDelegate:self];
+    [_geocoder start];
+    
     _shopAnnotationArray = [[NSMutableArray alloc] init];
     for (Shop *shop in self.shopArray) {
         ShopAnnotation *shopAnnotation = [[ShopAnnotation alloc] initWithShopInfo:shop];
@@ -105,6 +128,14 @@
 
 - (void)initUI
 {
+    [super changeTitleView];
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
+    [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:backBtn];
+    
+    
     [_cityLabel setBackgroundColor:[UIColor blackColor]];
     CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
 
@@ -115,15 +146,25 @@
     [_mapView addAnnotations:_shopAnnotationArray];
 }
 
+- (void)popToParent
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)goIntoShopDetail:(UIButton *)sender
 {
     MKAnnotationView *annotationView = (MKAnnotationView *)[[sender superview] superview];
     ShopAnnotation *shopAnnotation = (ShopAnnotation *)annotationView.annotation;
     Shop *shop = shopAnnotation.shop;
     
-    ShopDetailsViewController *vc = [[ShopDetailsViewController alloc] init];
+    ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
     [vc setShop:shop];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)setMapCenter:(CLLocationCoordinate2D)coordinate
+{
+    [_mapView setCenterCoordinate:coordinate animated:YES];
 }
 
 @end

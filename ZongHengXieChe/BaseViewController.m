@@ -9,10 +9,6 @@
 #import "BaseViewController.h"
 #import "Shop.h"
 
-
-
-
-
 @interface BaseViewController ()
 
 @end
@@ -56,7 +52,7 @@
         UILabel *lblView = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 30)] autorelease];
         //        [lblView setBackgroundColor:[UIColor colorWithRed:1 green:0.95 blue:0.93 alpha:1.0]];
         [lblView setBackgroundColor:[UIColor clearColor]];
-        [lblView setTextColor:[UIColor redColor]];
+        [lblView setTextColor:[UIColor whiteColor]];
         [lblView setTextAlignment:UITextAlignmentCenter];
         [lblView setFont:[UIFont fontWithName:@"STHeitiSC-Medium" size:20]];
         [lblView setText:[self title]];

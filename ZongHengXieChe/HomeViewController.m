@@ -6,7 +6,7 @@
 //  Copyright (c) 2013年 kiddz. All rights reserved.
 //
 
-#import "MyAccountViewController.h"
+#import "HomeViewController.h"
 #import "Option.h"
 #import "OptionCell.h"
 #import "Shop.h"
@@ -14,6 +14,9 @@
 #import "LoginViewController.h"
 #import "UpKeepViewController.h"
 #import "CoreService.h"
+#import "ArticleViewController.h"
+#import "MyOrderingViewController.h"
+#import "CouponViewController.h"
 
 #define KV_SWITCH_INTERVAL      2
 
@@ -26,7 +29,7 @@ enum {
 
 #define kCategoryCellIdentifier @"CategoryCellIdentifier"
 
-@interface MyAccountViewController ()
+@interface HomeViewController ()
 {
     IBOutlet    UIScrollView    *_kvScrollView;
     IBOutlet    UIPageControl   *_kvPageControl;
@@ -40,7 +43,7 @@ enum {
 
 @end
 
-@implementation MyAccountViewController
+@implementation HomeViewController
 
 - (void)dealloc
 {
@@ -99,6 +102,7 @@ enum {
                 cell = (OptionCell *)aObj;
             }
         }
+        [cell applyCell:[self.optionArray objectAtIndex:indexPath.row]];
     }
     return cell;
 }
@@ -115,13 +119,25 @@ enum {
         }
             break;
         case MY_BOOKING:
-            
+        {
+            MyOrderingViewController *vc = [[[MyOrderingViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
             break;
         case COUPON:
-            
+        {
+            CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
             break;
         case AFTER_SALE:
-
+        {
+            ArticleViewController *vc = [[[ArticleViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
             break;
         default:
             break;
@@ -144,8 +160,13 @@ enum {
 - (void)initUI
 {
     [super changeTitleView];
-    UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    [userBtn setFrame:CGRectMake(290, 10, 30, 30)];
+    UIImageView *logo = [[UIImageView alloc] initWithFrame:CGRectMake(0, -3, 120, 50)];
+    [logo setImage:[UIImage imageNamed:@"logo"]];
+    [self.navigationItem.titleView addSubview:logo];
+    [logo release];
+    UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [userBtn setFrame:CGRectMake(270, 3, 40, 40)];
+    [userBtn setImage:[UIImage imageNamed:@"user_icon"] forState:UIControlStateNormal];
     [userBtn addTarget:self action:@selector(calloutUserView) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:userBtn];
 }
@@ -153,6 +174,7 @@ enum {
 - (void)calloutUserView
 {
     LoginViewController *loginVC = [[[LoginViewController alloc] init] autorelease];
+    [loginVC.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:loginVC animated:YES];
     
 }
@@ -171,8 +193,38 @@ enum {
     if (!self.optionArray) {
         self.optionArray = [[NSMutableArray alloc] init];
     }
+    [self.optionArray removeAllObjects];
     for (NSInteger i=0; i<4; i++) {
         Option *option = [[Option alloc] init];
+        [option setIcon:[UIImage imageNamed:[NSString stringWithFormat:@"category_%d", i+1]]];
+        switch (i) {
+            case UPKEEP:
+            {
+                [option setTitle:@"预约维修保养"];
+                [option setDetails:@"      查询4S店最低预约折扣, 预约进店并享有预约专享工位."];
+            }
+                break;
+            case MY_BOOKING:
+            {
+                [option setTitle:@"我的预约"];
+                [option setDetails:@"      管理预约订单及服务点评, 售后维修记录一目了然."];
+            }
+                break;
+            case COUPON:
+            {
+                [option setTitle:@"优惠券"];
+                [option setDetails:@"      预约折扣还不够给力? 看看有没有折扣给力的优惠券."];
+            }
+                break;   
+            case AFTER_SALE:
+            {
+                [option setTitle:@"售后咨询"];
+                [option setDetails:@"      精选售后咨询及用车知识, 信息可筛选至您的爱车."];
+            }
+                break;    
+            default:
+                break;
+        }
         [_optionArray addObject:option];
         [option release];
     }
@@ -185,7 +237,7 @@ enum {
     [_kvPageControl setNumberOfPages:[self.kvArray count]];
     for (NSInteger index = 0; index < [self.kvArray count]; index++) {
         UIImageView *kvImageView = [[UIImageView alloc] initWithFrame:CGRectMake(320*index, 0, 320, _kvScrollView.bounds.size.height)];
-        [kvImageView setBackgroundColor:[UIColor redColor]];
+        [kvImageView setBackgroundColor:[UIColor clearColor]];
         [_kvScrollView addSubview:kvImageView];
         [kvImageView release];
         
