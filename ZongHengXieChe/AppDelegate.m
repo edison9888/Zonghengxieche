@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "CustomNavigationBar.h"
 #import "CustomTabBarController.h"
-#import "HomeViewController.h"
+#import "MyAccountViewController.h"
 #import "BookingViewController.h"
 #import "SettingViewController.h"
 #import "MoreViewController.h"
@@ -121,7 +121,7 @@
 {
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    HomeViewController *viewController1 = [[[HomeViewController alloc] initWithNibName:@"MyAccountViewController" bundle:nil] autorelease];
+    MyAccountViewController *viewController1 = [[[MyAccountViewController alloc] initWithNibName:@"MyAccountViewController" bundle:nil] autorelease];
     viewController1.view.frame = viewBounds;
     
     BookingViewController *viewController2 = [[[BookingViewController alloc] initWithNibName:@"BookingViewController" bundle:nil] autorelease];

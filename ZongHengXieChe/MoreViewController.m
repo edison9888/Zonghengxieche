@@ -10,6 +10,7 @@
 #import "AppRecommendViewController.h"
 #import "AgreementViewController.h"
 #import "ApplicationViewController.h"
+#import "MyAccountViewController.h"
 #define APP_ID      588144466
 enum  {
     AGREEMENT = 0,
@@ -168,7 +169,9 @@ enum  {
 
 - (void)backToHome
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+    MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
+    [[[[UIApplication sharedApplication] delegate] window] setRootViewController:vc];
 }
 
 

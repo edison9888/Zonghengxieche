@@ -6,7 +6,7 @@
 //  Copyright (c) 2013年 kiddz. All rights reserved.
 //
 
-#import "HomeViewController.h"
+#import "MyAccountViewController.h"
 #import "Option.h"
 #import "OptionCell.h"
 #import "Shop.h"
@@ -29,7 +29,7 @@ enum {
 
 #define kCategoryCellIdentifier @"CategoryCellIdentifier"
 
-@interface HomeViewController ()
+@interface MyAccountViewController ()
 {
     IBOutlet    UIScrollView    *_kvScrollView;
     IBOutlet    UIPageControl   *_kvPageControl;
@@ -43,7 +43,7 @@ enum {
 
 @end
 
-@implementation HomeViewController
+@implementation MyAccountViewController
 
 - (void)dealloc
 {

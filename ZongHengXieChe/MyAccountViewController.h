@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 
-@interface HomeViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+@interface MyAccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @end

@@ -160,6 +160,9 @@
 		17CD0D6E16ECE32600BB261D /* ApplicationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17CD0D6C16ECE32500BB261D /* ApplicationViewController.xib */; };
 		17CD0D7216EDF66800BB261D /* AgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17CD0D7016EDF66700BB261D /* AgreementViewController.m */; };
 		17CD0D7316EDF66800BB261D /* AgreementViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17CD0D7116EDF66800BB261D /* AgreementViewController.xib */; };
+		17CD0D7416EE293600BB261D /* MyAccountViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E77D8116AED3E9000F59D2 /* MyAccountViewController.xib */; };
+		17CD0D7D16EE2D7900BB261D /* AccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17CD0D7B16EE2D7100BB261D /* AccountViewController.m */; };
+		17CD0D7E16EE2D7900BB261D /* AccountViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17CD0D7C16EE2D7500BB261D /* AccountViewController.xib */; };
 		17D1DCB016D755E10098AB0B /* CarInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1DCAF16D755E10098AB0B /* CarInfo.m */; };
 		17D49F6816D1F7E9001FAF5E /* details_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 17D49F6716D1F7E9001FAF5E /* details_bg.png */; };
 		17D49F7016D1FB78001FAF5E /* line.png in Resources */ = {isa = PBXBuildFile; fileRef = 17D49F6F16D1FB78001FAF5E /* line.png */; };
@@ -208,8 +211,7 @@
 		17E77D7C16AED3DD000F59D2 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D7716AED3DD000F59D2 /* BaseViewController.m */; };
 		17E77D7D16AED3DD000F59D2 /* CustomTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D7916AED3DD000F59D2 /* CustomTabBarController.m */; };
 		17E77D7E16AED3DD000F59D2 /* CustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D7B16AED3DD000F59D2 /* CustomNavigationBar.m */; };
-		17E77D8516AED3E9000F59D2 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D8016AED3E9000F59D2 /* HomeViewController.m */; };
-		17E77D8616AED3E9000F59D2 /* HomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E77D8116AED3E9000F59D2 /* HomeViewController.xib */; };
+		17E77D8516AED3E9000F59D2 /* MyAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D8016AED3E9000F59D2 /* MyAccountViewController.m */; };
 		17E77D8716AED3E9000F59D2 /* OptionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D8316AED3E9000F59D2 /* OptionCell.m */; };
 		17E77D8816AED3E9000F59D2 /* OptionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E77D8416AED3E9000F59D2 /* OptionCell.xib */; };
 		17E77D8C16AED3F6000F59D2 /* BookingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E77D8A16AED3F6000F59D2 /* BookingViewController.m */; };
@@ -439,6 +441,9 @@
 		17CD0D6F16EDF66700BB261D /* AgreementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgreementViewController.h; sourceTree = "<group>"; };
 		17CD0D7016EDF66700BB261D /* AgreementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgreementViewController.m; sourceTree = "<group>"; };
 		17CD0D7116EDF66800BB261D /* AgreementViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AgreementViewController.xib; sourceTree = "<group>"; };
+		17CD0D7A16EE2D6D00BB261D /* AccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccountViewController.h; sourceTree = "<group>"; };
+		17CD0D7B16EE2D7100BB261D /* AccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccountViewController.m; sourceTree = "<group>"; };
+		17CD0D7C16EE2D7500BB261D /* AccountViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountViewController.xib; sourceTree = "<group>"; };
 		17D1DCAE16D755E10098AB0B /* CarInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarInfo.h; sourceTree = "<group>"; };
 		17D1DCAF16D755E10098AB0B /* CarInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarInfo.m; sourceTree = "<group>"; };
 		17D49F6716D1F7E9001FAF5E /* details_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = details_bg.png; sourceTree = "<group>"; };
@@ -496,9 +501,9 @@
 		17E77D7916AED3DD000F59D2 /* CustomTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTabBarController.m; sourceTree = "<group>"; };
 		17E77D7A16AED3DD000F59D2 /* CustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomNavigationBar.h; sourceTree = "<group>"; };
 		17E77D7B16AED3DD000F59D2 /* CustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNavigationBar.m; sourceTree = "<group>"; };
-		17E77D7F16AED3E9000F59D2 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
-		17E77D8016AED3E9000F59D2 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
-		17E77D8116AED3E9000F59D2 /* HomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeViewController.xib; sourceTree = "<group>"; };
+		17E77D7F16AED3E9000F59D2 /* MyAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAccountViewController.h; sourceTree = "<group>"; };
+		17E77D8016AED3E9000F59D2 /* MyAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAccountViewController.m; sourceTree = "<group>"; };
+		17E77D8116AED3E9000F59D2 /* MyAccountViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyAccountViewController.xib; sourceTree = "<group>"; };
 		17E77D8216AED3E9000F59D2 /* OptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionCell.h; sourceTree = "<group>"; };
 		17E77D8316AED3E9000F59D2 /* OptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionCell.m; sourceTree = "<group>"; };
 		17E77D8416AED3E9000F59D2 /* OptionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionCell.xib; sourceTree = "<group>"; };
@@ -1080,9 +1085,9 @@
 				17AA971716B4001B00911DE2 /* Location */,
 				17F1190616C3CFC900136AF8 /* Details */,
 				17AA972116B40A5500911DE2 /* Upkeep */,
-				17E77D7F16AED3E9000F59D2 /* HomeViewController.h */,
-				17E77D8016AED3E9000F59D2 /* HomeViewController.m */,
-				17E77D8116AED3E9000F59D2 /* HomeViewController.xib */,
+				17E77D7F16AED3E9000F59D2 /* MyAccountViewController.h */,
+				17E77D8016AED3E9000F59D2 /* MyAccountViewController.m */,
+				17E77D8116AED3E9000F59D2 /* MyAccountViewController.xib */,
 				17E77D8216AED3E9000F59D2 /* OptionCell.h */,
 				17E77D8316AED3E9000F59D2 /* OptionCell.m */,
 				17E77D8416AED3E9000F59D2 /* OptionCell.xib */,
@@ -1092,6 +1097,9 @@
 				17A18F5416DA00C80024E071 /* ArticleDetailViewController.h */,
 				17A18F5516DA00C80024E071 /* ArticleDetailViewController.m */,
 				17A18F5616DA00C80024E071 /* ArticleDetailViewController.xib */,
+				17CD0D7A16EE2D6D00BB261D /* AccountViewController.h */,
+				17CD0D7B16EE2D7100BB261D /* AccountViewController.m */,
+				17CD0D7C16EE2D7500BB261D /* AccountViewController.xib */,
 			);
 			name = Account;
 			sourceTree = "<group>";
@@ -1206,6 +1214,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17CD0D7416EE293600BB261D /* MyAccountViewController.xib in Resources */,
 				17E77D4516AED33E000F59D2 /* InfoPlist.strings in Resources */,
 				17E77D4D16AED33E000F59D2 /* Default.png in Resources */,
 				17E77D4F16AED33E000F59D2 /* Default@2x.png in Resources */,
@@ -1220,7 +1229,6 @@
 				17E77D6E16AED39C000F59D2 /* tab_button3_selected.png in Resources */,
 				17E77D6F16AED39C000F59D2 /* tab_button4_normal.png in Resources */,
 				17E77D7016AED39C000F59D2 /* tab_button4_selected.png in Resources */,
-				17E77D8616AED3E9000F59D2 /* HomeViewController.xib in Resources */,
 				17E77D8816AED3E9000F59D2 /* OptionCell.xib in Resources */,
 				17E77D8D16AED3F6000F59D2 /* BookingViewController.xib in Resources */,
 				17E77D9216AED401000F59D2 /* SettingViewController.xib in Resources */,
@@ -1347,6 +1355,7 @@
 				17CD0D6916ECDE7300BB261D /* CityViewController.xib in Resources */,
 				17CD0D6E16ECE32600BB261D /* ApplicationViewController.xib in Resources */,
 				17CD0D7316EDF66800BB261D /* AgreementViewController.xib in Resources */,
+				17CD0D7E16EE2D7900BB261D /* AccountViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1361,7 +1370,7 @@
 				17E77D7C16AED3DD000F59D2 /* BaseViewController.m in Sources */,
 				17E77D7D16AED3DD000F59D2 /* CustomTabBarController.m in Sources */,
 				17E77D7E16AED3DD000F59D2 /* CustomNavigationBar.m in Sources */,
-				17E77D8516AED3E9000F59D2 /* HomeViewController.m in Sources */,
+				17E77D8516AED3E9000F59D2 /* MyAccountViewController.m in Sources */,
 				17E77D8716AED3E9000F59D2 /* OptionCell.m in Sources */,
 				17E77D8C16AED3F6000F59D2 /* BookingViewController.m in Sources */,
 				17E77D9116AED401000F59D2 /* SettingViewController.m in Sources */,
@@ -1424,6 +1433,7 @@
 				17CD0D6816ECDE7300BB261D /* CityViewController.m in Sources */,
 				17CD0D6D16ECE32600BB261D /* ApplicationViewController.m in Sources */,
 				17CD0D7216EDF66800BB261D /* AgreementViewController.m in Sources */,
+				17CD0D7D16EE2D7900BB261D /* AccountViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
