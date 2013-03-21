@@ -8,8 +8,9 @@
 
 #import "BaseViewController.h"
 #import "Shop.h"
-
+#import "LoginViewController.h"
 @interface BaseViewController ()
+
 
 @end
 
@@ -17,6 +18,7 @@
 
 - (void)dealloc
 {
+    [self.loadingView release];
     [super dealloc];
 }
 
@@ -33,6 +35,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.loadingView = [[[LoadingView alloc] initWithFrame:self.view.frame] autorelease];
+    [self.view insertSubview:self.loadingView atIndex:self.view.subviews.count];
 }
 
 - (void)didReceiveMemoryWarning
@@ -42,6 +46,7 @@
 }
 
 #pragma  mark- custom methods
+
 - (void)changeTitleView
 {
     UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 44)] autorelease];

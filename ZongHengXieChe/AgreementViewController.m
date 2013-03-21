@@ -44,6 +44,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    [self.loadingView setHidden:NO];
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [self.loadingView setHidden:YES];
+}
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    [self.loadingView setHidden:YES];
+}
 
 #pragma mark- custom methods
 - (void)initUI
@@ -56,6 +68,8 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
+    
+    [self.loadingView setHidden:NO];
     
 }
 

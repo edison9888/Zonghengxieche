@@ -13,6 +13,7 @@
 @interface ShopCell()
 {
     IBOutlet    UIImageView     *_shopImage;
+    IBOutlet    UIImageView     *_shopClassImage;
     IBOutlet    UILabel         *_titleLabel;
     IBOutlet    UILabel         *_addressLabel;
     IBOutlet    UILabel         *_distanceLabel;
@@ -47,10 +48,13 @@
     [[CoreService sharedCoreService] loadDataWithURL:shop.logo withParams:nil withCompletionBlock:^(id data) {
         [_shopImage setImage:[UIImage imageWithData:(NSData *)data]];
     } withErrorBlock:nil];
-    [_titleLabel setText:shop.show_title];
+    [_titleLabel setText:shop.shop_name];
     [_addressLabel setText:shop.shop_address];
     
-    DLog(@"%f", (double)shop.distanceFromMyLocation);
+    [_shopClassImage setHidden:![shop.shop_class isEqualToString:@"1"]];
+    [_quanImage setHidden:![shop.have_coupon1 isEqualToString:@"1"]];
+    [_tuanImage setHidden:![shop.have_coupon2 isEqualToString:@"1"]];
+
     [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fkm",shop.distanceFromMyLocation/1000]];
     [_rateLabel setText:[NSString stringWithFormat:@"好评:%@ %%",shop.comment_rate]];
     [_productSaleLabel setText:[NSString stringWithFormat:@"工时费%@起",shop.workhours_sale]];

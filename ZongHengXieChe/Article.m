@@ -29,7 +29,7 @@
         if (_brand_logo) {
             [_brand_logo release];
         }
-        _brand_logo = [[NSString alloc] initWithFormat:@"http://www.xieche.net/%@",brand_logo];
+        _brand_logo = [[NSString alloc] initWithFormat:@"http://c.xieche.net/%@",brand_logo];
         
         [[CoreService sharedCoreService]loadDataWithURL:_brand_logo
                                              withParams:nil

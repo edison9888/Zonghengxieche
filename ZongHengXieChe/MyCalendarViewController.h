@@ -10,7 +10,8 @@
 #import "CalendarView.h"
 #import "BaseViewController.h"
 
-@interface MyCalendarViewController : BaseViewController <CalendarViewDelegate> {
+@interface MyCalendarViewController : BaseViewController <CalendarViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+{
     CalendarView *calendarView;
     IBOutlet UILabel *selectedDateLabel;
     IBOutlet UILabel *selectedYearLabel;

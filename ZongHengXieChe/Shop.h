@@ -21,14 +21,18 @@
 @property (nonatomic, copy) NSString *region;
 @property (nonatomic, copy) NSString *comment_rate;
 @property (nonatomic, copy) NSString *comment_number;
+@property (nonatomic, copy) NSString *have_coupon1;
+@property (nonatomic, copy) NSString *have_coupon2;
 @property (nonatomic, copy) NSString *product_sale;
 @property (nonatomic, copy) NSString *workhours_sale;
 @property (nonatomic, copy) NSString *shop_class;
+
 
 @property (nonatomic, copy) UIImage  *logoImage;
 @property (nonatomic, assign) CLLocationDegrees latitude;
 @property (nonatomic, assign) CLLocationDegrees longitude;
 @property (nonatomic, assign) CLLocationDistance distanceFromMyLocation;
+
 
 - (void)resetLogoImage:(void (^)(UIImage *image))completionHandler;
 

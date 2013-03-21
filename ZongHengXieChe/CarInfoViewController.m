@@ -9,7 +9,10 @@
 #import "CarInfoViewController.h"
 #import "CoreService.h"
 #import "CarInfo.h"
-
+#import "MyCarViewController.h"
+#import "CarDetailsViewController.h"
+#import "CouponViewController.h"
+#import "UpKeepViewController.h"
 
 @interface CarInfoViewController ()
 {
@@ -121,10 +124,15 @@
 {
     CarInfo *carInfo = [[_classifiedInfoArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
+    [vc setEntrance:_entrance];
     [vc.navigationItem setHidesBackButton:YES];
     switch (self.carInfo) {
         case BRAND:
         {
+            if (_entrance == ADD_MY_CAR) {
+                [[[CoreService sharedCoreService] myCar] setBrand_id:carInfo.brand_id];
+                [[[CoreService sharedCoreService] myCar] setBrand_name:carInfo.brand_name];
+            }
             vc.carInfo = SERIES;
             vc.detailID = carInfo.brand_id;
             [self.navigationController pushViewController:vc animated:YES];
@@ -132,6 +140,10 @@
             break;
         case SERIES:
         {
+            if (_entrance == ADD_MY_CAR) {
+                [[[CoreService sharedCoreService] myCar] setSeries_id:carInfo.series_id];
+                [[[CoreService sharedCoreService] myCar] setSeries_name:carInfo.series_name];
+            }
             vc.carInfo = MODEL;
             vc.detailID = carInfo.series_id;
             [self.navigationController pushViewController:vc animated:YES];
@@ -139,6 +151,46 @@
             break;
         case MODEL:
         {
+            if (_entrance == ADD_MY_CAR) {
+                [[[CoreService sharedCoreService] myCar] setModel_id:carInfo.model_id];
+                [[[CoreService sharedCoreService] myCar] setModel_name:carInfo.model_name];
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[CarDetailsViewController class]]) {
+                        CarDetailsViewController *carVC = (CarDetailsViewController *)v;
+                        [carVC fillCarInfo:[[CoreService sharedCoreService] myCar]];
+                        [carVC setCrudType:ADD];
+                        [self.navigationController popToViewController:v animated:YES];
+                    }
+                }
+            }
+            if (_entrance == CAR_FOR_COUPON){
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[CouponViewController class]]) {
+                        CouponViewController *couponVC = (CouponViewController *)v;
+                        [couponVC setModelId:carInfo.model_id];
+                        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+                        CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+                        [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+                        [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+                        [dic setObject:carInfo.model_id forKey:@"model_id"];
+                        couponVC.argumentsDic = dic;
+                        [couponVC getCoupons];
+                        [self.navigationController popToViewController:v animated:YES];
+                    }
+                }
+            }
+            if (_entrance == CAR_FOR_SHOP){
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[UpKeepViewController class]]) {
+                        UpKeepViewController *shopVC = (UpKeepViewController *)v;
+                        [shopVC initArguments];
+                        [shopVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
+                        [shopVC getShops];
+                        [self.navigationController popToViewController:v animated:YES];
+                    }
+                }
+            }
+
             
         }
             break;
@@ -215,17 +267,17 @@
     switch (self.carInfo) {
         case BRAND:
         {
-            return @"http://www.xieche.net/index.php//appandroid/get_allbrands";
+            return @"http://c.xieche.net/index.php//appandroid/get_allbrands";
         }
             break;
         case SERIES:
         {
-            return [NSString stringWithFormat: @"http://www.xieche.net/index.php/appandroid/get_carseries?brand_id=%@", self.detailID];
+            return [NSString stringWithFormat: @"http://c.xieche.net/index.php/appandroid/get_carseries?brand_id=%@", self.detailID];
         }
             break;
         case MODEL:
         {
-            return [NSString stringWithFormat: @"http://www.xieche.net/index.php/appandroid/get_carmodel?series_id=%@", self.detailID];
+            return [NSString stringWithFormat: @"http://c.xieche.net/index.php/appandroid/get_carmodel?series_id=%@", self.detailID];
         }
             break;
             

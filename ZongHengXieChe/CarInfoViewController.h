@@ -15,4 +15,5 @@
 @property (nonatomic, assign) enum CAR_INFO  carInfo;
 @property (nonatomic, strong) NSString  *detailID;
 @property (nonatomic, strong) NSString  *titleString;
+@property (nonatomic, assign) enum CAR_INFO_ENTRANCE entrance;
 @end

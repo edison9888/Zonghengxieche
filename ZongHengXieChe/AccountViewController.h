@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseViewController.h"
+#import "CoreService.h"
 
-@interface AccountViewController : UIViewController
+@interface AccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UserApiDelegate>
 
 @end

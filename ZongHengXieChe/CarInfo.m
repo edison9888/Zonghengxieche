@@ -19,6 +19,13 @@
     [_series_name release];
     [_model_id release];
     [_model_name release];
+      
+    [_brand_logo release];
+    [_u_c_id release];
+    [_car_name release];
+    [_car_number release];
+    [_s_pro release];
+    [_create_time release];
     
     [super dealloc];
 }

@@ -8,6 +8,9 @@
 
 #import "SettingViewController.h"
 #import "CoreService.h"
+#import "MyAccountViewController.h"
+#import "CityViewController.h"
+
 enum  {
     LOCATION = 0,
     CITY = 1
@@ -47,6 +50,11 @@ enum  {
     // Do any additional setup after loading the view from its nib.
     [self prepareData];
     [self initUI];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self refreshCity];
 }
 
 - (void)didReceiveMemoryWarning
@@ -98,8 +106,28 @@ enum  {
         default:
             break;
     }
-    
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.section) {
+        case LOCATION:
+        {
+        }
+            break;
+        case CITY:
+        {
+            CityViewController *vc = [[[CityViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [vc setEntrance:ENTRANCE_SETTING];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -122,6 +150,11 @@ enum  {
     _cityLabel = [[UILabel alloc] initWithFrame:CGRectMake(210.0f, 5.0f, 70.0f, 30.0f)];
     [_cityLabel setBackgroundColor:[UIColor clearColor]];
     [_cityLabel setTextAlignment:NSTextAlignmentRight];
+    [self refreshCity];
+}
+
+- (void)refreshCity
+{
     [_cityLabel setText:[[CoreService sharedCoreService] getCurrentCity]];
 }
 
@@ -154,7 +187,9 @@ enum  {
 
 - (void)backToHome
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 - (void)switched

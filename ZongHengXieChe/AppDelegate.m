@@ -7,17 +7,15 @@
 //
 
 #import "AppDelegate.h"
-#import "CustomNavigationBar.h"
-#import "CustomTabBarController.h"
 #import "MyAccountViewController.h"
 #import "BookingViewController.h"
 #import "SettingViewController.h"
 #import "MoreViewController.h"
 #import "CoreService.h"
+#import "AccountViewController.h"
 
 @interface AppDelegate()
-@property (nonatomic, strong) CustomNavigationBar *customNavigationBar;
-@property (nonatomic, strong) CustomTabBarController  *tabbarController;
+
 
 @end
 
@@ -37,11 +35,12 @@
     
     self.tabbarController = [[[CustomTabBarController alloc] init] autorelease];
     self.tabbarController.viewControllers = [self prepareViewControllers];
+
     
     self.window.rootViewController = self.tabbarController;
-
-    [[CoreService sharedCoreService] startLocationManger];
     
+    [self.tabbarController setSelectedTab:-1];
+    [[CoreService sharedCoreService] startLocationManger];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -61,6 +60,7 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    [[CoreService sharedCoreService] saveUserToLocal];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -71,6 +71,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    [[CoreService sharedCoreService] saveUserToLocal];
 }
 
 
@@ -121,7 +122,7 @@
 {
     CGRect viewBounds = [[UIScreen mainScreen] applicationFrame];
     
-    MyAccountViewController *viewController1 = [[[MyAccountViewController alloc] initWithNibName:@"MyAccountViewController" bundle:nil] autorelease];
+    AccountViewController *viewController1 = [[[AccountViewController alloc] initWithNibName:@"AccountViewController" bundle:nil] autorelease];
     viewController1.view.frame = viewBounds;
     
     BookingViewController *viewController2 = [[[BookingViewController alloc] initWithNibName:@"BookingViewController" bundle:nil] autorelease];

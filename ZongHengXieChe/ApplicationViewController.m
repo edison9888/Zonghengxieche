@@ -197,6 +197,9 @@
 }
 
 - (IBAction)commit:(UIButton *)sender {
+    
+    [self.loadingView setHidden:NO];
+    
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
     [dic setObject:_nameFiled.text forKey:@"shop_name"];
     [dic setObject:self.selectedCar.brand_id forKey:@"brand_id"];;
@@ -221,7 +224,7 @@
                                  if ([status isEqualToString:@"0"]) {
                                      [self popToParent];
                                  }
-                                 
+                                 [self.loadingView setHidden:YES];
                              } withErrorBlock:^(NSError *error) {
                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"提交失败, 请稍后再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                                  [alert show];

@@ -52,7 +52,7 @@
 #pragma  mark- custom methods
 - (void)initUI
 {
-    [self setTitle:@"售后咨询"];
+    [self setTitle:@"售后资讯"];
     [super changeTitleView];
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -66,7 +66,7 @@
 {
     if (self.article) {
         [_brandImage setImage: self.article.brand_logo_image];
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://www.xieche.net/index.php/appandroid/article?a_id=%@",self.article.article_id]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/article?a_id=%@",self.article.article_id]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [_contentWebView loadRequest:request];
     }

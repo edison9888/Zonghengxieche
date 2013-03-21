@@ -11,8 +11,10 @@
 #import "BaseViewController.h"
 
 @interface LocationViewController : BaseViewController<MKMapViewDelegate, MKReverseGeocoderDelegate>
-@property (nonatomic, strong) NSArray *shopArray;
 
-- (void)setMapCenter:(CLLocationCoordinate2D)coordinate;
+@property (nonatomic, strong) NSArray *shopArray;
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate;
+
+
 
 @end

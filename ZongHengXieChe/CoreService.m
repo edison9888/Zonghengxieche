@@ -13,6 +13,7 @@
 #import "ASIFormDataRequest.h"
 #import "ASINetworkQueue.h"
 #import <objc/runtime.h>
+#import "User.h"
 
 #define MaxConcurrentOperationCount 3
 
@@ -33,6 +34,9 @@
         [self.networkQueue cancelAllOperations];
         [self.networkQueue release];
     }
+    
+    [_myOrdering release];
+    [_myCar release];
     [_locationManager release];
     [_currentCity release];
     [super dealloc];
@@ -49,6 +53,13 @@
     [coreService startLocationManger];
     [coreService getStoredInfo];
     return coreService;
+}
+
+- (id)init
+{
+    [self loadUserFromLocal];
+    self.myCar = [[CarInfo alloc] init];
+    return self;
 }
 
 - (void)startLocationManger
@@ -86,8 +97,6 @@
     return _myCurrentLocation;
 }
 
-
-
 - (NSString *)getCurrentCity
 {
     if (_currentCity) {
@@ -96,7 +105,8 @@
         
         NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
         if ([userdefaults objectForKey:@"CURRENT_CITY"]) {
-            return [userdefaults objectForKey:@"CURRENT_CITY"];
+            self.currentCity = [userdefaults objectForKey:@"CURRENT_CITY"];
+            return self.currentCity;
         }
         return @"上海";
     }
@@ -107,10 +117,76 @@
     if (_currentCity) {
         if (_currentCity != currentCity) {
             [_currentCity release];
-            _currentCity = [currentCity retain];
         }
     }
+    _currentCity = [currentCity retain];
+}
+
+- (void)setCurrentUser:(User *)currentUser
+{
+    if (currentUser) {
+        if (_currentUser) {
+            if (_currentUser != currentUser) {
+                [_currentUser release];
+            }
+        }
+        _currentUser = [currentUser retain];
+        [self saveUserToLocal];
+    }
     
+}
+
+- (void)saveUserToLocal
+{
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    [userdefaults setObject:self.currentUser.uid forKey:UserIdKey];
+    [userdefaults setObject:self.currentUser.username forKey:UserNameKey];
+    [userdefaults setObject:self.currentUser.truename forKey:UserTruenameKey];
+    [userdefaults setObject:self.currentUser.email  forKey:UserEmailKey];
+    [userdefaults setObject:self.currentUser.mobile forKey:UserMobileKey];
+    [userdefaults setObject:self.currentUser.prov   forKey:UserProvKey];
+    [userdefaults setObject:self.currentUser.city forKey:UserCityKey];
+    [userdefaults setObject:self.currentUser.area forKey:UserAreaKey];
+    [userdefaults setObject:self.currentUser.password forKey:UserPasswordKey];
+    [userdefaults setObject:self.currentUser.token forKey:UserTokenKey];
+    
+    [userdefaults synchronize];
+}
+
+- (void)loadUserFromLocal
+{
+    if (!_currentUser) {
+        _currentUser = [[User alloc] init];
+    }
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    _currentUser.uid = [userdefaults objectForKey:UserIdKey];
+    _currentUser.username = [userdefaults objectForKey:UserNameKey];
+    _currentUser.truename = [userdefaults objectForKey:UserTruenameKey];
+    _currentUser.email = [userdefaults objectForKey:UserEmailKey];
+    _currentUser.mobile = [userdefaults objectForKey:UserMobileKey];
+    _currentUser.prov  =[userdefaults objectForKey:UserProvKey];
+    _currentUser.city = [userdefaults objectForKey:UserCityKey];
+    _currentUser.area = [userdefaults objectForKey:UserAreaKey];
+    _currentUser.password = [userdefaults objectForKey:UserPasswordKey];
+    _currentUser.token = [userdefaults objectForKey:UserTokenKey];
+}
+
+- (void)UserLogout
+{
+    self.currentUser = [[User alloc] init];
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    [userdefaults removeObjectForKey:UserIdKey];
+    [userdefaults removeObjectForKey:UserNameKey];
+    [userdefaults removeObjectForKey:UserTruenameKey];
+    [userdefaults removeObjectForKey:UserEmailKey];
+    [userdefaults removeObjectForKey:UserMobileKey];
+    [userdefaults removeObjectForKey:UserProvKey];
+    [userdefaults removeObjectForKey:UserCityKey];
+    [userdefaults removeObjectForKey:UserAreaKey];
+    [userdefaults removeObjectForKey:UserPasswordKey];
+    [userdefaults removeObjectForKey:UserTokenKey];
+    
+    [userdefaults synchronize];
 }
 
 #pragma mark- location delegate
@@ -189,14 +265,14 @@
     
     [request setCompletionBlock:^{
         NSString *responseString = [request responseString];
-        DLog(@"%d",[self.networkQueue operationCount]);
+//        DLog(@"%d",[self.networkQueue operationCount]);
         completionHandler(responseString);
     }];
     
     [request setFailedBlock:^{
         NSError *error = [request error];
         DLog(@"%@",[error description]);
-        if (error) {
+        if (errorHandler) {
             errorHandler(error);
         }
         
@@ -240,7 +316,7 @@
     [request setFailedBlock:^{
         NSError *error = [request error];
         DLog(@"%@",[error description]);
-        if (error) {
+        if (errorHandler) {
             errorHandler(error);
         }
         
@@ -280,6 +356,12 @@
     for (GDataXMLElement *childElement in childrenArray) {
         id obj = [[clazz alloc] init];
         NSMutableArray *propertyList = [self getPropertyList:clazz];
+        
+        if ([childElement elementsForName:@"id"] && [propertyList containsObject:@"uid"]) {
+            id propertyValue = [[[childElement elementsForName:@"id"] objectAtIndex:0]stringValue];
+            [obj setValue:propertyValue forKey:@"uid"];
+        }
+        
         for (NSString *propertyName in propertyList) {
             if ([childElement elementsForName:propertyName]) {
                 id propertyValue = [[[childElement elementsForName:propertyName] objectAtIndex:0]stringValue];
@@ -296,6 +378,92 @@
 - (NSDictionary *)convertXml2Dic:(NSString *)xmlString withError:(NSError **)errorPointer
 {
     return [XMLReader dictionaryForXMLString:xmlString error:errorPointer];
+}
+
+
+- (void)loginInBackgroundwithCompletionBlock:(void (^)(id data))completionHandler
+{
+    NSMutableDictionary *paramsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    [paramsDic setObject:_currentUser.username forKey:@"username"];
+    [paramsDic setObject:_currentUser.password forKey:@"password"];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/public/applogincheck"
+                                      withParams:paramsDic
+                             withCompletionBlock:^(id data) {
+                                 //                                     DLog(@"%@",data);
+                                 NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"tolken"] objectForKey:@"text"];
+                                 NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
+                                 
+                                 [_delegate didLoginBackground:status withMessage:desc];
+                                 
+                                 
+                                 if ([status isEqualToString:@"0"]) {
+                                     User *currentUser = [[User alloc]init];
+                                     [currentUser setUid:[[[dic objectForKey:@"XML"] objectForKey:@"uid"] objectForKey:@"text"]];
+                                     [currentUser setUsername:[paramsDic objectForKey:@"username"]];
+                                     [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+                                     [currentUser setTruename:[[[dic objectForKey:@"XML"] objectForKey:@"truename"] objectForKey:@"text"]];
+                                     [currentUser setToken:token];
+                                     [currentUser setEmail:[[[dic objectForKey:@"XML"] objectForKey:@"email"] objectForKey:@"text"]];
+                                     [currentUser setMobile:[[[dic objectForKey:@"XML"] objectForKey:@"mobile"] objectForKey:@"text"]];
+                                     [currentUser setProv:[[[dic objectForKey:@"XML"] objectForKey:@"prov"] objectForKey:@"text"]];
+                                     [currentUser setCity:[[[dic objectForKey:@"XML"] objectForKey:@"city"] objectForKey:@"text"]];
+                                     [currentUser setArea:[[[dic objectForKey:@"XML"] objectForKey:@"area"] objectForKey:@"text"]];
+                                     [[CoreService sharedCoreService] setCurrentUser:currentUser];
+                                     [currentUser release];
+                                 }
+                                 
+                                 if (completionHandler) {
+                                     completionHandler(status);
+                                 }
+                                 
+                             }    withErrorBlock:^(NSError *error) {
+                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"提交失败请稍候再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                 [alert show];
+                                 [alert release];
+                             }];
+
+}
+
+
+- (void)loginInBackground
+{
+    NSMutableDictionary *paramsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    [paramsDic setObject:_currentUser.username forKey:@"username"];
+    [paramsDic setObject:_currentUser.password forKey:@"password"];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
+                                      withParams:paramsDic
+                             withCompletionBlock:^(id data) {
+                                 DLog(@"user login: %@",data);
+                                 NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"tolken"] objectForKey:@"text"];
+                                 NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
+                                 
+                                 if ([status isEqualToString:@"0"]) {
+                                     User *currentUser = [[CoreService sharedCoreService] currentUser];
+                                     //                                     [currentUser setUid:[[[dic objectForKey:@"XML"] objectForKey:@"uid"] objectForKey:@"text"]];
+                                     [currentUser setUsername:[paramsDic objectForKey:@"username"]];
+                                     [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+                                     [currentUser setToken:token];
+                                     
+//                                     [currentUser setTruename:[[[dic objectForKey:@"XML"] objectForKey:@"truename"] objectForKey:@"text"]];
+//                                     [currentUser setEmail:[[[dic objectForKey:@"XML"] objectForKey:@"email"] objectForKey:@"text"]];
+//                                     [currentUser setMobile:[[[dic objectForKey:@"XML"] objectForKey:@"mobile"] objectForKey:@"text"]];
+//                                     [currentUser setProv:[[[dic objectForKey:@"XML"] objectForKey:@"prov"] objectForKey:@"text"]];
+//                                     [currentUser setCity:[[[dic objectForKey:@"XML"] objectForKey:@"city"] objectForKey:@"text"]];
+//                                     [currentUser setArea:[[[dic objectForKey:@"XML"] objectForKey:@"area"] objectForKey:@"text"]];
+                                 }
+                                 
+                                 [_delegate didLoginBackground:status withMessage:desc];
+                                 
+                             }    withErrorBlock:^(NSError *error) {
+                                 [_delegate didLoginBackground:@"-1" withMessage:@"出错"];
+                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"提交失败请稍候再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                 [alert show];
+                                 [alert release];
+                             }];
 }
 
 

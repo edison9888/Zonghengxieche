@@ -91,11 +91,11 @@
     [self setTitle:@"我的预约"];
     [super changeTitleView];
     
-    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
-    [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
-    [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationItem.titleView addSubview:backBtn];
+    UIButton *homeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [homeBtn setFrame:CGRectMake(0, 5, 35, 35)];
+    [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
+    [homeBtn addTarget:self action:@selector(backToHome) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:homeBtn];
     
     [_unpaidOrderBtn setImage:[UIImage imageNamed:@"my_order_btn1"] forState:UIControlStateNormal];
     [_unpaidOrderBtn setImage:[UIImage imageNamed:@"my_order_btn1_hover"] forState:UIControlStateSelected];
@@ -121,5 +121,8 @@
     [sender setSelected:YES];
 }
 
-
+- (void)backToHome
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 @end

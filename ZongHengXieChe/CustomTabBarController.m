@@ -8,7 +8,7 @@
 
 #import "CustomTabBarController.h"
 #import "AppDelegate.h"
-
+#import "MyAccountViewController.h"
 
 #define BUTTON_COUNT        4
 #define TEL_NUMBER          @"4006602822"
@@ -47,6 +47,8 @@
     
     [super dealloc];
 }
+
+
 
 - (void)initImageViewArray
 {
@@ -108,11 +110,20 @@
     }
 }
 
+- (void)hideTabbar:(BOOL)hiden
+{
+    [slideBg setHidden:hiden];
+    [tabbarBg setHidden:hiden];
+    for (UIButton *btn in self.tabButtons) {
+        [btn setHidden:hiden];
+    }
+}
+
 - (void)customTabBar
 {
     [slideBg addSubview:selectedTab];
     [tabbarBg setFrame:CGRectMake(0, YOFFSET, 320, 50 )];
-    [slideBg setFrame:CGRectMake(0, YOFFSET, 80, 50)];
+    [slideBg setFrame:CGRectMake(-80, YOFFSET, 80, 50)];
     [self.view addSubview:tabbarBg];
     
     //创建按钮
@@ -138,7 +149,7 @@
     imgFront.frame = tabbarBg.frame;
     [self.view addSubview:imgFront];
     [imgFront release];
-    [self selectedTab:[_tabButtons objectAtIndex:0]];
+//    [self selectedTab:[_tabButtons objectAtIndex:0]];
 }
 
 - (void)addTabClickCount:(NSUInteger)index
@@ -159,16 +170,18 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"电话预约?" message:@"拨打电话4006602822" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
         [alert show];
         [alert release];
-        
     }else{
+        if ([self.selectedViewController isKindOfClass:[UINavigationController class]]) {
+            [(UINavigationController *)self.selectedViewController popToRootViewControllerAnimated:NO];
+        }
         if (currentSelectedIndex == button.tag) {
+            
         }
         currentSelectedIndex = button.tag;
         self.selectedIndex = currentSelectedIndex;
         [self hideBtnWhenBeTapped:currentSelectedIndex];
         [self performSelector:@selector(slideTabBg:) withObject:button];
         [self.selectedViewController.navigationController popToRootViewControllerAnimated:NO];
-    
     }
     
     
@@ -177,9 +190,23 @@
 
 - (void)setSelectedTab:(NSUInteger)index
 {
-    currentSelectedIndex = index;
-    self.selectedIndex = currentSelectedIndex;
-    [self slideTabBgAnimation:index];
+    [slideBg setHidden:NO];
+    if (index == -1) {
+        if (!self.tabButtons) {
+//            [self viewDidAppear:YES];
+        }
+        [slideBg setHidden:YES];
+        if ([self.selectedViewController isKindOfClass:[UINavigationController class]]) {
+            MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [(UINavigationController *)self.selectedViewController popToRootViewControllerAnimated:NO];
+            [(UINavigationController *)self.selectedViewController pushViewController:vc animated:NO];
+        }
+     }else{
+         currentSelectedIndex = index;
+         self.selectedIndex = currentSelectedIndex;
+         [self slideTabBgAnimation:index];
+     }
 }
 
 - (void)setSelectedTabWithoutAnimation:(NSUInteger)index

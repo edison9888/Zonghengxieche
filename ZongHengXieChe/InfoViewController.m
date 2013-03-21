@@ -7,13 +7,17 @@
 //
 
 #import "InfoViewController.h"
+#import "Ordering.h"
+#import "CoreService.h"
 
 @interface InfoViewController ()
 {
+    IBOutlet    UIScrollView    *_contentScrollView;
     IBOutlet    UIButton        *_confirmBtn;
     IBOutlet    UITextField     *_nameField;
     IBOutlet    UITextField     *_phoneField;
     IBOutlet    UITextField     *_carPlateField;
+    IBOutlet    UITextField     *_carNumberField;
     IBOutlet    UITextView      *_commentView;
 }
 
@@ -61,11 +65,44 @@
 
 - (IBAction)confirm
 {
-
+    Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
+    [myOrdering setTruename:_nameField.text];
+    [myOrdering setMobile:_phoneField.text];
+    [myOrdering setCardqz:_carPlateField.text];
+    [myOrdering setLicenseplate:_carNumberField.text];
+    
+    NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[Ordering class]];
+    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    for (NSString *propertyName in properties) {
+        id value = [myOrdering valueForKey:propertyName];
+        if (value) {
+            [dic setObject:(NSString *)value forKey:propertyName];
+        }
+    
+    }
+    
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/save_order"
+                                      withParams:dic
+                             withCompletionBlock:^(id data) {
+                                 DLog(@"提交订单结果: %@",data);
+                                 NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
+                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                 [alert show];
+                                 [alert release];
+                                 if ([status isEqualToString:@"0"]) {
+                                     [self.navigationController popToRootViewControllerAnimated:YES];
+                                 }
+                                 
+                                 
+                                 
+                            } withErrorBlock:nil];
 }
 
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
 @end

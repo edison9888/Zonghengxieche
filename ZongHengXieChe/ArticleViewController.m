@@ -10,12 +10,16 @@
 #import "CoreService.h"
 #import "Article.h"
 #import "ArticleDetailViewController.h"
+#import "AppDelegate.h"
+#import "CustomTabBarController.h"
+#import "BaseTableViewCell.h"
 @interface ArticleViewController ()
 {
     IBOutlet    UITableView     *_myTableView;
-    NSArray     *_dataArray;
+    IBOutlet    UIButton        *_allBtn;
+    IBOutlet    UIButton        *_mineBtn;
 }
-
+@property (nonatomic, strong) NSMutableArray    *dataArray;
 @end
 
 @implementation ArticleViewController
@@ -35,7 +39,17 @@
     }
     return self;
 }
+- (void)viewWillAppear: (BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+}
 
+- (void)viewWillDisappear: (BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -55,7 +69,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_dataArray count];
+    return [_dataArray count]-1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -66,11 +80,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *indentifier = @"AFTER_SALE_INDENTIFIER";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
+    BaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier];
+        cell = [[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier];
     }
-    Article *article = [_dataArray objectAtIndex:indexPath.row];
+    Article *article = [_dataArray objectAtIndex:indexPath.row+1];
+    
+//    [cell setTitleImageWithUrl:article.brand_logo withSize:CGSizeMake(40, 40)];
     [cell.imageView setImage:article.brand_logo_image];
     [cell.textLabel setText:article.article_title];
     [cell.detailTextLabel setText:article.article_des];
@@ -91,32 +107,56 @@
 #pragma  mark- custom methods
 - (void)initUI
 {
-    [self setTitle:@"售后咨询"];
+    [self setTitle:@"售后资讯"];
     [super changeTitleView];
-    
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
+
+    [_mineBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
+    [_allBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
 }
 
 - (void)prepareData
 {
-    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/articlelist"
-                                          withParams:nil
-                                 withCompletionBlock:^(id data) {
-                                     _dataArray = [[NSMutableArray alloc] initWithArray:[[CoreService sharedCoreService] convertXml2Obj:data withClass:[Article class]]];
-                                     [_myTableView reloadData];
-                                    } withErrorBlock:nil];
-    
+    [self loadArticles:nil];
+}
+
+- (void)loadArticles: (NSMutableDictionary *)argumentsDic
+{
+    [self.loadingView setHidden:NO];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/articlelist"
+                                      withParams:argumentsDic
+                             withCompletionBlock:^(id data) {
+                                 self.dataArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Article class]];
+                                 [_myTableView reloadData];
+                                 [self.loadingView setHidden:YES];
+                             } withErrorBlock:^(NSError *error) {
+                                 [self.loadingView setHidden:YES];
+                             }];
 }
 
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (IBAction)getMyArticle:(id)sender {
+    [_mineBtn setSelected:YES];
+    [_allBtn setSelected:NO];
+    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+    [self loadArticles:dic];
+}
+- (IBAction)getAllArticle:(id)sender {
+    [_mineBtn setSelected:NO];
+    [_allBtn setSelected:YES];
+    [self loadArticles:nil];
+}
+
 
 
 @end

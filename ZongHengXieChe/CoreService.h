@@ -9,12 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "User.h"
-@interface CoreService : NSObject <CLLocationManagerDelegate>
+#import "CarInfo.h"
+#import "Ordering.h"
 
+@protocol UserApiDelegate
+@optional
+- (void)didLoginBackground:(NSString *)status withMessage:(NSString *)resultMsg;
+
+@end
+
+@interface CoreService : NSObject <CLLocationManagerDelegate, UserApiDelegate>
+@property (nonatomic, assign) id delegate;
 @property (nonatomic, strong) User *currentUser;
 @property (nonatomic, strong) NSMutableArray *shopArray;
 @property (nonatomic, strong) NSString *currentCity;
-
+@property (nonatomic, strong) CarInfo *myCar;
+@property (nonatomic, strong) Ordering *myOrdering;
 
 + (CoreService *)sharedCoreService;
 - (CLLocation *)getMyCurrentLocation;
@@ -22,6 +32,7 @@
 - (void)setLocationUpdates:(BOOL)updateStatus;
 - (NSString *)getCurrentCity;
 
+- (void)saveUserToLocal;
 
 - (void)loadHttpURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
 - (void)loadDataWithURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
@@ -32,4 +43,7 @@
 - (NSMutableArray *)getPropertyList:(Class)clazz;
 
 - (BOOL)isGPSValid;
+
+- (void)loginInBackgroundwithCompletionBlock:(void (^)(id data))completionHandler;
+- (void)loginInBackground;
 @end

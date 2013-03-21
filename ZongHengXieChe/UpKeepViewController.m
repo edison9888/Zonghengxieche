@@ -13,17 +13,18 @@
 #import "CoreService.h"
 #import "ShopDetailsViewController.h"
 #import "CarInfoViewController.h"
+#import "CityViewController.h"
+#import "MyCarViewController.h"
 
 enum {
     CAR_TYPE = 0,
     RATE,
     DISTANCE
 };
-
-
 enum {
     MY_TYPE = 1,
-    ALL_TYPE
+    ALL_TYPE,
+    SEARCH_ALL
 };
 
 @interface UpKeepViewController ()
@@ -33,10 +34,13 @@ enum {
     IBOutlet    UIButton    *_distanceBtn;
     IBOutlet    UITableView *_shopTableView;
     IBOutlet    UIView      *_carTypeView;
+    IBOutlet    UIButton    *_titleBtn;
     
     NSArray                 *_TopBtnArray;
 }
-@property (nonatomic, strong) NSArray *shopArray;
+@property (nonatomic, strong) NSMutableArray *shopArray;
+@property (nonatomic, assign) NSInteger currentPageNumber;
+@property (nonatomic, assign) NSInteger totalPageCount;
 
 @end
 
@@ -45,6 +49,7 @@ enum {
 - (void)dealloc
 {
     [self.shopArray release];
+
     [_carTypeBtn release];
     [_ratingBtn release];
     [_distanceBtn release];
@@ -62,6 +67,12 @@ enum {
         // Custom initialization
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
+    [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
 }
 
 - (void)viewDidLoad
@@ -117,7 +128,6 @@ enum {
 
 - (void)initUI
 {
-    [self setTitle:@"上海"];
     [super changeTitleView];
     UIButton *locationBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [locationBtn setFrame:CGRectMake(280, 5, 35, 35)];
@@ -130,6 +140,13 @@ enum {
     [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
     [homeBtn addTarget:self action:@selector(backToHome) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:homeBtn];
+    
+    _titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_titleBtn setFrame:CGRectMake(50, 0, 220, 50)];
+    [_titleBtn.titleLabel setTextAlignment:NSTextAlignmentCenter];
+    [_titleBtn.titleLabel setFont:[UIFont fontWithName:@"STHeitiSC-Medium" size:20]];
+    [_titleBtn addTarget:self action:@selector(selectLocation) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:_titleBtn];
     
     [_carTypeBtn setImage:[UIImage imageNamed:@"choose_car_off"] forState:UIControlStateNormal];
     [_carTypeBtn setImage:[UIImage imageNamed:@"choose_car_on"] forState:UIControlStateHighlighted];
@@ -147,28 +164,99 @@ enum {
     [_distanceBtn setSelected:NO];
 }
 
+- (void)initLocation
+{
+    if (!self.city) {
+        self.city = [[[City alloc] init] autorelease];
+        [self.city setCity_name:@"上海市"];
+    }
+    if (!self.region) {
+        self.region = [[[Region alloc] init] autorelease];
+        [self.region setRegion_name:@"全部城区"];
+    }
+}
+
 - (void)prepareData
 {
+    [self initLocation];
     _TopBtnArray = [[NSArray alloc] initWithObjects:_carTypeBtn, _ratingBtn, _distanceBtn, nil];
-    
-    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/get_shops"
-           withParams:nil
-  withCompletionBlock:^(id data) {
-      
-      NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
-      
-      self.shopArray = [tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)];
-      [self sortShopsByRate];
-      [_shopTableView reloadData];
-  }
-       withErrorBlock:^(NSError *error) {
-       }];
-   
+    [self initArguments];
+    [self getShops];
 }
+
+- (void)getShops
+{
+    [self.loadingView setHidden:NO];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
+                                      withParams:self.argumentsDic
+                             withCompletionBlock:^(id data) {
+                                 [self.loadingView setHidden:YES];
+                                 NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
+                                 self.shopArray = [NSMutableArray arrayWithArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
+                                 [_shopTableView reloadData];
+                             }
+                                  withErrorBlock:^(NSError *error) {
+                                      [self.loadingView setHidden:YES];
+                                  }];
+}
+
+- (void)initArguments
+{
+    self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+//    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+//    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",0] forKey:@"p"];
+    
+    
+    
+}
+
+- (void)getShops:(NSMutableDictionary *)params
+{
+    self.currentPageNumber = 0;
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",self.currentPageNumber] forKey:@"p"];
+    [self.argumentsDic addEntriesFromDictionary:params];
+    
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
+                                      withParams:self.argumentsDic
+                             withCompletionBlock:^(id data) {
+                                 
+                                 NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
+                                 
+                                 self.shopArray = [NSMutableArray arrayWithArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
+//                                 [self sortShopsByRate];
+                                 [_shopTableView reloadData];
+                             }
+                                  withErrorBlock:^(NSError *error) {
+                                  }];
+}
+
+- (void)getMoreShops
+{
+    if (self.currentPageNumber<self.totalPageCount) {
+        self.currentPageNumber++;
+        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
+                                          withParams:self.argumentsDic
+                                 withCompletionBlock:^(id data) {
+                                     NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
+                                     [self.shopArray addObjectsFromArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
+                                     [_shopTableView reloadData];
+                                 }
+                                      withErrorBlock:^(NSError *error) {
+                                      }];
+    }
+
+}
+
 
 - (void)backToHome
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)calloutLocationViewController
@@ -221,25 +309,18 @@ enum {
 
 - (IBAction)sortShopsByDistance
 {
-    self.shopArray = [self.shopArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        Shop *shop1 = (Shop *)obj1;
-        Shop *shop2 = (Shop *)obj2;
-        
-        if (shop1.distanceFromMyLocation > shop2.distanceFromMyLocation) {
-            return NSOrderedDescending;
-        }
-        return NSOrderedDescending;
-    }];
-    [_shopTableView reloadData];
+    [self initArguments];
+    [self getShops];
 }
 
 - (IBAction)carTypeBtnPressed:(UIButton *)btn
 {
+    [_carTypeView setHidden:YES];
     switch (btn.tag) {
         case MY_TYPE:
         {
-            CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
-            [vc setCarInfo:BRAND];
+            MyCarViewController *vc = [[[MyCarViewController alloc] init] autorelease];
+            [vc setEntrance:ENTRANCE_SHOP];
             [vc.navigationItem setHidesBackButton:YES];
             [self.navigationController pushViewController:vc animated:YES];
         }
@@ -248,16 +329,32 @@ enum {
         {
             CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
             [vc setCarInfo:BRAND];
+            [vc setEntrance:CAR_FOR_SHOP];
             [vc.navigationItem setHidesBackButton:YES];
             [self.navigationController pushViewController:vc animated:YES];
         }
             break;
+        case SEARCH_ALL:
+        {
+            [self initArguments];
+            [self getShops];
+        }
+        
         default:
             break;
     }
-
-
 }
+
+- (void)selectLocation
+{
+    CityViewController *vc = [[[CityViewController alloc] init] autorelease];
+    [vc setEntrance:ENTRANCE_SHOP];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+
 
 - (IBAction)hideCarTypeView
 {

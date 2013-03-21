@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseViewController.h"
+@interface CityViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
-@interface CityViewController : UIViewController
+@property (nonatomic, assign) enum  ENTRANCE entrance;
+
 
 @end

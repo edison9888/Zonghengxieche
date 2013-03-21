@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
+#import "City.h"
+#import "Region.h"
 
 @interface UpKeepViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
+@property (nonatomic, strong) City *city;
+@property (nonatomic, strong) Region *region;
+@property (nonatomic, strong) NSMutableDictionary *argumentsDic;
 
-
+- (void)initArguments;
 - (IBAction)carTypeBtnPressed:(id)btn;
+- (void)getShops;
+
 @end

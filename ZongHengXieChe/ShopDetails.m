@@ -14,6 +14,7 @@
 {
     [_shopid release];
     [_shop_name release];
+    [_shop_class release];
     [_shop_address release];
     [_shop_account release];
     [_shop_maps release];
@@ -34,8 +35,23 @@
     [_memo release];
     [_coupon_id release];
     
+    [_coupon_count1 release];
+    [_coupon1_id release];
+    [_coupon1_name release];
+    [_coupon_count2 release];
+    [_coupon2_id release];
+    [_coupon2_name release];
+    
+    [_timesaleArray release];
     
     [super dealloc];
+}
+
+- (id)init
+{
+    [super init];
+    _timesaleArray = [[NSMutableArray alloc] init];
+    return self;
 }
 
 - (NSString *)getWeekday

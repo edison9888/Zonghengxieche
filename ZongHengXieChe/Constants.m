@@ -13,4 +13,15 @@
 NSString *const NotRecallTabbar =  @"NotRecallTabbar";
 
 
+NSString *const UserIdKey = @"UserIdKey";
+NSString *const UserNameKey = @"UserNameKey";
+NSString *const UserEmailKey = @"UserEmailKey";
+NSString *const UserMobileKey = @"UserMobileKey";
+NSString *const UserPasswordKey = @"UserPasswordKey";
+NSString *const UserTokenKey = @"UserTokenKey";
+NSString *const UserTruenameKey = @"UserTruenameKey";
+NSString *const UserProvKey = @"UserProvKey";
+NSString *const UserCityKey = @"UserCityKey";
+NSString *const UserAreaKey = @"UserAreaKey";
+
 @end

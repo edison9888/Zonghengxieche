@@ -8,13 +8,28 @@
 
 #import <Foundation/Foundation.h>
 #if defined(__cplusplus)
-#define MY_EXTERN extern "C"
+#define ZH_EXTERN extern "C"
 #else
-#define MY_EXTERN extern
+#define ZH_EXTERN extern
 #endif
 
 
-MY_EXTERN NSString *const NotRecallTabbar;
+ZH_EXTERN NSString *const NotRecallTabbar;
+
+ZH_EXTERN NSString *const UserIdKey;
+ZH_EXTERN NSString *const UserNameKey;
+ZH_EXTERN NSString *const UserEmailKey;
+ZH_EXTERN NSString *const UserMobileKey;
+ZH_EXTERN NSString *const UserPasswordKey;
+ZH_EXTERN NSString *const UserTokenKey;
+ZH_EXTERN NSString *const UserTruenameKey;
+ZH_EXTERN NSString *const UserProvKey;
+ZH_EXTERN NSString *const UserCityKey;
+ZH_EXTERN NSString *const UserAreaKey;
+
+
+
+
 
 @interface Constants : NSObject
 

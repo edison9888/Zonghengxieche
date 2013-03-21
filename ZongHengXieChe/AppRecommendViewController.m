@@ -8,6 +8,8 @@
 
 #import "AppRecommendViewController.h"
 #import "RecommendApp.h"
+#import "BaseTableViewCell.h"
+
 
 @interface AppRecommendViewController ()
 {
@@ -55,37 +57,43 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 80;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *identifier = @"APP_RECOMMEND_CELL_IDENTIFIER";
     RecommendApp *app = [self.appArray objectAtIndex:indexPath.row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    BaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+        cell = [[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
+    [cell setBackgroundColor:[UIColor whiteColor]];
+    [cell.imageView setContentMode:UIViewContentModeCenter];
     [cell.textLabel setText:app.appname];
-    [cell.imageView setImage:app.applogo_image];
+
+    if (!app.applogo_image) {
+        [cell setTitleImageWithUrl:app.applogo withSize:CGSizeMake(60, 60)];
+    }else{
+        [cell.imageView setImage:app.applogo_image];
+    }
+        
+    [cell.detailTextLabel setNumberOfLines:2];
     [cell.detailTextLabel setText:app.appdes];
     return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-
 }
 
 #pragma  mark- custom methods
 - (void)prepareData
 {
-    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/get_otherapp"
+    [self.loadingView setHidden:NO];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_otherapp"
                                       withParams:nil
                              withCompletionBlock:^(id data) {
                                  self.appArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[RecommendApp class]];
                                  [_appTableView reloadData];
+                                 [self.loadingView setHidden:YES];
                              } withErrorBlock:nil];
 }
 - (void)initUI
@@ -98,6 +106,7 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
+    
 }
 
 - (void)popToParent

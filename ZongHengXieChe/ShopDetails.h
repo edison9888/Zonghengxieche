@@ -13,6 +13,7 @@
 
 @property (nonatomic, copy) NSString *shopid;
 @property (nonatomic, copy) NSString *shop_name;
+@property (nonatomic, copy) NSString *shop_class;
 @property (nonatomic, copy) NSString *shop_address;
 @property (nonatomic, copy) NSString *shop_account;
 @property (nonatomic, copy) NSString *shop_maps;
@@ -33,11 +34,19 @@
 @property (nonatomic, copy) NSString *memo;
 @property (nonatomic, copy) NSString *coupon_id;
 
+@property (nonatomic, copy) NSString *coupon_count1;
+@property (nonatomic, copy) NSString *coupon1_id;
+@property (nonatomic, copy) NSString *coupon1_name;
+@property (nonatomic, copy) NSString *coupon_count2;
+@property (nonatomic, copy) NSString *coupon2_id;
+@property (nonatomic, copy) NSString *coupon2_name;
 
 @property (nonatomic, copy) UIImage  *logoImage;
 @property (nonatomic, assign) CLLocationDegrees latitude;
 @property (nonatomic, assign) CLLocationDegrees longitude;
 @property (nonatomic, assign) CLLocationDistance distanceFromMyLocation;
+
+@property (nonatomic, strong) NSMutableArray *timesaleArray;
 
 
 

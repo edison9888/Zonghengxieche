@@ -14,4 +14,5 @@
 - (NSUInteger)getTabClickCount:(NSUInteger)index;
 - (void)saveState:(NSInteger)locatIndex withFreshTagIndexArray:(NSArray *)indexArray;
 - (void)resumeState;
+- (void)hideTabbar:(BOOL)hiden;
 @end

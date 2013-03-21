@@ -16,6 +16,8 @@
 #import "ShopDetailsViewController.h"
 
 #define Discrepancy 0.05
+#define RegionWidth  3000
+#define RegionHeight 3000
 
 @interface LocationViewController ()
 {
@@ -62,6 +64,17 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    if (self.coordinate.latitude && self.coordinate.latitude != 0) {
+        [self setMapCenter:self.coordinate];
+    }else{
+        CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+        [self setMapCenter:myCurrentLocation.coordinate];
+    }
+
 }
 
 #pragma mark- mapkit delegate
@@ -137,9 +150,10 @@
     
     
     [_cityLabel setBackgroundColor:[UIColor blackColor]];
-    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    
 
-    [_mapView setRegion:MKCoordinateRegionMake(myCurrentLocation.coordinate, MKCoordinateSpanMake(Discrepancy, Discrepancy)) animated:YES];
+    
+//    [_mapView setRegion:MKCoordinateRegionMake(myCurrentLocation.coordinate, MKCoordinateSpanMake(Discrepancy, Discrepancy)) animated:YES];
     [_mapView setShowsUserLocation:YES];
     [_mapView.userLocation setTitle:@"当前位置"];
     
@@ -162,9 +176,13 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)setMapCenter:(CLLocationCoordinate2D)coordinate
+- (void)setMapCenter:(CLLocationCoordinate2D)centerCoordinate
 {
-    [_mapView setCenterCoordinate:coordinate animated:YES];
+    MKCoordinateRegion centerRegion = MKCoordinateRegionMakeWithDistance(centerCoordinate, RegionWidth, RegionHeight);
+    MKCoordinateRegion adjustedRegion = [_mapView regionThatFits:centerRegion];
+    
+    [_mapView setRegion:adjustedRegion animated:YES];
+    [_mapView setCenterCoordinate:centerCoordinate];
 }
 
 @end

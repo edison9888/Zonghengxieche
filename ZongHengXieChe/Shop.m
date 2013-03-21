@@ -29,6 +29,8 @@
     [self.product_sale release];
     [self.workhours_sale release];
     [self.shop_class release];
+    [self.have_coupon1 release];
+    [self.have_coupon2 release];
     
     [super dealloc];
 }

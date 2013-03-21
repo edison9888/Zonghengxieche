@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "Coupon.h"
+#import "BaseViewController.h"
 @interface CouponCell : UITableViewCell
 
+@property (nonatomic, assign) enum ENTRANCE entrance;
+- (void)applyCell:(Coupon *)coupon;
 @end

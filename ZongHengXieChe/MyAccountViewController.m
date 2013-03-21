@@ -129,6 +129,7 @@ enum {
         {
             CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
             [vc.navigationItem setHidesBackButton:YES];
+            [vc setHidesBottomBarWhenPushed:YES];
             [self.navigationController pushViewController:vc animated:YES];
         }
             break;
@@ -164,6 +165,7 @@ enum {
     [logo setImage:[UIImage imageNamed:@"logo"]];
     [self.navigationItem.titleView addSubview:logo];
     [logo release];
+    
     UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [userBtn setFrame:CGRectMake(270, 3, 40, 40)];
     [userBtn setImage:[UIImage imageNamed:@"user_icon"] forState:UIControlStateNormal];
@@ -183,7 +185,7 @@ enum {
 {
     _currentPage = 0;
     _kvImageViewArray = [[NSMutableArray alloc] init];
-    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/appandroid/index_inner"
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/index_inner"
             withParams:nil
    withCompletionBlock:^(id data) {
        self.kvArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[KeyVision class]];

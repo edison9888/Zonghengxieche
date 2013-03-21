@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface InfoViewController : BaseViewController
+@interface InfoViewController : BaseViewController<UIScrollViewDelegate, UITextFieldDelegate>
 
 @end

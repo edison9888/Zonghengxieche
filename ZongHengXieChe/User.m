@@ -13,9 +13,16 @@
 
 - (void)dealloc
 {
-    [self.username release];
-    [self.password release];
-    [self.token release];
+    [_uid release];
+    [_username release];
+    [_truename release];
+    [_email release];
+    [_mobile release];
+    [_prov release];
+    [_city release];
+    [_area release];
+    [_password release];
+    [_token release];
     
     [super dealloc];
 }

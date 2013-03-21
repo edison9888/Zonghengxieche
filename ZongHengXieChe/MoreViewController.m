@@ -16,7 +16,8 @@ enum  {
     AGREEMENT = 0,
     RECOMMEND,
     RATTING,
-    APPLICATION
+    APPLICATION,
+    VERSION
 };
 
 @interface MoreViewController ()
@@ -86,7 +87,7 @@ enum  {
     
     [cell.textLabel setText:[[_sectionArray objectAtIndex:indexPath.section] objectAtIndex:0]];
     [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-    
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
 
@@ -140,11 +141,22 @@ enum  {
     [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
     [homeBtn addTarget:self action:@selector(backToHome) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:homeBtn];
+    
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *version = [NSString stringWithFormat:@"当前版本: %@", [infoDictionary objectForKey:@"CFBundleShortVersionString"]];
+    UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 250, 220, 50)];
+    [versionLabel setFont:[UIFont fontWithName:@"STHeitiSC-Medium" size:17]];
+    [versionLabel setTextAlignment:NSTextAlignmentCenter];
+    [versionLabel setText:version];
+    [versionLabel setBackgroundColor:[UIColor clearColor]];
+    [_myTableView addSubview:versionLabel];
+    [versionLabel release];
 }
 
 - (void)prepareData
 {
     _sectionArray = [[NSMutableArray alloc] init];
+      
     for (NSInteger index = 0; index < 4; index++) {
         NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
         switch (index) {
@@ -169,9 +181,9 @@ enum  {
 
 - (void)backToHome
 {
-//    [self.navigationController popToRootViewControllerAnimated:YES];
     MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
-    [[[[UIApplication sharedApplication] delegate] window] setRootViewController:vc];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 

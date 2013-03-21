@@ -109,24 +109,33 @@ enum USER_INFO_TEXTFIELD {
         [paramsDic setValue:_usernameField.text forKey:@"username"];
         [paramsDic setValue:_pwdField.text forKey:@"password"];
         
-        [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/public/applogincheck"
+        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/public/applogincheck"
                                           withParams:paramsDic
                                  withCompletionBlock:^(id data) {
-                                     DLog(@"%@",data);
+//                                     DLog(@"%@",data);
                                      NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                      NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
-                                     NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"token"];
+                                     NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"tolken"] objectForKey:@"text"];
                                      
                                      if ([status isEqualToString:@"0"]) {
-                                         User *currentUser = [[User alloc]init];
+                                         User *currentUser = [[CoreService sharedCoreService] currentUser];
+                                         [currentUser setUid:[[[dic objectForKey:@"XML"] objectForKey:@"uid"] objectForKey:@"text"]];
                                          [currentUser setUsername:[paramsDic objectForKey:@"username"]];
                                          [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+                                         [currentUser setTruename:[[[dic objectForKey:@"XML"] objectForKey:@"truename"] objectForKey:@"text"]];
                                          [currentUser setToken:token];
-                                         [[CoreService sharedCoreService] setCurrentUser:currentUser];
-                                         [currentUser release];
+                                         [currentUser setEmail:[[[dic objectForKey:@"XML"] objectForKey:@"email"] objectForKey:@"text"]];
+                                         [currentUser setMobile:[[[dic objectForKey:@"XML"] objectForKey:@"mobile"] objectForKey:@"text"]];
+                                         [currentUser setProv:[[[dic objectForKey:@"XML"] objectForKey:@"prov"] objectForKey:@"text"]];
+                                         [currentUser setCity:[[[dic objectForKey:@"XML"] objectForKey:@"city"] objectForKey:@"text"]];
+                                         [currentUser setArea:[[[dic objectForKey:@"XML"] objectForKey:@"area"] objectForKey:@"text"]];
+                                         
+                                         [self popToParent];
                                      }
                                  }    withErrorBlock:^(NSError *error) {
-                                     
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"提交失败请稍候再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                     [alert show];
+                                     [alert release];
                                  }];
         
     }else{

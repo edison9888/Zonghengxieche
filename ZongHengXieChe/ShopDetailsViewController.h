@@ -10,7 +10,9 @@
 #import <CoreLocation/CoreLocation.h>
 #import "BaseViewController.h"
 #import "Shop.h"
-@interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+#import "CouponBtnView.h"
+
+@interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CouponBtnViewDelegate>
 
 @property (nonatomic, strong) Shop *shop;
 @end
