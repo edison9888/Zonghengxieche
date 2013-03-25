@@ -33,9 +33,35 @@
     [_car_sn release]; //车辆识别码
     [_remark release]; //备注 release];
 
+    
+    [_order_count release];//  订单数量
+    [_uid release];      // 订单ID
+    [_order_id release]; //处理后的订单号 用于页面显示
+    [_order_type release]; // 订单类型 1普通订单；2优惠券订单
+    [_create_time release];//     下定时间
+    [_order_time release];//      预约时间
+    [_iscomment release];//      是否评论
+    [_order_state release];//  订单状态 '0'=>'等待处理','1'=>'预约已确认','2'=>'预约已完成','-1'=>'作废预约',
+    [_order_state_str release];// 订单状态 文字显示
+    [_complain_state release];//   投诉状态  '0'=>'无','1'=>'投诉中','2'=>'结束投诉'
+    [_product_sale release];//   零件折扣
+    [_workhours_sale release];//   工时折扣
+    [_shop_name release];//
+    [_order_verify release];//订单验证编号 （如果是优惠券订单才有这个字段 ）
+    [_logo release];
+    [_detail_html release];
+    [_serviceArray release];
+    [_selectedTimeSale release];
     [super dealloc];
 }
 
-
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _serviceArray = [[NSMutableArray alloc] init];
+    }
+    return  self;
+}
 
 @end

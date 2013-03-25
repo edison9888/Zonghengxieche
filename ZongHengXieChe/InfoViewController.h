@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface InfoViewController : BaseViewController<UIScrollViewDelegate, UITextFieldDelegate>
+@interface InfoViewController : BaseViewController<UIScrollViewDelegate, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 
 @end

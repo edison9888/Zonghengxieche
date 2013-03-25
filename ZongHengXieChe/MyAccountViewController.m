@@ -34,9 +34,9 @@ enum {
     IBOutlet    UIScrollView    *_kvScrollView;
     IBOutlet    UIPageControl   *_kvPageControl;
     IBOutlet    UITableView     *_optionTableView;
-    NSMutableArray      *_kvImageViewArray;
-    NSInteger           _currentPage;
-    BOOL                _isKVAnimating;
+    NSMutableArray              *_kvImageViewArray;
+    NSInteger                   _currentPage;
+    BOOL                        _isKVAnimating;
 }
 @property (nonatomic, strong) NSMutableArray *kvArray;
 @property (nonatomic, strong) NSMutableArray *optionArray;
@@ -64,6 +64,11 @@ enum {
         // Custom initialization
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self initUI];
 }
 
 - (void)viewDidLoad
@@ -151,9 +156,16 @@ enum {
 {
     _isKVAnimating = NO;
     CGFloat x = scrollView.contentOffset.x;
-    DLog(@"%f",x);
     NSInteger pageIndex = x/320;
     [_kvPageControl setCurrentPage:pageIndex];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [[CoreService sharedCoreService] UserLogout];
+        [self initUI];
+    }
 }
 
 #pragma mark- custom methods
@@ -166,12 +178,43 @@ enum {
     [self.navigationItem.titleView addSubview:logo];
     [logo release];
     
-    UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [userBtn setFrame:CGRectMake(270, 3, 40, 40)];
-    [userBtn setImage:[UIImage imageNamed:@"user_icon"] forState:UIControlStateNormal];
-    [userBtn addTarget:self action:@selector(calloutUserView) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationItem.titleView addSubview:userBtn];
+    User *user = [[CoreService sharedCoreService] currentUser];
+    if( user && user.uid && ![user.uid isEqualToString:@""] ) {
+        UIButton *logoutBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [logoutBtn setFrame:CGRectMake(270, 3, 40, 40)];
+        [logoutBtn setImage:[UIImage imageNamed:@"logout"] forState:UIControlStateNormal];
+        [logoutBtn addTarget:self action:@selector(logout) forControlEvents:UIControlEventTouchUpInside];
+        [self.navigationItem.titleView addSubview:logoutBtn];
+        
+        UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(170, 3, 100, 40)];
+        [nameLabel setTextColor:[UIColor whiteColor]];
+        [nameLabel setBackgroundColor:[UIColor clearColor]];
+        [nameLabel setFont:[UIFont fontWithName:@"Helvetica-blod" size:15]];
+        [nameLabel setTextAlignment:NSTextAlignmentRight];
+        [nameLabel setText:user.truename];
+        [self.navigationItem.titleView addSubview:nameLabel];
+    }else{
+        UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [userBtn setFrame:CGRectMake(270, 3, 40, 40)];
+        [userBtn setImage:[UIImage imageNamed:@"user_icon"] forState:UIControlStateNormal];
+        [userBtn addTarget:self action:@selector(calloutUserView) forControlEvents:UIControlEventTouchUpInside];
+        [self.navigationItem.titleView addSubview:userBtn];
+    }
+    
+    
+    
+   
+    
+    
 }
+
+- (void)logout
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"您是否确定要注销当前用户?" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"取消", nil];
+    [alert show];
+    [alert release];
+}
+
 
 - (void)calloutUserView
 {
@@ -291,4 +334,6 @@ enum {
 {
 
 }
+
+
 @end

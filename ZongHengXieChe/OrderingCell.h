@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "Ordering.h"
+#import "CoreService.h"
 @interface OrderingCell : UITableViewCell
 
+
+- (void)applyOrderingCell:(Ordering *)ordering;
 @end

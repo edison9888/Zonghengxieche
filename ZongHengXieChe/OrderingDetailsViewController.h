@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface OrderingDetailsViewController : BaseViewController <UITableViewDataSource,UITableViewDelegate>
+#import "Ordering.h"
+@interface OrderingDetailsViewController : BaseViewController <UITableViewDataSource,UITableViewDelegate, UIWebViewDelegate>
+
+@property (nonatomic, strong) Ordering *ordering;
 
 @end

@@ -35,6 +35,7 @@
 - (void)saveUserToLocal;
 
 - (void)loadHttpURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
+- (void)loadHttpURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler withUIViewController:(UIViewController *)vc;
 - (void)loadDataWithURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler;
 
 - (NSMutableArray *)convertXml2Obj:(NSString *)xmlString withClass:(Class)clazz;
@@ -44,6 +45,8 @@
 
 - (BOOL)isGPSValid;
 
-- (void)loginInBackgroundwithCompletionBlock:(void (^)(id data))completionHandler;
-- (void)loginInBackground;
+- (NSArray *)getPlateProvinceArray;
+- (void)UserLogout;
+- (NSString *)getToken:(UIViewController *)viewController;
+
 @end

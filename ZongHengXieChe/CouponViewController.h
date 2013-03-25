@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
+#import "EGORefreshTableHeaderView.h"
 
-@interface CouponViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+@interface CouponViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, EGORefreshTableHeaderDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) NSString  *area;
 @property (nonatomic, strong) NSString  *modelId;
@@ -24,5 +25,6 @@
 - (IBAction)carTypeSearch:(UIButton *)btn;
 - (IBAction)hideSearchMenuView;
 - (IBAction)btnsOfCouponKindMenuPressed:(UIButton *)btn;
+- (void)getCoupons;
 
 @end

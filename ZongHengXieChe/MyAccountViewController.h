@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
+#import "EGORefreshTableHeaderView.h"
 
-@interface MyAccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+@interface MyAccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UIAlertViewDelegate>
 
 @end

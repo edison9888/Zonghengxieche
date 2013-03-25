@@ -12,7 +12,6 @@
 @protocol CouponBtnViewDelegate
 @optional
 - (void)didCouponButtonPressed:(UIButton *)button;
-
 @end
 
 enum COUPON_TYPE{

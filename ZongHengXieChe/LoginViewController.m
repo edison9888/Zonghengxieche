@@ -75,8 +75,7 @@ enum USER_INFO_TEXTFIELD {
     return YES;
 }
 
-#pragma mark-
-#pragma custom methods
+#pragma mark- custom methods
 - (void)initUI
 {
     self.title = @"登录我的携车";

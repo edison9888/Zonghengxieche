@@ -15,6 +15,7 @@
 @interface MyCalendarViewController ()
 {
     IBOutlet    UIPickerView    *_picker;
+    IBOutlet    UIView          *_pickerView;
 }
 
 @property (nonatomic, strong) NSMutableArray *hoursArray;
@@ -28,12 +29,12 @@
 
 - (void)calendarViewDateSelected:(CalendarView *)calendarView date:(NSDate *)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-M-dd"];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
     self.dateString = [NSString stringWithFormat:@"%@", [formatter stringFromDate:date]];
     
     [formatter release];
     
-    [_picker setHidden:NO];
+    [_pickerView setHidden:NO];
     
 //    NSLog(@"%@", date);
 }
@@ -83,9 +84,9 @@
         }
     }
     
-    [self.view insertSubview:calendarView belowSubview:_picker];
+    [self.view insertSubview:calendarView belowSubview:_pickerView];
     
-    selectedYearLabel.text = [NSString stringWithFormat:@"%d年", calendarView.selectedYear];
+    selectedYearLabel.text = [NSString stringWithFormat:@"%d年%d月", calendarView.selectedYear, calendarView.selectedMonth];
     [self prepareData];
     [self initUI];
 }
@@ -112,8 +113,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"%@", keyPath);
-    selectedYearLabel.text = [NSString stringWithFormat:@"Year of %d", calendarView.selectedYear];
+//    NSLog(@"%@", keyPath);
+    selectedYearLabel.text = [NSString stringWithFormat:@"%d年 %d月", calendarView.selectedYear, calendarView.selectedMonth];
 }
 
 #pragma mark- picker
@@ -148,17 +149,42 @@
 {
     if (component == 0) {
         self.hour = [self.hoursArray objectAtIndex:row];
+        [self refreshMinutesArray:[self.hour integerValue]];
     }
     if (component == 1) {
         self.minute = [self.minutesArray objectAtIndex:row];
         selectedDateLabel.text = [NSString stringWithFormat:@"%@ %@:%@", self.dateString, self.hour, self.minute];
-        
-        [_picker setHidden:YES];
     }
     
 }
 
-
+- (void)refreshMinutesArray:(NSInteger)selectedhour
+{
+    self.minutesArray = [[[NSMutableArray alloc] init] autorelease];
+    Ordering *ordering = [[CoreService sharedCoreService] myOrdering];
+    TimeSale *timesale = ordering.selectedTimeSale;
+    NSString *beginTime = timesale.begin_time;
+    NSString *endTime = timesale.end_time;
+    NSInteger beginHour = [[[beginTime componentsSeparatedByString:@":"] objectAtIndex:0] integerValue];
+    NSInteger endHour = [[[endTime componentsSeparatedByString:@":"] objectAtIndex:0] integerValue];
+    NSInteger beginMinutes = [[[beginTime componentsSeparatedByString:@":"] objectAtIndex:1] integerValue];
+    NSInteger endMinutes = [[[endTime componentsSeparatedByString:@":"] objectAtIndex:1] integerValue];
+    
+    NSInteger minMinutes = 00;
+    NSInteger maxMinutes = 60;
+    if (selectedhour == beginHour) {
+        minMinutes = beginMinutes;
+    }
+    if (selectedhour == endHour) {
+        maxMinutes = endMinutes;
+    }
+    
+    for (int minutes = minMinutes; minutes<maxMinutes; minutes+=10) {
+        [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",minutes]];
+    }
+    [_picker reloadComponent:1];
+    self.minute = [self.minutesArray objectAtIndex:0];
+}
 #pragma  mark- custom methods
 - (void)initUI
 {
@@ -174,8 +200,27 @@
 
 - (void)prepareData
 {
-    self.hoursArray = [NSMutableArray arrayWithObjects:@"8",@"9",@"10", nil];
-    self.minutesArray = [NSMutableArray arrayWithObjects:@"00",@"10",@"20", nil];
+    self.hoursArray = [[NSMutableArray alloc] init];
+    self.minutesArray = [[NSMutableArray alloc] init];
+    
+    Ordering *ordering = [[CoreService sharedCoreService] myOrdering];
+    TimeSale *timesale = ordering.selectedTimeSale;
+    NSString *beginTime = timesale.begin_time;
+    NSString *endTime = timesale.end_time;
+    NSInteger beginHour = [[[beginTime componentsSeparatedByString:@":"] objectAtIndex:0] integerValue];
+    NSInteger endHour = [[[endTime componentsSeparatedByString:@":"] objectAtIndex:0] integerValue];
+    
+    NSInteger minInitMinites = [[[beginTime componentsSeparatedByString:@":"] objectAtIndex:1] integerValue];
+
+    
+    for (int hour = beginHour; hour < endHour;  hour++ ) {
+        [self.hoursArray addObject:[NSString stringWithFormat:@"%d",hour]];
+    }
+    self.hour = [NSString stringWithFormat:@"%d",beginHour];
+    for (int minutes = minInitMinites; minutes<60; minutes+=10) {
+        [self.minutesArray addObject:[NSString stringWithFormat:@"%d",minutes]];
+    }
+    self.minute = [NSString stringWithFormat:@"%02d",minInitMinites];
 }
 
 - (IBAction)next
@@ -185,7 +230,6 @@
     [myOrdering setOrder_hours:self.hour];
     [myOrdering setOrder_minute:self.minute];
     
-    
     InfoViewController *vc = [[[InfoViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:YES];
@@ -194,5 +238,9 @@
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+- (IBAction)timeSelected:(UIButton *)sender {
+    [_pickerView setHidden:YES];
+    selectedDateLabel.text = [NSString stringWithFormat:@"%@ %@:%@", self.dateString, self.hour, self.minute];
 }
 @end

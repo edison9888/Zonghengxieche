@@ -6,22 +6,22 @@
 "SHOP_CELL_INDENTIFIER" = "ShopCellIdentifier";
 
 /* No comment provided by engineer. */
-"一" = "Mon";
+"一" = "周一";
 
 /* No comment provided by engineer. */
-"三" = "Wed";
+"三" = "周三";
 
 /* No comment provided by engineer. */
-"二" = "Tue";
+"二" = "周二";
 
 /* No comment provided by engineer. */
-"五" = "Fri";
+"五" = "周五";
 
 /* No comment provided by engineer. */
-"六" = "Sat";
+"六" = "周六";
 
 /* No comment provided by engineer. */
-"四" = "Thu";
+"四" = "周四";
 
 /* No comment provided by engineer. */
-"日" = "Sun";
+"日" = "周日";

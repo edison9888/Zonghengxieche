@@ -10,6 +10,8 @@
 #import "CoreService.h"
 #import "OrderingCell.h"
 #import "OrderingOptionCell.h"
+#import "Service.h"
+#import "MyOrderingViewController.h"
 
 enum ORDERING_CELL {
     ORDERING_CELL = 0,
@@ -20,14 +22,35 @@ enum ORDERING_CELL {
 
 @interface OrderingDetailsViewController ()
 {
-    IBOutlet    UITableView     *_myTableView;
+    IBOutlet    UIWebView       *_myWebView;
+    IBOutlet    UIScrollView    *_myScrollView;
+    IBOutlet    UIImageView     *_bgImageView;
+    IBOutlet    UILabel         *_orderingIdLabel;
+    IBOutlet    UILabel         *_createTimeLabel;
+    IBOutlet    UILabel         *_shopNameLabel;
+    IBOutlet    UILabel         *_timeSaleLabel;
+    IBOutlet    UILabel         *_orderingTimeLabel;
+    IBOutlet    UILabel         *_orderStatusLabel;
+    IBOutlet    UIImageView     *_shopImageView;
+    
+    IBOutlet    UILabel         *_addressLabel;
+    IBOutlet    UITextView      *_serviceItemTextView;
+    IBOutlet    UIButton        *_detailsBtn;
+    IBOutlet    UILabel         *_totalPriceLabel;
+    IBOutlet    UIImageView     *_lineImageView;
+    IBOutlet    UIImageView     *_arrowImageView;
+    
+    NSMutableArray              *_lowerUIArray;
 }
-
+@property (nonatomic, strong) Ordering *orderingDetails;
 @end
 
 @implementation OrderingDetailsViewController
 - (void)dealloc
 {
+    [_lowerUIArray release];
+    [self.ordering release];
+    [self.orderingDetails release];
     [super dealloc];
 }
 
@@ -54,84 +77,6 @@ enum ORDERING_CELL {
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark- tableview delegate & datasource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 5;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    switch (indexPath.row) {
-        case ORDERING_CELL:
-            return 250.0;
-            break;
-        case ORDERING_LABEL_CELL:
-            return 45.0;
-        default:
-            return 45.0;
-            break;
-    }
-
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *identifier;
-    
-    switch (indexPath.row) {
-        case ORDERING_CELL:
-            identifier = @"ORDERING_CELL_INDENTIFIER";
-            break;
-        case ORDERING_LABEL_CELL:
-            identifier = @"ORDERING_LABEL_CELL_INDENTIFIER";
-        default:
-            identifier = @"ORDERING_OPTION_CELL_INDENTIFIER";
-            break;
-    }
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        switch (indexPath.row) {
-            case ORDERING_CELL:
-            {
-                NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"OrderingCell" owner:self options:nil];
-                for (id aObj in nibArray) {
-                    if ([aObj isKindOfClass:[OrderingCell class]]) {
-                        cell = (OrderingCell *)aObj;
-                    }
-                }
-            }
-                break;
-            case ORDERING_LABEL_CELL:
-            {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier] autorelease];
-                [cell.textLabel setFont:[UIFont fontWithName:@"Helvetica" size:13]];
-                [cell.textLabel setText:@"通过纵横携车网预约您的维修项目,共为您节省:"];
-            }
-                break;
-            default:
-            {
-                NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"OrderingOptionCell" owner:self options:nil];
-                for (id aObj in nibArray) {
-                    if ([aObj isKindOfClass:[OrderingOptionCell class]]) {
-                        cell = (OrderingOptionCell *)aObj;
-                    }
-                }
-            }
-                break;
-        }
-    }
-    return cell;
-    
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-}
-
-
-
 #pragma  mark- custom methods
 - (void)initUI
 {
@@ -148,7 +93,29 @@ enum ORDERING_CELL {
 
 - (void)prepareData
 {
+    [self.loadingView setHidden:NO];
+    self.orderingDetails = [[[Ordering alloc] init] autorelease];
     
+    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+    [dic setObject:self.ordering.uid forKey:@"order_id"];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_orderdetail"
+                                          withParams:dic
+                                 withCompletionBlock:^(id data) {
+                                     [self.loadingView setHidden:YES];
+                                     [self convertXml2OrderingDetails:data];
+                                     [self fillInfo];
+                                     NSURL *url = [NSURL URLWithString:self.orderingDetails.detail_html];
+                                     NSURLRequest *request = [NSURLRequest requestWithURL:url];
+                                     [_myWebView loadRequest:request];
+                                 } withErrorBlock:^(NSError *error) {
+                                     [self.loadingView setHidden:YES];
+                                 }];
+    _lowerUIArray = [[NSMutableArray alloc] init];
+    [_lowerUIArray addObject:_lineImageView];
+    [_lowerUIArray addObject:_detailsBtn];
+    [_lowerUIArray addObject:_totalPriceLabel];
+    [_lowerUIArray addObject:_arrowImageView];
 }
 
 - (void)popToParent
@@ -156,5 +123,163 @@ enum ORDERING_CELL {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (IBAction)come2map:(id)sender {
+}
 
+- (NSString *)getOrderingStatusDesc:(NSString *)status
+{
+    NSString *statusDesc = @"";
+    switch ([status integerValue]) {
+        case ORDERING_STATUS_WAITING:
+            statusDesc = @"预约等待";
+            break;
+        case ORDERING_STATUS_CONFIRM:
+            statusDesc = @"预约确认";
+            break;
+        case ORDERING_STATUS_FINISHED:
+            statusDesc = @"预约完成";
+            break;
+        case ORDERING_STATUS_CANCEL:
+            statusDesc = @"作废";
+            break;
+        default:
+            break;
+    }
+    return statusDesc;
+}
+
+- (void)fillInfo
+{
+    UIImage *bgimage = [UIImage imageNamed:@"textfiled_bg"];
+    bgimage = [bgimage stretchableImageWithLeftCapWidth:floorf(bgimage.size.width/2) topCapHeight:floorf(bgimage.size.height/2)];
+    [_bgImageView setImage:bgimage];
+    
+    [_orderingIdLabel setText:self.orderingDetails.uid];
+    [_createTimeLabel setText:[self formateDate:self.orderingDetails.create_time]];
+    [_shopNameLabel setText:self.orderingDetails.shop_name];
+    [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f",[self.orderingDetails.workhours_sale doubleValue]*10]];
+    [_orderingTimeLabel setText:[self formateDate:self.orderingDetails.order_time]];
+    [_orderStatusLabel setText:[self getOrderingStatusDesc:self.orderingDetails.order_state]];
+    [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
+    [[CoreService sharedCoreService] loadDataWithURL:self.orderingDetails.logo
+                                          withParams:nil
+                                 withCompletionBlock:^(id data) {
+                                     [_shopImageView setImage:[UIImage imageWithData:data]];
+                                 } withErrorBlock:nil];
+    
+    [_addressLabel setText:self.orderingDetails.shop_address];
+    
+    [self resizeUI];
+    
+   }
+
+- (void)resizeUI
+{
+    NSInteger serviceCount = self.orderingDetails.serviceArray.count;
+    [_serviceItemTextView setFrame:CGRectMake(114, 164, 161, serviceCount!=0?30+25*(serviceCount-1):30)];
+    [_serviceItemTextView setText:[self formateServiceString]];
+    for (UIView *v in _lowerUIArray) {
+        CGRect frame = v.frame;
+        frame.origin.y += (serviceCount!=0?15*(serviceCount-1):0);
+        [v setFrame:frame];
+    }
+    CGRect frame = _bgImageView.frame;
+    frame.size.height += (serviceCount!=0?15*(serviceCount-1):0);
+    [_bgImageView setFrame:frame];
+    
+    frame = _myWebView.frame;
+    frame.origin.y = _bgImageView.frame.origin.y + _bgImageView.frame.size.height + 10;
+    [_myWebView setFrame: frame];
+}
+
+- (Ordering *)convertXml2OrderingDetails:(NSString *)xmlString
+{
+    NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[Ordering class]];
+    NSError *error;
+    GDataXMLDocument *document = [[[GDataXMLDocument alloc] initWithXMLString:xmlString options:1 error:&error] autorelease];
+    GDataXMLElement *rootElement = [document rootElement];
+    [self ergodic:rootElement withPropertyList:properties];
+    
+    return nil;
+}
+
+- (id)ergodic:(GDataXMLElement *)rootElement withPropertyList:(NSArray *)properties
+{
+    NSArray *propertyList = [[NSArray alloc] initWithArray:properties];
+    
+    for (GDataXMLElement *childElement in rootElement.children) {
+        if ([childElement elementsForName:@"id"] && [propertyList containsObject:@"uid"]) {
+            id propertyValue = [[[childElement elementsForName:@"id"] objectAtIndex:0]stringValue];
+            [self.orderingDetails setValue:propertyValue forKey:@"uid"];
+        }
+        
+        if([childElement.name isEqualToString:@"serviceitem"]){
+            Service *service = [[[Service alloc] init] autorelease];
+            [service setService_id:[[[childElement elementsForName:@"i"] objectAtIndex:0] stringValue]];
+            [service setName:[[[childElement elementsForName:@"name"] objectAtIndex:0] stringValue]];
+            [self.orderingDetails.serviceArray addObject:service];
+        }
+        
+        if (childElement.childCount == 1) {
+            for (NSString *propertyName in properties) {
+                if([childElement.name isEqualToString:propertyName]){
+                    id propertyValue = [childElement stringValue];
+                    [self.orderingDetails setValue:propertyValue forKey:propertyName];
+                }
+            }
+        }else{
+            
+            [self ergodic:childElement withPropertyList:properties];
+        }
+    }
+    [propertyList release];
+    return nil;
+}
+
+- (NSString *)formateDate:(NSString *)time
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[time doubleValue]];
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *formatedDate = [dateFormatter stringFromDate:date];
+    return formatedDate;
+}
+
+- (NSString *)formateServiceString
+{
+    NSMutableString *serviceNames = [[[NSMutableString alloc] init] autorelease];
+    for (NSInteger index = 0; index < self.orderingDetails.serviceArray.count; index++) {
+        Service *service = [self.orderingDetails.serviceArray objectAtIndex:index];
+        [serviceNames appendString:service.name];
+        if (self.orderingDetails.serviceArray.count>0 &&index != self.orderingDetails.serviceArray.count-1) {
+            [serviceNames appendString:@"\r"];
+        }
+    }
+    return serviceNames;
+}
+- (IBAction)queryPriceDetails:(UIButton *)sender {
+    [_myWebView setHidden:!sender.selected];
+    [sender setSelected:!sender.selected];
+    if (sender.selected) {
+        [_arrowImageView setImage:[UIImage imageNamed:@"arrow_down_icon"]];
+    }else{
+        [_arrowImageView setImage:[UIImage imageNamed:@"arrow_up_icon"]];
+    }
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    CGRect frame = _myWebView.frame;
+    frame.size.height = 1;
+    _myWebView.frame = frame;
+    CGSize fittingSize = [_myWebView sizeThatFits:CGSizeZero];
+    frame.size = fittingSize;
+    _myWebView.frame = frame;
+
+    
+//    CGRect frame = _myWebView.frame;
+//    frame.size.height = _myWebView.scrollView.contentSize.height;
+    [_myScrollView setContentSize:CGSizeMake(320, _myWebView.frame.origin.y + _myWebView.frame.size.height)];
+
+}
 @end

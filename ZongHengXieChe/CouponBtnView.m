@@ -40,6 +40,7 @@
 
 - (id)initCouponBtnViewWithFrame:(CGRect)frame withType:(enum COUPON_TYPE )type
 {
+    self.type = type;
     [self initWithFrame:frame];
     if (self) {
         [self initUI];
@@ -60,7 +61,6 @@
     bgImage = [bgImage stretchableImageWithLeftCapWidth:floorf(bgImage.size.width/2) topCapHeight:floorf(bgImage.size.height/2)];
     [_bgImageView setImage:bgImage];
     [self addSubview:_bgImageView];
-    
     
     _accessoryView = [[[UIImageView alloc] init] autorelease];
     [_accessoryView setFrame:CGRectMake(self.frame.size.width - self.frame.size.height/3*2-5, self.frame.size.height/6, self.frame.size.height/3*2, self.frame.size.height/3*2)];
@@ -84,17 +84,19 @@
     _titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(_logoImageView.frame.size.width + 20, self.frame.size.height/6, self.frame.size.width/5*3, self.frame.size.height/3*2)] autorelease];
     [_titleLabel setBackgroundColor:[UIColor clearColor]];
     [_titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:13]];
+    [_titleLabel setTextColor:[UIColor darkGrayColor]];
     [_bgImageView addSubview:_titleLabel];
     
     _countLabel = [[[UILabel alloc] initWithFrame:CGRectMake(_titleLabel.frame.origin.x + _titleLabel.frame.size.width + 10, self.frame.size.height/6, 30, self.frame.size.height/3*2)] autorelease];
     [_countLabel setBackgroundColor:[UIColor clearColor]];
     [_countLabel setFont:[UIFont fontWithName:@"Helvetica" size:13]];
+    [_countLabel setTextColor:[UIColor darkGrayColor]];
     [_bgImageView addSubview:_countLabel];
     
     _button = [UIButton buttonWithType:UIButtonTypeCustom];
     [_button setFrame:_titleLabel.frame];
-//    [_button setBackgroundColor:[UIColor blackColor]];
     [_button addTarget:self action:@selector(couponButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [_button setTag:self.type];
     [self addSubview:_button];
 }
 

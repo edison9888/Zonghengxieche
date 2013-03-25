@@ -34,7 +34,9 @@
 - (void)dealloc
 {
     [_serviceIdsArray release];
-    [_serviceIdsArray release];
+    if (self.serviceArray != nil) {
+        [self.serviceArray release];
+    }
     [_buttonArray release];
     [_buttonTitleStringArray release];
     
@@ -166,13 +168,19 @@
 
 - (IBAction)next
 {
+    Ordering *ordering = [[CoreService sharedCoreService] myOrdering];
+    NSMutableString *selectedServiceIds = [[[NSMutableString alloc] init] autorelease];
     NSMutableArray *selectedServiceIDArray = [[[NSMutableArray alloc] init] autorelease];
     for (NSInteger index = 0; index<_buttonArray.count; index++) {
         UIButton *btn = [_buttonArray objectAtIndex:index];
         if (btn.selected) {
-            [selectedServiceIDArray addObject:[[self.serviceArray objectAtIndex:index] service_id]];
+            [selectedServiceIDArray addObject:[_serviceIdsArray objectAtIndex:index]];
+            [selectedServiceIds appendString:[_serviceIdsArray objectAtIndex:index]];
+            [selectedServiceIds appendString:@","];
         }
     }
+    [ordering setSelect_services:selectedServiceIds];
+    
     MyCalendarViewController *vc = [[[MyCalendarViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:YES];

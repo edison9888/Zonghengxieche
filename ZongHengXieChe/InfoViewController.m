@@ -9,6 +9,7 @@
 #import "InfoViewController.h"
 #import "Ordering.h"
 #import "CoreService.h"
+#import "User.h"
 
 @interface InfoViewController ()
 {
@@ -16,14 +17,24 @@
     IBOutlet    UIButton        *_confirmBtn;
     IBOutlet    UITextField     *_nameField;
     IBOutlet    UITextField     *_phoneField;
-    IBOutlet    UITextField     *_carPlateField;
+    IBOutlet    UIButton        *_carPlateBtn;
     IBOutlet    UITextField     *_carNumberField;
     IBOutlet    UITextView      *_commentView;
+    
+    IBOutlet    UIView          *_pickerView;
+    IBOutlet    UIPickerView    *_picker;
 }
-
+@property (nonatomic, strong) NSArray *provinceArray;
 @end
 
 @implementation InfoViewController
+
+- (void)dealloc
+{
+    [_provinceArray release];
+    
+    [super dealloc];
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -38,6 +49,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self prepareData];
     [self initUI];
 }
 
@@ -47,7 +59,33 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark- picker
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return self.provinceArray.count;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return  [self.provinceArray objectAtIndex:row];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    [_carPlateBtn.titleLabel setText:[self.provinceArray objectAtIndex:row]];
+}
+
+
 #pragma  mark- custom methods
+- (void)prepareData
+{
+    self.provinceArray = [[CoreService sharedCoreService] getPlateProvinceArray];
+}
 - (void)initUI
 {
     [self setTitle:@"3/3 基本信息"];
@@ -68,17 +106,21 @@
     Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
     [myOrdering setTruename:_nameField.text];
     [myOrdering setMobile:_phoneField.text];
-    [myOrdering setCardqz:_carPlateField.text];
+    [myOrdering setCardqz:_carPlateBtn.titleLabel.text];
     [myOrdering setLicenseplate:_carNumberField.text];
+    [myOrdering setRemark:_commentView.text];
     
     NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[Ordering class]];
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
     for (NSString *propertyName in properties) {
         id value = [myOrdering valueForKey:propertyName];
-        if (value) {
+        if (value && [value isKindOfClass:[NSString class]]) {
             [dic setObject:(NSString *)value forKey:propertyName];
         }
-    
+    }
+    User *user = [[CoreService sharedCoreService] currentUser];
+    if (user.token) {
+        [dic setObject:user.token forKey:@"tolken"];
     }
     
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/save_order"
@@ -103,6 +145,23 @@
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+- (IBAction)carPlateSelect:(UIButton *)sender {
+    [_nameField resignFirstResponder];
+    [_phoneField resignFirstResponder];
+    [_carNumberField resignFirstResponder];
+    
+    [_pickerView setHidden:NO];
+    NSString *province  = _carPlateBtn.titleLabel.text;
+    if (!province || [province isEqualToString:@""]) {
+        province = @"沪";
+    }
+    NSInteger index = [self.provinceArray indexOfObject:province];
+    [_picker selectRow:index inComponent:0 animated:YES];
+
+}
+- (IBAction)hidePickerView:(UIButton *)sender {
+    [_pickerView setHidden:YES];
 }
 
 @end

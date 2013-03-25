@@ -11,10 +11,12 @@
 #import "BaseViewController.h"
 #import "Shop.h"
 #import "CouponBtnView.h"
+#import "TimeSaleView.h"
 
-@interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CouponBtnViewDelegate>
+@interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CouponBtnViewDelegate, TimeSaleDelegate>
 
 @property (nonatomic, strong) Shop *shop;
+
 @end
 
 #import "Shop.h"

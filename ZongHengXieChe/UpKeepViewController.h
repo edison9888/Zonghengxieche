@@ -10,8 +10,9 @@
 #import "BaseViewController.h"
 #import "City.h"
 #import "Region.h"
+#import "EGORefreshTableHeaderView.h"
 
-@interface UpKeepViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+@interface UpKeepViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, EGORefreshTableHeaderDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) City *city;
 @property (nonatomic, strong) Region *region;

@@ -17,6 +17,7 @@
 #import "TimeSale.h"
 #import "TimeSaleView.h"
 #import "ProductSaleView.h"
+#import "CouponViewController.h"
 enum {
     TITLE,
     ADDRESS,
@@ -39,15 +40,7 @@ enum {
     IBOutlet    UILabel         *_rateLabel;
     IBOutlet    UILabel         *_commentCountLabel;
     IBOutlet    UITextView      *_commentContentTextView;
-    IBOutlet    UILabel         *_quanContentLabel;
-    IBOutlet    UILabel         *_quanCountLabel;
-    IBOutlet    UILabel         *_tuanContentLabel;
-    IBOutlet    UILabel         *_tuanCountLabel;
-    IBOutlet    UITextView      *_productSaleContentTextView;
-    IBOutlet    UILabel         *_timeSaleTimeLabel;
-    IBOutlet    UILabel         *_timeSaleContentLabel;
-    IBOutlet    UILabel         *_timeSaleWeekLabel;
-    IBOutlet    UIButton        *_bookingButton;
+    IBOutlet    UILabel         *_timeSaleTitleLabel;
     
     CouponBtnView               *_quanCouponView;
     CouponBtnView               *_tuanCouponView;
@@ -79,9 +72,7 @@ enum {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-//    [_detailsTableView setSectionFooterHeight:0];
-//    [_detailsTableView setSectionHeaderHeight:0];
+
     [self prepareData];
     [self initUI];
 }
@@ -110,14 +101,9 @@ enum {
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
     
-    [_contentScrollView setContentSize:CGSizeMake(320, 570)];
+//    [_contentScrollView setContentSize:CGSizeMake(320, 570)];
     
     [self addGestures];
-    
-    TimeSaleView *tsv = [[[TimeSaleView alloc] initWithFrame:CGRectMake(0, 50, 320, 50)] autorelease];
-    [_contentView addSubview:tsv];
-    
-    
 }
 
 - (void)fillInfo
@@ -130,16 +116,6 @@ enum {
     [_rateLabel setText:[NSString stringWithFormat:@"好评率:%@%%",self.shopDetails.comment_rate]];
     [_commentCountLabel setText:[NSString stringWithFormat:@"已有%@人评价",self.shopDetails.comment_number]];
     [_commentContentTextView setText:self.shopDetails.comment];
-    [_quanContentLabel setText:self.shopDetails.coupon1_name];
-    [_quanCountLabel setText:self.shopDetails.coupon_count1];
-    [_tuanContentLabel setText:self.shopDetails.coupon2_name];
-    [_tuanCountLabel setText:self.shopDetails.coupon_count2];
-    [_productSaleContentTextView setText:[self.shopDetails.product_sale isEqualToString:@"0.00"]?@"无":[NSString stringWithFormat:@"%f折",[self.shopDetails.product_sale doubleValue]*10]];
-    
-    
-    [_timeSaleTimeLabel setText:[NSString stringWithFormat:@"%@ -- %@", self.shopDetails.begin_time, self.shopDetails.end_time]];
-    [_timeSaleContentLabel setText:[NSString stringWithFormat:@"工时费%.1f折", [self.shopDetails.workhours_sale doubleValue]*10]];
-    [_timeSaleWeekLabel setText:[self.shopDetails getWeekday]];
     
     
     if (self.shopDetails.coupon1_id && !_quanCouponView) {
@@ -149,12 +125,12 @@ enum {
         [_quanCouponView setCount:self.shopDetails.coupon_count1];
         [_contentView addSubview:_quanCouponView];
     }
-    
+
     if (self.shopDetails.coupon2_id && !_tuanCouponView) {
         if (self.shopDetails.coupon1_id) {
-            _tuanCouponView = [[CouponBtnView alloc] initCouponBtnViewWithFrame:CGRectMake(7, 290, 300, 43) withType:TUAN_TYPE];
-        }else{
             _tuanCouponView = [[CouponBtnView alloc] initCouponBtnViewWithFrame:CGRectMake(7, 335, 300, 43) withType:TUAN_TYPE];
+        }else{
+            _tuanCouponView = [[CouponBtnView alloc] initCouponBtnViewWithFrame:CGRectMake(7, 290, 300, 43) withType:TUAN_TYPE];
         }
         [_tuanCouponView setDelegate:self];
         [_tuanCouponView setTitle:self.shopDetails.coupon2_name];
@@ -165,28 +141,41 @@ enum {
     if (!_productSaleView) {
         _productSaleView = [self getProductSaleView];
         [_productSaleView setContentText:self.shopDetails.product_sale];
-        if (!_tuanCouponView) {
-            [_productSaleView setFrame:CGRectMake(7, 290, 300, 43)];
-        }else{
+        if (_tuanCouponView) {
             CGRect frame = _tuanCouponView.frame;
-            frame.origin.y += 30;
-            [_productSaleView setFrame:CGRectMake(0, frame.origin.y+frame.size.height+30, 320, 76)];
+            [_productSaleView setFrame:CGRectMake(0, frame.origin.y+frame.size.height+15, 320, 76)];
+        }else if(_quanCouponView){
+            CGRect frame = _quanCouponView.frame;
+            [_productSaleView setFrame:CGRectMake(0, frame.origin.y+frame.size.height+15, 320, 76)];
+        }else{
+            [_productSaleView setFrame:CGRectMake(0, 290, 320, 76)];
+            
         }
         [_contentView addSubview:_productSaleView];
     }
     
+   
+    CGRect frame = _timeSaleTitleLabel.frame;
+    frame.origin.y = _productSaleView.frame.origin.y + _productSaleView.frame.size.height + 10;
+    [_timeSaleTitleLabel setFrame:frame];
+    
     for (NSInteger index = 0; index < self.shopDetails.timesaleArray.count; index++) {
         TimeSale *timeSale = [self.shopDetails.timesaleArray objectAtIndex:index];
         TimeSaleView *timeSaleView = [self getTimeSaleView];
+        [timeSaleView setDelegate:self];
         [timeSaleView fillInfo:timeSale];
-        CGFloat y = _productSaleView.frame.size.height + _productSaleView.frame.origin.y;
-        [timeSaleView setFrame:CGRectMake(0, y+30+50*index, 320, 50)];
+        CGFloat y = _timeSaleTitleLabel.frame.size.height + _timeSaleTitleLabel.frame.origin.y;
+        [timeSaleView setFrame:CGRectMake(0, y+5+50*index, 320, 50)];
         
         [_contentView addSubview:timeSaleView];
         [_contentView setFrame:CGRectMake(0, 0, 320, timeSaleView.frame.origin.y+50)];
+        
     }
     
-    [_contentScrollView setContentSize:CGSizeMake(320, _contentView.frame.size.height)];
+    
+    
+    
+    [_contentScrollView setContentSize:CGSizeMake(320, _contentView.frame.size.height+30)];
 }
 
 
@@ -206,7 +195,7 @@ enum {
 - (ProductSaleView *)getProductSaleView
 {
     ProductSaleView *productSaleView;
-    NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"TimeSaleView" owner:self options:nil];
+    NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"ProductSaleView" owner:self options:nil];
     for (id aObj in nibArray) {
         if ([aObj isKindOfClass:[ProductSaleView class]]) {
             productSaleView = (ProductSaleView *)aObj;
@@ -237,12 +226,13 @@ enum {
 
 - (void)prepareData
 {
+    [self.loadingView setHidden:NO];
     self.shopDetails = [[ShopDetails alloc] init];
     
     [[CoreService sharedCoreService] loadHttpURL:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/getshop_detail?shop_id=%@",self.shop.shop_id]
                                       withParams:nil
                              withCompletionBlock:^(id data) {
-
+                                 [self.loadingView setHidden:YES];
                                  [self convertXml2ShopDetails:data];
                                  if (self.shop.logoImage) {
                                      self.shopDetails.logoImage = self.shop.logoImage;
@@ -258,7 +248,9 @@ enum {
                                      self.shopDetails.longitude = self.shopDetails.longitude;
                                  }
                                  [self fillInfo];
-                             } withErrorBlock:nil];
+                             } withErrorBlock:^(NSError *error) {
+                                 [self.loadingView setHidden:YES];
+                             }];
 }
 
 - (void)popToParent
@@ -268,8 +260,6 @@ enum {
 
 - (ShopDetails *)convertXml2ShopDetails:(NSString *)xmlString
 {
-//    NSArray *array = [NSArray arrayWithObjects:@"lastcomment", @"timesale", @"timesaleversion", nil];
-
     NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[ShopDetails class]];
     NSError *error;
     GDataXMLDocument *document = [[[GDataXMLDocument alloc] initWithXMLString:xmlString options:1 error:&error] autorelease];
@@ -312,6 +302,7 @@ enum {
     [propertyList release];
     return obj;
 }
+
 - (IBAction)ordering:(id)sender {
     Ordering *ordering = [[[Ordering alloc] init] autorelease];
     [ordering setShop_id:self.shopDetails.shopid];
@@ -325,7 +316,33 @@ enum {
 
 - (void)didCouponButtonPressed:(UIButton *)button
 {
-    DLog(@"didCouponButtonPressed");
+    [self pushToCouponsWithCouponType:[NSString stringWithFormat:@"%d",button.tag]];
+}
+
+- (void)didTimeSaleButtonPressed:(UIButton *)button
+{
+    Ordering *ordering = [[[Ordering alloc] init] autorelease];
+    [ordering setShop_id:self.shopDetails.shopid];
+    [ordering setTimesaleversion_id:[NSString stringWithFormat:@"%d",button.tag]];
+    for (TimeSale *timesale in self.shopDetails.timesaleArray) {
+        if ([timesale.timesale_id integerValue] == button.tag) {
+            [ordering setSelectedTimeSale:timesale];
+            break;
+        }
+    }
+    [[CoreService sharedCoreService] setMyOrdering:ordering];
+    
+    ServiceChosenViewController *vc = [[[ServiceChosenViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+- (void)pushToCouponsWithCouponType:(NSString *)type
+{
+    CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [vc initArguments];
+    [vc getCoupons];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

@@ -26,7 +26,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        
         self.backgroundColor = [UIColor blackColor];
     }
     return self;
@@ -37,8 +36,11 @@
     [_timeLabel setText:[NSString stringWithFormat:@"%@ -- %@", timesale.begin_time, timesale.end_time]];
     [_discountLabel setText:[NSString stringWithFormat:@"工时费%.1f折", [timesale.workhours_sale doubleValue]*10]];
     [_weekLabel setText:[timesale getWeekday]];
-
+    [_bookingBtn setTag:[timesale.timesale_id integerValue]];
 }
 
+- (IBAction)timeSaleBtnPressed:(UIButton *)sender {
+    [self.delegate didTimeSaleButtonPressed:sender];
+}
 
 @end

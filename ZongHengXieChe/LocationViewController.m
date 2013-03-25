@@ -172,6 +172,7 @@
     Shop *shop = shopAnnotation.shop;
     
     ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
     [vc setShop:shop];
     [self.navigationController pushViewController:vc animated:YES];
 }

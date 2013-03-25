@@ -37,10 +37,17 @@ enum {
     IBOutlet    UIButton    *_titleBtn;
     
     NSArray                 *_TopBtnArray;
+    
+    //EGO
+    BOOL                        _reloading;
+    EGORefreshTableHeaderView   *_refreshHeaderView;
+    UIActivityIndicatorView     *_refreshSpinner;
+    
+    
+    NSInteger       p_count;//总页数
+    NSInteger       p;//当前页
 }
 @property (nonatomic, strong) NSMutableArray *shopArray;
-@property (nonatomic, assign) NSInteger currentPageNumber;
-@property (nonatomic, assign) NSInteger totalPageCount;
 
 @end
 
@@ -49,7 +56,7 @@ enum {
 - (void)dealloc
 {
     [self.shopArray release];
-
+    [_refreshHeaderView release];
     [_carTypeBtn release];
     [_ratingBtn release];
     [_distanceBtn release];
@@ -124,6 +131,49 @@ enum {
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+#pragma mark - ego && UIScrollViewDelegate Methods
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    if(!_reloading && scrollView.contentOffset.y > ((scrollView.contentSize.height - scrollView.frame.size.height)))
+    {
+        if (p<=p_count) {
+            [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+            [self getShops];
+        }else{
+            _shopTableView.tableFooterView = nil;
+        }
+    }else if (scrollView.contentOffset.y <= - 65.0f){
+        [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
+    }
+}
+- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
+    [self reloadData];
+    [self performSelector:@selector(doneLoadingData) withObject:nil afterDelay:3.0];
+}
+
+- (BOOL)egoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView*)view{
+    return _reloading?NO:_reloading;
+}
+- (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view{
+    return [NSDate date];
+}
+
+- (void)reloadData
+{
+//[self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+    [self initArguments];
+    [self getShops];
+    _reloading = YES;
+}
+
+- (void)doneLoadingData{
+    _reloading = NO;
+    [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:_shopTableView];
+}
+
 #pragma mark- custom methods
 
 - (void)initUI
@@ -162,6 +212,35 @@ enum {
     [_distanceBtn setImage:[UIImage imageNamed:@"distance_on"] forState:UIControlStateHighlighted];
     [_distanceBtn setImage:[UIImage imageNamed:@"distance_on"] forState:UIControlStateSelected];
     [_distanceBtn setSelected:NO];
+    
+    [self createEGORefreshHeader];
+    [self createTableFooter];
+}
+
+- (void)createEGORefreshHeader
+{
+    if ( !_refreshHeaderView ) {
+        _refreshHeaderView = [[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.view.bounds.size.height, self.view.frame.size.width, self.view.bounds.size.height)];
+        _refreshHeaderView.delegate = self;
+        [_shopTableView addSubview:_refreshHeaderView];
+    }
+    [_refreshHeaderView refreshLastUpdatedDate];
+}
+
+- (void) createTableFooter
+{
+    _shopTableView.tableFooterView = nil;
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _shopTableView.bounds.size.width, 40.0f)];
+    UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
+    [loadMoreText setCenter:tableFooterView.center];
+    [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
+    [loadMoreText setText:@"上拉显示更多"];
+    [tableFooterView addSubview:loadMoreText];
+    _refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [_refreshSpinner setFrame: CGRectMake(190, _shopTableView.tableFooterView.frame.size.height/2+10,20,20)];
+    [_refreshSpinner setHidesWhenStopped: YES];
+    [tableFooterView addSubview:_refreshSpinner];
+    [_shopTableView setTableFooterView: tableFooterView]; 
 }
 
 - (void)initLocation
@@ -191,68 +270,38 @@ enum {
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
                                  [self.loadingView setHidden:YES];
+                                 
+                                 NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 p_count = [[[[result objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
+                                 p++;
+                                 
                                  NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
-                                 self.shopArray = [NSMutableArray arrayWithArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
+                                 [tempArray removeObjectAtIndex:0];
+                                 if (p>1) {
+                                     [self.shopArray addObjectsFromArray:tempArray];
+                                 }else{
+                                     self.shopArray = tempArray;
+                                 }
                                  [_shopTableView reloadData];
                              }
                                   withErrorBlock:^(NSError *error) {
                                       [self.loadingView setHidden:YES];
                                   }];
+
+    
+    
+    
 }
 
 - (void)initArguments
 {
+    p = 0;
     self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
-    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+//    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
 //    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
 //    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",0] forKey:@"p"];
-    
-    
-    
 }
-
-- (void)getShops:(NSMutableDictionary *)params
-{
-    self.currentPageNumber = 0;
-    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-    self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",self.currentPageNumber] forKey:@"p"];
-    [self.argumentsDic addEntriesFromDictionary:params];
-    
-    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
-                                      withParams:self.argumentsDic
-                             withCompletionBlock:^(id data) {
-                                 
-                                 NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
-                                 
-                                 self.shopArray = [NSMutableArray arrayWithArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
-//                                 [self sortShopsByRate];
-                                 [_shopTableView reloadData];
-                             }
-                                  withErrorBlock:^(NSError *error) {
-                                  }];
-}
-
-- (void)getMoreShops
-{
-    if (self.currentPageNumber<self.totalPageCount) {
-        self.currentPageNumber++;
-        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
-                                          withParams:self.argumentsDic
-                                 withCompletionBlock:^(id data) {
-                                     NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
-                                     [self.shopArray addObjectsFromArray:[tempArray subarrayWithRange:NSMakeRange(1, tempArray.count-1)]];
-                                     [_shopTableView reloadData];
-                                 }
-                                      withErrorBlock:^(NSError *error) {
-                                      }];
-    }
-
-}
-
 
 - (void)backToHome
 {

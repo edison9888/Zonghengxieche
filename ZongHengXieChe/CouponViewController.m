@@ -57,8 +57,13 @@
     NSMutableArray  *_couponTypeBtnArray;
     NSMutableArray  *_couponKindsBtnArray;  //我的XX 搜索view中的button
     
-    NSInteger   _totalPageCount;
-    NSInteger   _currentPage;
+    //EGO
+    BOOL                        _reloading;
+    EGORefreshTableHeaderView   *_refreshHeaderView;
+    UIActivityIndicatorView     *_refreshSpinner;
+    
+    NSInteger       p_count;//总页数
+    NSInteger       p;//当前页
 }
 @property (nonatomic, strong) NSMutableArray *couponArray;
 
@@ -98,14 +103,17 @@
 
 - (void)viewWillAppear: (BOOL)animated
 {
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+    if (self.entrance != ENTRANCE_SHOP_DETAILS_CASH && self.entrance != ENTRANCE_SHOP_DETAILS_TUAN) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+    }
 }
 
 - (void)viewWillDisappear: (BOOL)animated
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -162,7 +170,48 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+#pragma mark - ego && UIScrollViewDelegate Methods
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
+}
 
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    if(!_reloading && scrollView.contentOffset.y > ((scrollView.contentSize.height - scrollView.frame.size.height)))
+    {
+        if (p<=p_count) {
+            [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+            [self getCoupons];
+        }else{
+            _myTableView.tableFooterView = nil;
+        }
+    }else if (scrollView.contentOffset.y <= - 65.0f){
+        [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
+    }
+}
+- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
+    [self reloadData];
+    [self performSelector:@selector(doneLoadingData) withObject:nil afterDelay:3.0];
+}
+
+- (BOOL)egoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView*)view{
+    return _reloading?NO:_reloading;
+}
+- (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view{
+    return [NSDate date];
+}
+
+- (void)reloadData
+{
+    //[self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+    [self initArguments];
+    [self getCoupons];
+    _reloading = YES;
+}
+
+- (void)doneLoadingData{
+    _reloading = NO;
+    [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:_myTableView];
+}
 
 #pragma  mark- custom methods
 - (void)initUI
@@ -242,7 +291,7 @@
     [_forMeRecommedBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateSelected];
     
     [_footCashBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
-    [_footTuanBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
+    [_footTuanBtn setBackgroundImage:[UIImage imageNamed:@"sale_btn_focus"] forState:UIControlStateSelected];
     
     
     [_allTypeBtn setBackgroundImage:[UIImage imageNamed:@"1"] forState:UIControlStateNormal];
@@ -281,6 +330,35 @@
     [_tuanKindBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateHighlighted];
     [_tuanKindBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateSelected];
     [_couponKindsBtnArray addObject:_tuanKindBtn];
+    
+    [self createEGORefreshHeader];
+    [self createTableFooter];
+}
+
+- (void)createEGORefreshHeader
+{
+    if ( !_refreshHeaderView ) {
+        _refreshHeaderView = [[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.view.bounds.size.height, self.view.frame.size.width, self.view.bounds.size.height)];
+        _refreshHeaderView.delegate = self;
+        [_myTableView addSubview:_refreshHeaderView];
+    }
+    [_refreshHeaderView refreshLastUpdatedDate];
+}
+
+- (void) createTableFooter
+{
+    _myTableView.tableFooterView = nil;
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _myTableView.bounds.size.width, 40.0f)];
+    UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
+    [loadMoreText setCenter:tableFooterView.center];
+    [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
+    [loadMoreText setText:@"上拉显示更多"];
+    [tableFooterView addSubview:loadMoreText];
+    _refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [_refreshSpinner setFrame: CGRectMake(190, _myTableView.tableFooterView.frame.size.height/2+10,20,20)];
+    [_refreshSpinner setHidesWhenStopped: YES];
+    [tableFooterView addSubview:_refreshSpinner];
+    [_myTableView setTableFooterView: tableFooterView];
 }
 
 - (void)configToolBar
@@ -291,7 +369,6 @@
     }else{
         [_topToolBar setHidden:NO];
         [_myTableView setFrame:CGRectMake(0, 32, 320, 335)];
-
     }
 }
 
@@ -320,8 +397,18 @@
 
 - (void)initArguments
 {
+    p = 0;
     if (!self.argumentsDic) {
         self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+        [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+        
+        if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH) {
+            [self setLocationInfo];
+            [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
+        }else if(self.entrance == ENTRANCE_SHOP_DETAILS_TUAN){
+            [self setLocationInfo];
+            [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
+        }
         
         if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
             User *user = [[CoreService sharedCoreService] currentUser];
@@ -334,11 +421,16 @@
                 [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
             }
         }else{
-            CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-            [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-            [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+            [self setLocationInfo];
         }
     }
+}
+
+- (void)setLocationInfo
+{
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+    [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
 }
 
 - (void)prepareData
@@ -346,7 +438,6 @@
     _topBtnArray = [[NSMutableArray alloc] init];
     _couponTypeBtnArray = [[NSMutableArray alloc] init];
     _couponKindsBtnArray = [[NSMutableArray alloc] init];
-    _currentPage = 1;
     
     [self initArguments];
     [self getCoupons];
@@ -429,14 +520,19 @@
     [[CoreService sharedCoreService] loadHttpURL:URLString
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
-                                    self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
-                                    NSDictionary *params = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                    _totalPageCount = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
-                                    [_myTableView reloadData];
-                                    [self.loadingView setHidden:YES];
-                                } withErrorBlock:^(NSError *error) {
-                                    [self.loadingView setHidden:YES];
-                                }];
+                                 NSDictionary *params = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 p_count = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
+                                 p++;
+                                 if (p>1) {
+                                     [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
+                                 }else{
+                                     self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
+                                 }
+                                 [_myTableView reloadData];
+                                 [self.loadingView setHidden:YES];
+                             } withErrorBlock:^(NSError *error) {
+                                 [self.loadingView setHidden:YES];
+                             }];
 }
 
 
