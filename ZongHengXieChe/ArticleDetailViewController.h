@@ -12,5 +12,5 @@
 @interface ArticleDetailViewController : BaseViewController<UIWebViewDelegate>
 
 @property (nonatomic, strong) Article *article;
-
+@property (nonatomic, strong) NSString *article_id;
 @end

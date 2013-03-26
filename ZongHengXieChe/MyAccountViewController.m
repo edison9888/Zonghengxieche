@@ -17,7 +17,9 @@
 #import "ArticleViewController.h"
 #import "MyOrderingViewController.h"
 #import "CouponViewController.h"
-
+#import "CouponDetailsViewController.h"
+#import "ShopDetailsViewController.h"
+#import "ArticleDetailViewController.h"
 #define KV_SWITCH_INTERVAL      2
 
 enum {
@@ -25,6 +27,13 @@ enum {
     MY_BOOKING,
     COUPON,
     AFTER_SALE
+};
+
+enum {
+    KV_CASH = 1,
+    KV_TUAN,
+    KV_SHOP,
+    KV_ARTICLE
 };
 
 #define kCategoryCellIdentifier @"CategoryCellIdentifier"
@@ -281,14 +290,19 @@ enum {
     [self setKVAutoSwitch];
     [_kvPageControl setNumberOfPages:[self.kvArray count]];
     for (NSInteger index = 0; index < [self.kvArray count]; index++) {
+        KeyVision *kv = [self.kvArray objectAtIndex:index];
         UIImageView *kvImageView = [[UIImageView alloc] initWithFrame:CGRectMake(320*index, 0, 320, _kvScrollView.bounds.size.height)];
+        [kvImageView setUserInteractionEnabled:YES];
+        [kvImageView setTag:index];
         [kvImageView setBackgroundColor:[UIColor clearColor]];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleKVTapped:)];
+        [singleTap setNumberOfTapsRequired:1];
+        [singleTap setNumberOfTouchesRequired:1];
+        [kvImageView addGestureRecognizer:singleTap];
+        [singleTap release];
         [_kvScrollView addSubview:kvImageView];
         [kvImageView release];
         
-        KeyVision *kv = [self.kvArray objectAtIndex:index];
-        
-        DLog(@"%@",kv.pic);
         [[CoreService sharedCoreService] loadDataWithURL:kv.pic
                     withParams:nil
            withCompletionBlock:^(id data) {
@@ -296,6 +310,49 @@ enum {
                [kvImageView  setImage:image];
            } withErrorBlock:nil];
     }
+}
+
+- (void)handleKVTapped:(UITapGestureRecognizer *)tapGesture
+{
+    UIImageView *kvImageView = (UIImageView *)tapGesture.view;
+    KeyVision *kv = [self.kvArray objectAtIndex:kvImageView.tag];
+    switch ([kv.type integerValue]) {
+        case KV_CASH:
+        {
+            CouponDetailsViewController *vc = [[[CouponDetailsViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [vc setCoupon_id:kv.uid];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        case KV_TUAN:
+        {
+            CouponDetailsViewController *vc = [[[CouponDetailsViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [vc setCoupon_id:kv.uid];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        case KV_SHOP:
+        {
+            ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [vc setShop_id:kv.uid];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        case KV_ARTICLE:
+        {
+            ArticleDetailViewController *vc = [[[ArticleDetailViewController alloc] init] autorelease];
+            [vc.navigationItem setHidesBackButton:YES];
+            [vc setArticle_id:kv.uid];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+        default:
+            break;
+    }
+
 }
 
 - (IBAction)pageControllerValueChanged
@@ -330,10 +387,6 @@ enum {
     [NSTimer scheduledTimerWithTimeInterval:KV_SWITCH_INTERVAL target:self selector:@selector(switchKV) userInfo:nil repeats:YES];
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
-
-}
 
 
 @end

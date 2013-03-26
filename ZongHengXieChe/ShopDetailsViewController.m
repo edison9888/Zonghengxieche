@@ -55,6 +55,7 @@ enum {
 
 - (void) dealloc
 {
+    [self.shop_id release];
     [self.shopDetails release];
     [self.shop release];
     [super dealloc];
@@ -229,12 +230,12 @@ enum {
     [self.loadingView setHidden:NO];
     self.shopDetails = [[ShopDetails alloc] init];
     
-    [[CoreService sharedCoreService] loadHttpURL:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/getshop_detail?shop_id=%@",self.shop.shop_id]
+    [[CoreService sharedCoreService] loadHttpURL:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/getshop_detail?shop_id=%@",self.shop?self.shop.shop_id:self.shop_id]
                                       withParams:nil
                              withCompletionBlock:^(id data) {
                                  [self.loadingView setHidden:YES];
                                  [self convertXml2ShopDetails:data];
-                                 if (self.shop.logoImage) {
+                                 if (self.shop && self.shop.logoImage) {
                                      self.shopDetails.logoImage = self.shop.logoImage;
                                  }else{
                                      [[CoreService sharedCoreService]loadDataWithURL:self.shopDetails.logo
@@ -243,7 +244,7 @@ enum {
                                                                               [_shopImage setImage:self.shopDetails.logoImage];
                                                                           } withErrorBlock:nil];          
                                  }
-                                 if (self.shop.latitude  && self.shop.latitude != 0) {
+                                 if (self.shop && self.shop.latitude  && self.shop.latitude != 0) {
                                      self.shopDetails.latitude = self.shop.latitude;
                                      self.shopDetails.longitude = self.shopDetails.longitude;
                                  }

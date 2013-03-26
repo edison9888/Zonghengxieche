@@ -16,7 +16,7 @@
 @interface ShopDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CouponBtnViewDelegate, TimeSaleDelegate>
 
 @property (nonatomic, strong) Shop *shop;
-
+@property (nonatomic, strong) NSString *shop_id;
 @end
 
 #import "Shop.h"

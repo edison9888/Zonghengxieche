@@ -21,7 +21,7 @@
 - (void)dealloc
 {
     [_article release];
-    
+    [self.article_id release];
     [super dealloc];
 }
 
@@ -66,7 +66,7 @@
 {
     if (self.article) {
         [_brandImage setImage: self.article.brand_logo_image];
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/article?a_id=%@",self.article.article_id]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/article?a_id=%@",self.article?self.article.article_id:self.article_id]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [_contentWebView loadRequest:request];
     }
