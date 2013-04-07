@@ -10,6 +10,7 @@
 #import "CoreService.h"
 #import "MyAccountViewController.h"
 #import "CityViewController.h"
+#import "CustomTabBarController.h"
 
 enum  {
     LOCATION = 0,
@@ -155,7 +156,7 @@ enum  {
 
 - (void)refreshCity
 {
-    [_cityLabel setText:[[CoreService sharedCoreService] getCurrentCity]];
+    [_cityLabel setText:[[[CoreService sharedCoreService] currentSelectedCity] city_name]];
 }
 
 - (void)prepareData
@@ -187,6 +188,7 @@ enum  {
 
 - (void)backToHome
 {
+    [((CustomTabBarController *)self.tabBarController) setSelectedTab :-1];
     MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:NO];

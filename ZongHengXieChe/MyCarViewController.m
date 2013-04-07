@@ -42,6 +42,12 @@
     return self;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear: animated];
+    [self prepareData];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -51,7 +57,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self prepareData];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -137,6 +143,7 @@
                 if ([v isKindOfClass:[UpKeepViewController class]]) {
                     UpKeepViewController *shopVC = (UpKeepViewController *)v;
                     [shopVC initArguments];
+                    [shopVC.argumentsDic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
                     [shopVC.argumentsDic setObject:car.model_id forKey:@"model_id"];
                     [shopVC.argumentsDic setObject:car.series_id forKey:@"series_id"];
                     [shopVC.argumentsDic setObject:car.brand_id forKey:@"brand_id"];
@@ -157,11 +164,6 @@
         }
             break;
     }
-    
-    
-    
-    
-    
 }
 
 
@@ -180,13 +182,17 @@
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_mycars"
                                       withParams:dic
                              withCompletionBlock:^(id data) {
-                                 DLog(@"%@", (NSString *)data);
-                                 [self.loadingView setHidden:YES]; 
                                  if (data) {
-                                     self.carArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[CarInfo class]];
-                                     [_contentTableView reloadData];
+                                     NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                     NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                     if ([status isEqualToString:@"1"]) {
+                                         [self pushLoginVC];
+                                     }else{
+                                         [self.loadingView setHidden:YES]; 
+                                         self.carArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[CarInfo class]];
+                                         [_contentTableView reloadData];
+                                     }
                                  }
-                                 
                              } withErrorBlock:^(NSError *error) {
                                  [self.loadingView setHidden:YES];
                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"网络出错, 请稍后再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];

@@ -17,7 +17,11 @@
 
 @property (nonatomic, strong) Shop *shop;
 @property (nonatomic, strong) NSString *shop_id;
+
+- (IBAction)showComment;
 @end
+
+
 
 #import "Shop.h"
 @interface TitleCell : UITableViewCell

@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface CityViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+#import "CoreService.h"
+
+@interface CityViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UserApiDelegate>
 
 @property (nonatomic, assign) enum  ENTRANCE entrance;
 

@@ -42,6 +42,8 @@
     [_coupon2_id release];
     [_coupon2_name release];
     
+    [_model_id release];
+    
     [_timesaleArray release];
     
     [super dealloc];

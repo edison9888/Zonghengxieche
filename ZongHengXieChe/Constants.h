@@ -14,6 +14,8 @@
 #endif
 
 
+ZH_EXTERN NSString *const IsFirstLaunchKey;
+
 ZH_EXTERN NSString *const NotRecallTabbar;
 
 ZH_EXTERN NSString *const UserIdKey;
@@ -27,9 +29,10 @@ ZH_EXTERN NSString *const UserProvKey;
 ZH_EXTERN NSString *const UserCityKey;
 ZH_EXTERN NSString *const UserAreaKey;
 
+ZH_EXTERN NSString *const CityIdKey;
+ZH_EXTERN NSString *const CityNameKey;
 
-
-
+ZH_EXTERN NSString *const LastLoginTimeKey;
 
 @interface Constants : NSObject
 

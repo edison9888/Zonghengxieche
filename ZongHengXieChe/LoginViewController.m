@@ -10,6 +10,9 @@
 #import "CoreService.h"
 #import "User.h"
 #import "RegisterViewController.h"
+#import "AppDelegate.h"
+#import "CustomNavigationBar.h"
+
 enum USER_INFO_TEXTFIELD {
     USERNAME = 1,
     PWD
@@ -20,6 +23,7 @@ enum USER_INFO_TEXTFIELD {
     IBOutlet    UITextField     *_usernameField;
     IBOutlet    UITextField     *_pwdField;
     IBOutlet    UIButton        *_loginBtn;
+    IBOutlet    UIScrollView    *_contentScrollView;
 }
 
 @end
@@ -52,6 +56,24 @@ enum USER_INFO_TEXTFIELD {
     [self initUI];
 }
 
+
+- (void)viewWillAppear: (BOOL)animated
+{
+    if (self.loginType == LOGIN_TYPE_PRESENT) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [((CustomNavigationBar *)[appDelegate customNavigationBar]) setHidden:YES];
+    }
+    
+}
+
+- (void)viewWillDisappear: (BOOL)animated
+{
+    if (self.loginType == LOGIN_TYPE_PRESENT) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [((CustomNavigationBar *)[appDelegate customNavigationBar]) setHidden:NO];
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -74,6 +96,19 @@ enum USER_INFO_TEXTFIELD {
     }
     return YES;
 }
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    switch (textField.tag) {
+        case USERNAME:
+            [_contentScrollView setContentOffset:CGPointMake(0, 30)];
+            break;
+        case PWD:
+            [_contentScrollView setContentOffset:CGPointMake(0, 70)];
+        default:
+            break;
+    }
+
+}
+
 
 #pragma mark- custom methods
 - (void)initUI
@@ -86,10 +121,15 @@ enum USER_INFO_TEXTFIELD {
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
-    
+    [_contentScrollView setContentSize:CGSizeMake(320, 400)];
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [_usernameField resignFirstResponder];
+    [_pwdField resignFirstResponder];
 
+}
 
 - (IBAction)login
 {
@@ -111,10 +151,10 @@ enum USER_INFO_TEXTFIELD {
         [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/public/applogincheck"
                                           withParams:paramsDic
                                  withCompletionBlock:^(id data) {
-//                                     DLog(@"%@",data);
                                      NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                      NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
                                      NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"tolken"] objectForKey:@"text"];
+                                     NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
                                      
                                      if ([status isEqualToString:@"0"]) {
                                          User *currentUser = [[CoreService sharedCoreService] currentUser];
@@ -128,8 +168,19 @@ enum USER_INFO_TEXTFIELD {
                                          [currentUser setProv:[[[dic objectForKey:@"XML"] objectForKey:@"prov"] objectForKey:@"text"]];
                                          [currentUser setCity:[[[dic objectForKey:@"XML"] objectForKey:@"city"] objectForKey:@"text"]];
                                          [currentUser setArea:[[[dic objectForKey:@"XML"] objectForKey:@"area"] objectForKey:@"text"]];
+                                         [[CoreService sharedCoreService] saveUserToLocal];
+                                         
+                                         NSDate *date = [NSDate date];
+                                         NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+                                         [userdefaults setObject:date forKey:LastLoginTimeKey];
                                          
                                          [self popToParent];
+                                     }else{
+                                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                         [alert show];
+                                         [alert release];
+
+                                     
                                      }
                                  }    withErrorBlock:^(NSError *error) {
                                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"提交失败请稍候再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -146,6 +197,10 @@ enum USER_INFO_TEXTFIELD {
 
 - (void)popToParent
 {
+//    if (self.loginType == LOGIN_TYPE_PRESENT) {
+//        [self dismissModalViewControllerAnimated:YES];
+//    }
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 - (IBAction)Register:(id)sender {

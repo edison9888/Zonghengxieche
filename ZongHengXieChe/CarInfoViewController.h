@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-
+#import "CarInfo.h"
 @interface CarInfoViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
 
@@ -16,4 +16,5 @@
 @property (nonatomic, strong) NSString  *detailID;
 @property (nonatomic, strong) NSString  *titleString;
 @property (nonatomic, assign) enum CAR_INFO_ENTRANCE entrance;
+
 @end

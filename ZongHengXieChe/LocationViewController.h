@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "BaseViewController.h"
 
-@interface LocationViewController : BaseViewController<MKMapViewDelegate, MKReverseGeocoderDelegate>
+@interface LocationViewController : BaseViewController<MKMapViewDelegate>
 
 @property (nonatomic, strong) NSArray *shopArray;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;

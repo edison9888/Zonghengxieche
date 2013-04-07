@@ -80,6 +80,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     
     if ([userDefaults boolForKey:NotRecallTabbar]) {
@@ -96,7 +97,7 @@
         [self hideRealTabBar];
         [self customTabBar];
     }
-    [self resumeState];
+//    [self resumeState];
 }
 
 - (void)hideRealTabBar
@@ -166,6 +167,7 @@
 
 - (void)selectedTab:(UIButton *)button
 {
+    [slideBg setHidden:NO];
     if (button.tag == 1) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"电话预约?" message:@"拨打电话4006602822" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
         [alert show];
@@ -183,14 +185,10 @@
         [self performSelector:@selector(slideTabBg:) withObject:button];
         [self.selectedViewController.navigationController popToRootViewControllerAnimated:NO];
     }
-    
-    
-    
 }
 
 - (void)setSelectedTab:(NSUInteger)index
 {
-    [slideBg setHidden:NO];
     if (index == -1) {
         if (!self.tabButtons) {
 //            [self viewDidAppear:YES];

@@ -13,6 +13,7 @@
 #import "MoreViewController.h"
 #import "CoreService.h"
 #import "AccountViewController.h"
+#import "UserGuideViewController.h"
 
 @interface AppDelegate()
 
@@ -36,12 +37,14 @@
     self.tabbarController = [[[CustomTabBarController alloc] init] autorelease];
     self.tabbarController.viewControllers = [self prepareViewControllers];
 
-    
     self.window.rootViewController = self.tabbarController;
-    
     [self.tabbarController setSelectedTab:-1];
     [[CoreService sharedCoreService] startLocationManger];
     [self.window makeKeyAndVisible];
+    
+    
+
+    
     return YES;
 }
 

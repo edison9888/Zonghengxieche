@@ -10,9 +10,11 @@
 
 @implementation Constants
 
+NSString *const IsFirstLaunchKey =  @"IsFirstLaunchKey";
+
 NSString *const NotRecallTabbar =  @"NotRecallTabbar";
 
-
+//USER
 NSString *const UserIdKey = @"UserIdKey";
 NSString *const UserNameKey = @"UserNameKey";
 NSString *const UserEmailKey = @"UserEmailKey";
@@ -24,4 +26,9 @@ NSString *const UserProvKey = @"UserProvKey";
 NSString *const UserCityKey = @"UserCityKey";
 NSString *const UserAreaKey = @"UserAreaKey";
 
+//City
+NSString *const CityIdKey = @"CityIdKey";
+NSString *const CityNameKey = @"CityNameKey";
+
+NSString *const LastLoginTimeKey = @"LastLoginTimeKey";
 @end

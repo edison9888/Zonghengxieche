@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-
+#import "CoreService.h"
 enum ORDERING_TYPE {
     ORDERING_TYPE_ALL = 999,
     ORDERING_TYPE_NORMAL = 0,
@@ -24,7 +24,7 @@ enum ORDERING_STATUS {
 };
 
 
-@interface MyOrderingViewController : BaseViewController <UITableViewDataSource,UITableViewDelegate>
+@interface MyOrderingViewController : BaseViewController <UITableViewDataSource,UITableViewDelegate, UserApiDelegate>
 
 - (IBAction)btnPressed:(UIButton *)sender;
 - (IBAction)hideOrderingSearchMenu;

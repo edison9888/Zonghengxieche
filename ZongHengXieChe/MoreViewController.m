@@ -11,6 +11,8 @@
 #import "AgreementViewController.h"
 #import "ApplicationViewController.h"
 #import "MyAccountViewController.h"
+#import "CustomTabBarController.h"
+
 #define APP_ID      588144466
 enum  {
     AGREEMENT = 0,
@@ -181,6 +183,7 @@ enum  {
 
 - (void)backToHome
 {
+    [((CustomTabBarController *)self.tabBarController) setSelectedTab :-1];
     MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:NO];

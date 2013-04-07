@@ -92,7 +92,8 @@
                     UpKeepViewController *shopVC = (UpKeepViewController *)v;
                     [shopVC setRegion:region];
                     [shopVC initArguments];
-                    [shopVC.argumentsDic setObject:region.region_name forKey:@"area"];
+                    [shopVC.argumentsDic setObject:self.city.uid forKey:@"city_id"];
+                    [shopVC.argumentsDic setObject:region.uid forKey:@"area_id"];
                     [shopVC getShops];
                     [self.navigationController popToViewController:v animated:YES];
                 }
@@ -104,12 +105,10 @@
             for (UIViewController *v in self.navigationController.viewControllers) {
                 if ([v isKindOfClass:[CouponViewController class]]) {
                     CouponViewController *couponVC = (CouponViewController *)v;
-                    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
-                    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-                    [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-                    [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
-                    [dic setObject:region.region_name forKey:@"area"];
-                    [couponVC setArgumentsDic:dic];
+                    [couponVC initArguments];
+                    [couponVC.argumentsDic setObject:self.city.uid forKey:@"city_id"];
+                    [couponVC.argumentsDic setObject:region.region_name forKey:@"area"];
+                    [couponVC.argumentsDic setObject:region.uid forKey:@"area_id"];
                     [couponVC getCoupons];
                     [self.navigationController popToViewController:v animated:YES];
                 }

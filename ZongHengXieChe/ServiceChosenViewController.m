@@ -16,6 +16,7 @@
 {
     IBOutlet    UIScrollView    *_myScrollView;
     IBOutlet    UIView          *_contentView;
+    IBOutlet    UIView          *_tipView;
     IBOutlet    UILabel         *_tipLabel;
     
     UIButton                    *_selectNoneBtn;
@@ -77,8 +78,14 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
-    
-    [_myScrollView setContentSize:_contentView.frame.size.height>367?_contentView.frame.size:CGSizeMake(320, 367)];
+    if (IS_IPHONE_5) {
+        CGRect frame = _tipView.frame;
+        frame.origin.y += 88;
+        [_tipView setFrame:frame];
+        [_myScrollView setContentSize:_contentView.frame.size.height>367?_contentView.frame.size:CGSizeMake(320, 367+88)];
+    }else{
+        [_myScrollView setContentSize:_contentView.frame.size.height>367?_contentView.frame.size:CGSizeMake(320, 367)];
+    }
 }
 
 - (void)prepareData
@@ -87,22 +94,42 @@
     
     Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
     if (myOrdering && myOrdering.model_id && ![myOrdering.model_id isEqualToString:@""]) {
-        [[CoreService sharedCoreService] loadDataWithURL:@"http://c.xieche.net/index.php/appandroid/get_orderprice/"
-                                              withParams:nil
+        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init]autorelease];
+        [dic setObject:myOrdering.model_id forKey:@"model_id"];
+        [dic setObject:myOrdering.timesaleversion_id forKey:@"timesaleversion_id"];
+        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_orderprice/"
+                                              withParams:dic
                                      withCompletionBlock:^(id data) {
-                                         self.serviceArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
-                                         [self drawUI];
+                                         NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                         if (result) {
+                                             NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"services"];
+                                             if (services) {
+                                                 self.serviceArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
+                                                 [self drawUI];
+                                             }else{
+                                                 [self serviceLocalInit];
+                                             }
+                                             
+                                         }
+                                         
+                                         
+                                         
                                      } withErrorBlock:nil];
     }else{
-        self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
-        _serviceIdsArray = [[NSMutableArray alloc] initWithObjects:@"9", @"10", @"11", @"12",@"14",@"15",@"16",@"19",@"20",@"25",@"22",@"23",@"24",@"26",@"27",@"28",@"17",@"18",nil];
-        for (NSInteger index = 0; index < _buttonTitleStringArray.count; index++) {
-            Service *service = [[Service alloc] init];
-            [service setService_id:[_serviceIdsArray objectAtIndex:index]];
-            [self.serviceArray addObject:service];
-        }
-        [self drawUI];
+        [self serviceLocalInit];
     }
+}
+
+- (void)serviceLocalInit
+{
+    self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
+    _serviceIdsArray = [[NSMutableArray alloc] initWithObjects:@"9", @"10", @"11", @"12",@"14",@"15",@"16",@"19",@"20",@"25",@"22",@"23",@"24",@"26",@"27",@"28",@"17",@"18",nil];
+    for (NSInteger index = 0; index < _buttonTitleStringArray.count; index++) {
+        Service *service = [[Service alloc] init];
+        [service setService_id:[_serviceIdsArray objectAtIndex:index]];
+        [self.serviceArray addObject:service];
+    }
+    [self drawUI];
 }
 
 - (void)drawUI
@@ -121,7 +148,7 @@
         [serviceBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 18)];
         [serviceBtn.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:13]];
         [serviceBtn.titleLabel setTextAlignment:NSTextAlignmentLeft];
-        [serviceBtn setFrame:CGRectMake(65+135*x, 55+45*y, 114, 35)];
+        [serviceBtn setFrame:CGRectMake(50	+140*x, 55+45*y, 130, 35)];
         [serviceBtn setBackgroundImage:unselectedImage forState:UIControlStateNormal];
         [serviceBtn setBackgroundImage:selectedImage forState:UIControlStateSelected];
         [serviceBtn setTitle:[_buttonTitleStringArray objectAtIndex:index] forState:UIControlStateNormal];

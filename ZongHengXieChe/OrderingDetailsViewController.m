@@ -12,6 +12,8 @@
 #import "OrderingOptionCell.h"
 #import "Service.h"
 #import "MyOrderingViewController.h"
+#import "LocationViewController.h"
+#import "Shop.h"
 
 enum ORDERING_CELL {
     ORDERING_CELL = 0,
@@ -124,6 +126,29 @@ enum ORDERING_CELL {
 }
 
 - (IBAction)come2map:(id)sender {
+    double longitude = 0.0;
+    double latitude = 0.0;
+    NSArray *stringArray = [self.orderingDetails.shop_maps componentsSeparatedByString:@","];
+    if ([stringArray count]>0) {
+        longitude = [[stringArray objectAtIndex:0] doubleValue];
+        latitude = [[stringArray objectAtIndex:1] doubleValue];
+    }
+    
+    LocationViewController *vc = [[[LocationViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    Shop *shop = [[[Shop alloc] init] autorelease];
+    [shop setLogo:self.orderingDetails.logo];
+    [shop setShop_name:self.orderingDetails.shop_name];
+    [shop setShop_address:self.orderingDetails.shop_address];
+    [shop setShop_id:self.orderingDetails.shop_id];
+    [shop setShop_maps:self.orderingDetails.shop_maps];
+    [shop setLongitude:longitude];
+    [shop setLatitude:latitude];
+    
+    NSMutableArray *shopArray = [NSMutableArray  arrayWithObject:shop];
+    [vc setShopArray:shopArray];
+    [vc setCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (NSString *)getOrderingStatusDesc:(NSString *)status
@@ -157,7 +182,7 @@ enum ORDERING_CELL {
     [_orderingIdLabel setText:self.orderingDetails.uid];
     [_createTimeLabel setText:[self formateDate:self.orderingDetails.create_time]];
     [_shopNameLabel setText:self.orderingDetails.shop_name];
-    [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f",[self.orderingDetails.workhours_sale doubleValue]*10]];
+    [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f折",[self.orderingDetails.workhours_sale doubleValue]]];
     [_orderingTimeLabel setText:[self formateDate:self.orderingDetails.order_time]];
     [_orderStatusLabel setText:[self getOrderingStatusDesc:self.orderingDetails.order_state]];
     [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
@@ -166,12 +191,9 @@ enum ORDERING_CELL {
                                  withCompletionBlock:^(id data) {
                                      [_shopImageView setImage:[UIImage imageWithData:data]];
                                  } withErrorBlock:nil];
-    
     [_addressLabel setText:self.orderingDetails.shop_address];
-    
     [self resizeUI];
-    
-   }
+}
 
 - (void)resizeUI
 {
@@ -228,7 +250,6 @@ enum ORDERING_CELL {
                 }
             }
         }else{
-            
             [self ergodic:childElement withPropertyList:properties];
         }
     }

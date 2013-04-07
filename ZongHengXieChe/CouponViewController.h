@@ -26,5 +26,6 @@
 - (IBAction)hideSearchMenuView;
 - (IBAction)btnsOfCouponKindMenuPressed:(UIButton *)btn;
 - (void)getCoupons;
+- (void)initArguments;
 
 @end

@@ -9,13 +9,10 @@
 #import "CoreService.h"
 #import "GDataXMLNode.h"
 #import "XMLReader.h"
-#import "ASIHTTPRequest.h"
-#import "ASIFormDataRequest.h"
-#import "ASINetworkQueue.h"
 #import <objc/runtime.h>
 #import "User.h"
 #import "LoginViewController.h"
-
+#import "City.h"
 
 #define MaxConcurrentOperationCount 3
 
@@ -24,8 +21,10 @@
     CLLocationManager   *_locationManager;
     CLLocation          *_myCurrentLocation;
     NSArray             *_plateProvinceArray;
+    MKReverseGeocoder   *_geocoder;
 }
-@property (nonatomic, strong) ASINetworkQueue  *networkQueue;
+
+@property (nonatomic, strong) NSString *address;
 
 @end
 
@@ -33,11 +32,20 @@
 
 - (void)dealloc
 {
+    [_currentSelectedCity release];
+    [_currentLocationCityName release];
+    
     if (self.networkQueue) {
         [self.networkQueue cancelAllOperations];
         [self.networkQueue release];
     }
-    
+    if (_address) {
+        [_address release];
+    }
+    if (_geocoder) {
+        [_geocoder setDelegate:nil];
+        [_geocoder release];
+    }
     [_plateProvinceArray release];
     [_myOrdering release];
     [_myCar release];
@@ -60,6 +68,7 @@
 - (id)init
 {
     [self loadUserFromLocal];
+    [self loadCityFromLocal];
     self.myCar = [[CarInfo alloc] init];
     [self startLocationManger];
     [self getStoredInfo];
@@ -96,9 +105,7 @@
 }
 
 - (CLLocation *)getMyCurrentLocation
-{
-    [self startLocationManger];
-    
+{   
     return _myCurrentLocation;
 }
 
@@ -138,9 +145,25 @@
         _currentUser = [currentUser retain];
         [self saveUserToLocal];
     }
-    
 }
 
+- (void)setCurrentSelectedCity:(City *)currentSelectedCity
+{
+    if (currentSelectedCity) {
+        if (_currentSelectedCity) {
+            if (_currentSelectedCity != currentSelectedCity) {
+                [_currentSelectedCity release];
+            }
+        }
+        _currentSelectedCity = [currentSelectedCity retain];
+        [self saveCityToLocal];
+    }
+}
+
+- (NSString *)getCurrentAddress
+{
+    return  self.address;
+}
 - (void)saveUserToLocal
 {
     NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
@@ -157,6 +180,26 @@
     
     [userdefaults synchronize];
 }
+- (void)saveCityToLocal
+{
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    [userdefaults setObject:_currentSelectedCity.uid forKey:CityIdKey];
+    [userdefaults setObject:_currentSelectedCity.city_name forKey:CityNameKey];
+    [userdefaults synchronize];
+}
+
+
+- (void)loadCityFromLocal
+{
+    if (!_currentSelectedCity) {
+        _currentSelectedCity = [[City alloc] init];
+    }
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+
+    _currentSelectedCity.uid = [userdefaults objectForKey:CityIdKey];
+    _currentSelectedCity.city_name = [userdefaults objectForKey:CityNameKey];
+}
+
 
 - (void)loadUserFromLocal
 {
@@ -194,6 +237,24 @@
     [userdefaults synchronize];
 }
 
+#pragma mark- MKReverseGeocoderDelegate
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
+{
+    self.address = [NSString stringWithFormat:@"当前位置 %@%@", placemark.thoroughfare, placemark.subThoroughfare];
+//    NSString *cityname = placemark.locality;
+//    if (cityname && !self.currentSelectedCity.city_name) {
+//        self.currentSelectedCity.city_name = cityname;
+//        self.currentSelectedCity.uid = @"-1";
+//    }
+    [_delegate didFindCurrentPlacemark:placemark];
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
+{
+    DLog(@"%@",[error description]);
+}
+
 #pragma mark- location delegate
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
@@ -201,8 +262,6 @@
         [_myCurrentLocation release];
     }
     _myCurrentLocation = [[locations lastObject] retain];
-    
-//    DLog(@"%d ,%f , %f", [locations count], _myCurrentLocation.coordinate.longitude, _myCurrentLocation.coordinate.latitude);
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -235,7 +294,11 @@
         [_myCurrentLocation release];
     }
     _myCurrentLocation = [newLocation retain];
-    
+    if (!_geocoder) {
+        _geocoder = [[MKReverseGeocoder alloc] initWithCoordinate:_myCurrentLocation.coordinate];
+        [_geocoder setDelegate:self];
+        [_geocoder start];
+    }
 //    DLog(@"longitude=%f , latitude=%f", _myCurrentLocation.coordinate.longitude, _myCurrentLocation.coordinate.latitude);
 }
 
@@ -270,7 +333,7 @@
     
     [request setCompletionBlock:^{
         NSString *responseString = [request responseString];
-//        DLog(@"%d",[self.networkQueue operationCount]);
+        
         completionHandler(responseString);
     }];
     
@@ -283,65 +346,11 @@
         
     }];
     [self.networkQueue addOperation:request];
-//    DLog(@"%d",[self.networkQueue operationCount]);
     
     if ([self.networkQueue isSuspended]) {
         [self.networkQueue go];
     }
 }
-
-- (void)loadHttpURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler withUIViewController:(UIViewController *)vc
-{
-    if (!self.networkQueue) {
-        self.networkQueue = [[ASINetworkQueue alloc] init];
-        [self.networkQueue setMaxConcurrentOperationCount:MaxConcurrentOperationCount];
-        [self.networkQueue setShouldCancelAllRequestsOnFailure:NO];
-    }
-    
-    NSURL *url = [NSURL URLWithString:urlString];
-    
-    ASIHTTPRequest *request;
-    if (dic && [dic.allKeys count]>0) {
-        request = [ASIFormDataRequest requestWithURL:url];
-        [request setRequestMethod:@"POST"];
-        for (NSString *key in dic.allKeys) {
-            [((ASIFormDataRequest *)request) addPostValue:[dic objectForKey:key] forKey:key];
-        }
-    }else{
-        request = [ASIHTTPRequest requestWithURL:url];
-    }
-    
-    [request setCompletionBlock:^{
-        NSString *responseString = [request responseString];
-        NSDictionary *resultDic = [[CoreService sharedCoreService] convertXml2Dic:responseString withError:nil];
-        NSString *status;
-        if (resultDic != nil) {
-            status = [[[resultDic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
-        }
-        if (status && [status isEqualToString:@"1"]) {
-            [self pushLoginViewContorller:vc];
-        }else{
-            completionHandler(responseString);
-        }
-        
-    }];
-    
-    [request setFailedBlock:^{
-        NSError *error = [request error];
-        DLog(@"%@",[error description]);
-        if (errorHandler) {
-            errorHandler(error);
-        }
-    }];
-    [self.networkQueue addOperation:request];
-    //    DLog(@"%d",[self.networkQueue operationCount]);
-    
-    if ([self.networkQueue isSuspended]) {
-        [self.networkQueue go];
-    }
-}
-
-
 
 
 - (void)loadDataWithURL:(NSString *)urlString withParams:(NSMutableDictionary *)dic withCompletionBlock:(void (^)(id data))completionHandler withErrorBlock:(void (^)(NSError *error))errorHandler
@@ -441,12 +450,4 @@
 {
     return _plateProvinceArray;
 }
-
-- (void)pushLoginViewContorller:(UIViewController *)viewController
-{
-    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
-    [vc.navigationItem setHidesBackButton:YES];
-    [viewController.navigationController pushViewController:vc animated:YES];
-}
-
 @end

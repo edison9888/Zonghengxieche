@@ -89,25 +89,32 @@
                                  NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                  NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
                                  NSString *desc = [[[result objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
-                                 
-                                 [[[CoreService sharedCoreService] currentUser] setPassword:_pwdField2.text];
-                                 
-                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                                 [alert show];
-                                 [alert release];
-                                 
-                                 if ([status isEqualToString:@"0"]) {
-                                     [self popToParent];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
+                                 }else{
+                                     [[[CoreService sharedCoreService] currentUser] setPassword:_pwdField2.text];
+                                     
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                     [alert show];
+                                     [alert release];
+                                     
+                                     if ([status isEqualToString:@"0"]) {
+                                         [self popToParent];
+                                     }
                                  }
+                                 
                                  
                              } withErrorBlock:^(NSError *error) {
                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"提交失败, 请稍后再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                                  [alert show];
                                  [alert release];
                              }];
-
-    
-    
+  
 }
-
+- (void)pushLoginVC
+{
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end

@@ -47,6 +47,7 @@
     [_product_sale release];//   零件折扣
     [_workhours_sale release];//   工时折扣
     [_shop_name release];//
+    [_shop_maps release];
     [_order_verify release];//订单验证编号 （如果是优惠券订单才有这个字段 ）
     [_logo release];
     [_detail_html release];

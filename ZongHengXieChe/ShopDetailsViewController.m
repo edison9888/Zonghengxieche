@@ -18,6 +18,7 @@
 #import "TimeSaleView.h"
 #import "ProductSaleView.h"
 #import "CouponViewController.h"
+#import "CommentViewController.h"
 enum {
     TITLE,
     ADDRESS,
@@ -219,9 +220,21 @@ enum {
 
 - (void)pushToLocation
 {
+    double longitude = 0.0;
+    double latitude = 0.0;
+    NSArray *stringArray = [self.shopDetails.shop_maps componentsSeparatedByString:@","];
+    if ([stringArray count]>0) {
+        longitude = [[stringArray objectAtIndex:0] doubleValue];
+        latitude = [[stringArray objectAtIndex:1] doubleValue];
+    }
+
+    
+    
     LocationViewController *vc = [[[LocationViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
-    [vc setCoordinate:CLLocationCoordinate2DMake(self.shopDetails.latitude, self.shopDetails.longitude)];
+    NSMutableArray *shopArray = [NSMutableArray  arrayWithObject:self.shop];
+    [vc setShopArray:shopArray];
+    [vc setCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -304,25 +317,31 @@ enum {
     return obj;
 }
 
-- (IBAction)ordering:(id)sender {
-    Ordering *ordering = [[[Ordering alloc] init] autorelease];
-    [ordering setShop_id:self.shopDetails.shopid];
-    [ordering setTimesaleversion_id:self.shopDetails.timesale_id];
-    [[CoreService sharedCoreService] setMyOrdering:ordering];
-    
-    ServiceChosenViewController *vc = [[[ServiceChosenViewController alloc] init] autorelease];
-    [vc.navigationItem setHidesBackButton:YES];
-    [self.navigationController pushViewController:vc animated:YES];
-}
+//- (IBAction)ordering:(id)sender {
+//    Ordering *ordering = [[[Ordering alloc] init] autorelease];
+//    [ordering setShop_id:self.shopDetails.shopid];
+//    [ordering setTimesaleversion_id:self.shopDetails.timesale_id];
+//    
+//    [[CoreService sharedCoreService] setMyOrdering:ordering];
+//    
+//    ServiceChosenViewController *vc = [[[ServiceChosenViewController alloc] init] autorelease];
+//    [vc.navigationItem setHidesBackButton:YES];
+//    [self.navigationController pushViewController:vc animated:YES];
+//}
 
 - (void)didCouponButtonPressed:(UIButton *)button
 {
-    [self pushToCouponsWithCouponType:[NSString stringWithFormat:@"%d",button.tag]];
+//    [self pushToCouponsWithCouponType:[NSString stringWithFormat:@"%d",button.tag]];
+    [self pushToCouponsWithCouponType:button.tag];
+    
 }
 
 - (void)didTimeSaleButtonPressed:(UIButton *)button
 {
     Ordering *ordering = [[[Ordering alloc] init] autorelease];
+    if (self.shop.model_id) {
+        [ordering setModel_id:self.shop.model_id];
+    }
     [ordering setShop_id:self.shopDetails.shopid];
     [ordering setTimesaleversion_id:[NSString stringWithFormat:@"%d",button.tag]];
     for (TimeSale *timesale in self.shopDetails.timesaleArray) {
@@ -337,13 +356,33 @@ enum {
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:YES];
 }
-- (void)pushToCouponsWithCouponType:(NSString *)type
+- (void)pushToCouponsWithCouponType:(NSInteger )type
 {
     CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
+    if (type == 1) {
+        [vc setEntrance:ENTRANCE_SHOP_DETAILS_CASH];
+    }else{
+        [vc setEntrance:ENTRANCE_SHOP_DETAILS_TUAN];
+    }
     [vc.navigationItem setHidesBackButton:YES];
     [vc initArguments];
+    [vc.argumentsDic setObject:self.shopDetails.shopid forKey:@"shop_id"];
+    
     [vc getCoupons];
     [self.navigationController pushViewController:vc animated:YES];
 }
+
+- (IBAction)showComment
+{
+    CommentViewController *vc = [[[CommentViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    NSString *urlString = [NSString stringWithFormat:@"http://c.xieche.net/index.php/App/getcomment_byshopid/shop_id/%@",self.shopDetails.shopid];
+    [vc setUrl:[NSURL URLWithString:urlString]];
+
+    
+    [self.navigationController pushViewController:vc animated:YES];
+
+}
+
 
 @end

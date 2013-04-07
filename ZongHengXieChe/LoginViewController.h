@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 
-@interface LoginViewController : BaseViewController<UITextFieldDelegate>
-
+@interface LoginViewController : BaseViewController<UITextFieldDelegate, UIScrollViewDelegate>
+@property (nonatomic, assign) enum ENTRANCE entrance;
+@property (nonatomic, assign) enum LOGIN_TYPE loginType;
 @end

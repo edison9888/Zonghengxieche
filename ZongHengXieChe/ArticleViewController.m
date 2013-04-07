@@ -13,6 +13,8 @@
 #import "AppDelegate.h"
 #import "CustomTabBarController.h"
 #import "BaseTableViewCell.h"
+#import "LoginViewController.h"
+
 @interface ArticleViewController ()
 {
     IBOutlet    UITableView     *_myTableView;
@@ -86,8 +88,8 @@
     }
     Article *article = [_dataArray objectAtIndex:indexPath.row+1];
     
-//    [cell setTitleImageWithUrl:article.brand_logo withSize:CGSizeMake(40, 40)];
-    [cell.imageView setImage:article.brand_logo_image];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    [cell setTitleImageWithUrl:article.brand_logo withSize:CGSizeMake(60, 45)];
     [cell.textLabel setText:article.article_title];
     [cell.detailTextLabel setText:article.article_des];
     
@@ -116,8 +118,8 @@
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
 
-    [_mineBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
-    [_allBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
+    [_mineBtn setBackgroundImage:[UIImage imageNamed:@"sale_btn_focus"] forState:UIControlStateSelected];
+    [_allBtn setBackgroundImage:[UIImage imageNamed:@"sale_btn_focus"] forState:UIControlStateSelected];
 }
 
 - (void)prepareData
@@ -131,9 +133,17 @@
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/articlelist"
                                       withParams:argumentsDic
                              withCompletionBlock:^(id data) {
-                                 self.dataArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Article class]];
-                                 [_myTableView reloadData];
-                                 [self.loadingView setHidden:YES];
+                                 
+                                 NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
+                                 }else{
+                                     self.dataArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Article class]];
+                                     [_myTableView reloadData];
+                                     [self.loadingView setHidden:YES];
+                                 }
+                                 
                              } withErrorBlock:^(NSError *error) {
                                  [self.loadingView setHidden:YES];
                              }];
@@ -145,16 +155,30 @@
 }
 
 - (IBAction)getMyArticle:(id)sender {
-    [_mineBtn setSelected:YES];
-    [_allBtn setSelected:NO];
-    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
-    [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
-    [self loadArticles:dic];
+    
+    User *user = [[CoreService sharedCoreService] currentUser];
+    if (user.token) {
+        [_mineBtn setSelected:YES];
+        [_allBtn setSelected:NO];
+        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+        [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+        [self loadArticles:dic];
+    }else{
+        [self pushLoginVC];
+    }
+    
+    
 }
 - (IBAction)getAllArticle:(id)sender {
     [_mineBtn setSelected:NO];
     [_allBtn setSelected:YES];
     [self loadArticles:nil];
+}
+- (void)pushLoginVC
+{
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 

@@ -17,7 +17,10 @@
     IBOutlet    UIButton        *_paiButton;
     IBOutlet    UITextField     *_numberField;
     IBOutlet    UITextField     *_typeField;
-    IBOutlet    UITableView     *_regionTableView;
+    IBOutlet    UIScrollView    *_contentScrollView;
+    
+    IBOutlet    UIPickerView    *_picker;
+    IBOutlet    UIView          *_pickerView;
     
     NSArray     *_regionArray;
 }
@@ -59,49 +62,67 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark- tableview delegate & datasource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+
+
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    return [_regionArray count];
+    [_nameField resignFirstResponder];
+    [_typeField resignFirstResponder];
+    [_numberField resignFirstResponder];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark- picker
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-    return 30;
+    return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    NSString *identifier = @"REGION_CELL_IDENTIFIER";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier] autorelease];
-    }
-    
-    [cell.textLabel setText:[_regionArray objectAtIndex:indexPath.row]];
-    
-    return cell;
+    return _regionArray.count;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    [_paiButton.titleLabel setText:[_regionArray objectAtIndex:indexPath.row]];
-    [_regionTableView setHidden:YES];
+    return  [_regionArray objectAtIndex:row];
 }
 
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    [_paiButton setTitle:[_regionArray objectAtIndex:row] forState:UIControlStateNormal];
+}
 
 #pragma mark- custom methods
 - (void)prepareData
 {
     _regionArray = [[NSArray alloc] initWithObjects:@"京",@"沪",@"港",@"吉",@"鲁",@"冀",@"湘",@"青",@"苏",@"浙",@"粤",@"台",@"甘",@"川",@"黑",@"蒙",@"新",@"津",@"渝",@"澳",@"辽",@"豫",@"鄂",@"晋",@"皖",@"赣",@"闽",@"琼",@"陕",@"云",@"贵",@"藏",@"宁",@"桂", nil];
-    [_regionTableView reloadData];
+    [_picker reloadAllComponents];
     
 }
 - (IBAction)sProSelect:(id)sender {
-    [_regionTableView setHidden:NO];
+    [_pickerView setHidden:NO];
+    [_nameField resignFirstResponder];
+    [_typeField resignFirstResponder];
+    [_numberField resignFirstResponder];
+    
+    [_pickerView setHidden:NO];
+    NSString *province  = _paiButton.titleLabel.text;
+    NSInteger index = [_regionArray indexOfObject:province];
+    [_picker selectRow:index inComponent:0 animated:YES];
 }
 - (IBAction)carTypeSelect:(id)sender {
+    
+    if (self.selectedCar) {
+        [[CoreService sharedCoreService] setMyCar:self.selectedCar];
+    }else{
+        [[CoreService sharedCoreService] setMyCar:[[[CarInfo alloc] init] autorelease]];
+    }
+    CarInfo *mycar = [[CoreService sharedCoreService] myCar];
+    [mycar setCar_name:_nameField.text];
+    [mycar setCar_number:_numberField.text];
+    [mycar setS_pro: _paiButton.titleLabel.text];
+    
     CarInfoViewController *vc = [[[CarInfoViewController alloc] init] autorelease];
     [vc setEntrance:ADD_MY_CAR];
     [vc setCarInfo:BRAND];
@@ -112,7 +133,12 @@
 
 - (void)initUI
 {
-    [self setTitle:@"编辑车辆"];
+    if (self.crudType == ADD) {
+        [self setTitle:@"新增车辆"];
+    }else{
+        [self setTitle:@"编辑车辆"];
+    }
+    
     [super changeTitleView];
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -123,7 +149,18 @@
     
     if (self.selectedCar) {
         [self fillCarInfo:self.selectedCar];
+        [[CoreService sharedCoreService] setMyCar:self.selectedCar];
+    }else{
+        [[CoreService sharedCoreService] setMyCar:[[[CarInfo alloc] init] autorelease]];
     }
+    
+    NSString *province  = _paiButton.titleLabel.text;
+    if (!province || [province isEqualToString:@""]) {
+        province = @"沪";
+    }
+    [_paiButton setTitle:province forState:UIControlStateNormal];
+    
+    [_contentScrollView setContentSize:CGSizeMake(320, self.view.frame.size.height+20)];
 }
 
 - (void)popToParent
@@ -202,5 +239,9 @@
                } withErrorBlock:nil];
 }
 
+- (IBAction)hidePicker:(id)sender {
+    [_pickerView setHidden:YES];
+    
+}
 
 @end

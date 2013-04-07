@@ -90,7 +90,7 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
-    [_contentView setContentSize:CGSizeMake(320, 367)];
+    [_contentView setContentSize:CGSizeMake(320, 400)];
 }
 
 - (void)popToParent
@@ -100,12 +100,13 @@
 
 - (IBAction)register:(id)sender {
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    [dic setObject:_username.text forKey:@"username"];
     [dic setObject:_email.text forKey:@"email"];
     [dic setObject:_password1.text forKey:@"password"];
     [dic setObject:_password2.text forKey:@"repassword"];
     [dic setObject:_phone.text forKey:@"mobile"];
 
-    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/appinsert"
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/member/appinsert"
                                       withParams:dic
                              withCompletionBlock:^(id data) {
                                  DLog(@"%@", (NSString *)data);
@@ -113,7 +114,7 @@
                                  NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
                                  NSString *desc = [[[result objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
                                  
-                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                                  [alert show];
                                  [alert release];
                                  

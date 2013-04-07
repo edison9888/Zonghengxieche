@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 #import "CarInfo.h"
-@interface CarDetailsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate>
+@interface CarDetailsViewController : BaseViewController<UIPickerViewDelegate,UIPickerViewDataSource, UIScrollViewDelegate, UITextFieldDelegate>
 
 - (void)fillCarInfo:(CarInfo *)selectedCar;
 
 @property (nonatomic, assign) enum  CRUD_TYPE crudType;;
 @property (nonatomic, assign) enum  ENTRANCE  entrance;
+
+- (IBAction)hidePicker:(id)sender;
 @end

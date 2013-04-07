@@ -41,6 +41,8 @@
 @property (nonatomic, copy) NSString *coupon2_id;
 @property (nonatomic, copy) NSString *coupon2_name;
 
+@property (nonatomic, copy) NSString *model_id;
+
 @property (nonatomic, copy) UIImage  *logoImage;
 @property (nonatomic, assign) CLLocationDegrees latitude;
 @property (nonatomic, assign) CLLocationDegrees longitude;

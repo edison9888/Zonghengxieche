@@ -7,14 +7,17 @@
 //
 
 #import "CityViewController.h"
-#import "CoreService.h"
 #import "City.h"
 #import "RegionViewController.h"
 #import "SettingViewController.h"
 #import "UpKeepViewController.h"
 
-@interface CityViewController (){
+@interface CityViewController ()
+{
     IBOutlet    UITableView     *_contentTableView;
+    IBOutlet    UILabel         *_gpsLabel;
+    IBOutlet    UILabel         *_cityTitleLabel;
+    IBOutlet    UIButton        *_selectCityButton;
 }
 
 @property (nonatomic, strong) NSMutableArray *cityArray;
@@ -95,22 +98,28 @@
         {
             for (UIViewController *v in self.navigationController.viewControllers) {
                 if ([v isKindOfClass:[SettingViewController class]]) {
-                    [[CoreService sharedCoreService] setCurrentCity:city.city_name];
+                    [[CoreService sharedCoreService] setCurrentSelectedCity:city];
                     [self.navigationController popToViewController:v animated:YES];
                 }
             }
         }
             break;
-            
         case ENTRANCE_SHOP:
         {
             for (UIViewController *v in self.navigationController.viewControllers) {
                 if ([v isKindOfClass:[UpKeepViewController class]]) {
                     UpKeepViewController *shopVC = (UpKeepViewController *)v;
+                    shopVC.city = city;
                     [shopVC setCity:city];
                     [self pushToRegtion:city];
                 }
             }
+        }
+            break;
+        case ENTRANCE_FIRST_TIME_LAUNCH:
+        {
+            [[CoreService sharedCoreService] setCurrentSelectedCity:city];
+            [self.navigationController popViewControllerAnimated:YES];
         }
             break;
             
@@ -134,11 +143,25 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
+    
+    if(self.entrance != ENTRANCE_SETTING && self.entrance != ENTRANCE_FIRST_TIME_LAUNCH){
+        CGRect frame = _contentTableView.frame;
+        frame.origin.y -= 83;
+        frame.size.height += 83;
+        [_contentTableView setFrame:frame];
+    }
+
+    if([[[CoreService sharedCoreService] currentSelectedCity] city_name]){
+        [_gpsLabel setText:[[[CoreService sharedCoreService] currentSelectedCity] city_name]];
+        [_selectCityButton setEnabled:YES];
+    }
+
 }
 
 
 - (void)prepareData
 {
+    [[CoreService sharedCoreService]setDelegate:self];
     [self.loadingView setHidden:NO];
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_citys"
                                       withParams:nil
@@ -146,13 +169,40 @@
                                  self.cityArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[City class]];
                                  [_contentTableView reloadData];
                                  [self.loadingView setHidden:YES];
-                             } withErrorBlock:nil];
-    
+                             } withErrorBlock:^(NSError *error) {
+                                 [self.loadingView setHidden:YES];
+                             }];
 }
 
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+- (IBAction)gpsCitySelected:(UIButton *)sender {
+    City *city = nil;
+    for (City *aCity in self.cityArray) {
+        if ([_gpsLabel.text isEqualToString:aCity.city_name]) {
+            city = aCity;
+            break;
+        }
+    }
+    if (!city) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"抱歉，您携车暂时不支持您所在的城市,请选择列表中的城市" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return;
+    }
+    [[CoreService sharedCoreService] setCurrentSelectedCity:city];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)didFindCurrentPlacemark:(MKPlacemark *)placemark
+{
+    [_gpsLabel setText:placemark.locality];
+    [_selectCityButton setEnabled:YES];
+    
 }
 
 @end

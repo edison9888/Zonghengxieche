@@ -51,8 +51,12 @@
     [_orderingIdLabel setText:ordering.order_id];
     [_createTimeLabel setText:ordering.create_time];
     [_shopNameLabel setText:ordering.shop_name];
-    [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f",[ordering.workhours_sale doubleValue]*10]];
-    [_orderingTimeLabel setText:ordering.order_time];
+    [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f折",[ordering.workhours_sale doubleValue]*10]];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[ordering.order_time doubleValue]];
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:MM"];
+    NSString *orderingTime = [dateFormatter stringFromDate:date];
+    [_orderingTimeLabel setText:orderingTime];
     [_orderStatusLabel setText:ordering.order_state_str];
      [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
     [[CoreService sharedCoreService] loadDataWithURL:ordering.logo

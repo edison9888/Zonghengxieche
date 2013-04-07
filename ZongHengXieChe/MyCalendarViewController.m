@@ -16,6 +16,8 @@
 {
     IBOutlet    UIPickerView    *_picker;
     IBOutlet    UIView          *_pickerView;
+    
+    IBOutlet    UIView          *_tipView;
 }
 
 @property (nonatomic, strong) NSMutableArray *hoursArray;
@@ -41,7 +43,7 @@
 
 - (void)dealloc
 {
-    [calendarView release];
+//    [calendarView release];
     [self.dateString release];
     [self.hoursArray release];
     [self.minutesArray release];
@@ -196,6 +198,12 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
+    
+    if (IS_IPHONE_5) {
+        CGRect  frame = _tipView.frame;
+        frame.origin.y += 88;
+        _tipView.frame = frame;
+    }
 }
 
 - (void)prepareData

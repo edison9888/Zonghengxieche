@@ -10,6 +10,6 @@
 #import "BaseViewController.h"
 #import "CoreService.h"
 
-@interface AccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UserApiDelegate>
+@interface AccountViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end

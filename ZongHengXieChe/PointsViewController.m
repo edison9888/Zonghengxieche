@@ -42,8 +42,14 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     [self prepareData];
     [self initUI];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,17 +93,23 @@
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_mypoints"
                                       withParams:dic
                              withCompletionBlock:^(id data) {
-                                 DLog(@"%@", (NSString *)data);
-
+                                 
+                                 NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
+                                 }else{
                                      NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                      
                                      self.pointsArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Points class]];
                                      NSString *totalNumber= [[[dic objectForKey:@"XML"] objectForKey:@"total_number"]objectForKey:@"text"];
                                      [_totalPointsLabel setText:totalNumber];
                                      [_contentTableView reloadData];
+                                 }
+                                     
                                  
                                  
-                                                              } withErrorBlock:^(NSError *error) {
+                            } withErrorBlock:^(NSError *error) {
                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"提交失败, 请稍后再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                                  [alert show];
                                  [alert release];
@@ -123,7 +135,12 @@
 }
 
 
-
+- (void)pushLoginVC
+{
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 
 @end

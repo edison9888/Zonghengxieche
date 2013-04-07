@@ -7,7 +7,7 @@
 //
 
 #import "ArticleDetailViewController.h"
-
+#import "CoreService.h"
 @interface ArticleDetailViewController ()
 {
     IBOutlet    UIImageView     *_brandImage;
@@ -64,8 +64,8 @@
 
 - (void)prepareData
 {
+//    [self.loadingView setHidden:NO];
     if (self.article) {
-        [_brandImage setImage: self.article.brand_logo_image];
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/article?a_id=%@",self.article?self.article.article_id:self.article_id]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [_contentWebView loadRequest:request];
@@ -75,6 +75,21 @@
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+//    [self.loadingView setHidden:NO];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+//    [self.loadingView setHidden:YES];
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+//    [self.loadingView setHidden:YES];
 }
 
 @end

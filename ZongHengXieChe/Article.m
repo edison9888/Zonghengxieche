@@ -23,21 +23,21 @@
 }
 
 
-- (void)setBrand_logo:(NSString *)brand_logo
-{
-    if (_brand_logo != brand_logo) {
-        if (_brand_logo) {
-            [_brand_logo release];
-        }
-        _brand_logo = [[NSString alloc] initWithFormat:@"http://c.xieche.net/%@",brand_logo];
-        
-        [[CoreService sharedCoreService]loadDataWithURL:_brand_logo
-                                             withParams:nil
-                                    withCompletionBlock:^(id data) {
-                                        self.brand_logo_image = [UIImage imageWithData:data];
-                                    } withErrorBlock:nil];
-    }
-}
+//- (void)setBrand_logo:(NSString *)brand_logo
+//{
+//    if (_brand_logo != brand_logo) {
+//        if (_brand_logo) {
+//            [_brand_logo release];
+//        }
+//        _brand_logo = [[NSString alloc] initWithFormat:@"http://c.xieche.net/%@",brand_logo];
+//        
+//        [[CoreService sharedCoreService]loadDataWithURL:_brand_logo
+//                                             withParams:nil
+//                                    withCompletionBlock:^(id data) {
+//                                        self.brand_logo_image = [UIImage imageWithData:data];
+//                                    } withErrorBlock:nil];
+//    }
+//}
 
 
 @end

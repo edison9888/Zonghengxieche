@@ -168,12 +168,8 @@
                     if ([v isKindOfClass:[CouponViewController class]]) {
                         CouponViewController *couponVC = (CouponViewController *)v;
                         [couponVC setModelId:carInfo.model_id];
-                        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
-                        CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-                        [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-                        [dic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
-                        [dic setObject:carInfo.model_id forKey:@"model_id"];
-                        couponVC.argumentsDic = dic;
+                        [couponVC initArguments];
+                        [couponVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
                         [couponVC getCoupons];
                         [self.navigationController popToViewController:v animated:YES];
                     }
@@ -183,7 +179,7 @@
                 for (UIViewController *v in self.navigationController.viewControllers) {
                     if ([v isKindOfClass:[UpKeepViewController class]]) {
                         UpKeepViewController *shopVC = (UpKeepViewController *)v;
-                        [shopVC initArguments];
+//                        [shopVC initArguments];
                         [shopVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
                         [shopVC getShops];
                         [self.navigationController popToViewController:v animated:YES];

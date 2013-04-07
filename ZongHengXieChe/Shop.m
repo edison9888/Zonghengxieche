@@ -31,7 +31,8 @@
     [self.shop_class release];
     [self.have_coupon1 release];
     [self.have_coupon2 release];
-    
+    [self.model_id release];
+    [self.shop_maps release];
     [super dealloc];
 }
 

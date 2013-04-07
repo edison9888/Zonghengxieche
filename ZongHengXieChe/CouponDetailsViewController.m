@@ -14,6 +14,7 @@
 
 @interface CouponDetailsViewController ()
 {
+    IBOutlet    UIScrollView    *_contentScrollView;
     IBOutlet    UIView          *_bgImage;
     IBOutlet    UIImageView     *_logoImage;
     IBOutlet    UILabel         *_titleLabel;
@@ -24,6 +25,8 @@
     IBOutlet    UITextView      *_detailDescribeTextView;
     IBOutlet    UIButton        *_functionBtn;
     IBOutlet    UILabel         *_statusLabel;
+    
+    IBOutlet    UIWebView       *_detailsWebView;
 
 }
 @property (nonatomic, strong) Coupon *currentCoupon;
@@ -63,7 +66,19 @@
     // Dispose of any resources that can be recreated.
 }
 
-
+#pragma mark- UIWebViewDelegate
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    CGRect frame = _detailsWebView.frame;
+    frame.size.height = 1;
+    _detailsWebView.frame = frame;
+    CGSize fittingSize = [_detailsWebView sizeThatFits:CGSizeZero];
+    frame.size = fittingSize;
+    _detailsWebView.frame = frame;
+    
+    [_contentScrollView setContentSize:CGSizeMake(320, _detailsWebView.frame.origin.y + _detailsWebView.frame.size.height)];
+    [self initUI];
+}
 #pragma  mark- custom methods
 - (void)initUI
 {
@@ -158,7 +173,12 @@
     [_addressLabel setText:self.currentCoupon.shop_address];
     [_priceLabel setText:[NSString stringWithFormat:@"¥%@",self.currentCoupon.coupon_amount]];
     [_discountLabel setText:[NSString stringWithFormat:@"¥%@",self.currentCoupon.cost_price]];
-    [_detailDescribeTextView setText:self.currentCoupon.coupon_des];
+    
+    
+    NSURL *url = [NSURL URLWithString:self.currentCoupon.coupon_des];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [_detailsWebView loadRequest:[NSURLRequest requestWithURL:url]];
+    }
 
 }
 

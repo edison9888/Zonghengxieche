@@ -10,6 +10,8 @@
 #import "OrderingCell.h"
 #import "OrderingDetailsViewController.h"
 #import "LoginViewController.h"
+#import "AppDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface MyOrderingViewController ()
 {
@@ -17,6 +19,7 @@
     IBOutlet    UIButton    *_unpaidOrderBtn;
     IBOutlet    UIButton    *_allOrderBtn;
     IBOutlet    UIView      *_orderingSearchMenu;
+    IBOutlet    UIImageView *_orderingSearchBg;
     
     IBOutlet    UIButton    *_typeAllBtn;
     IBOutlet    UIButton    *_typeCrashBtn;
@@ -58,12 +61,20 @@
     return self;
 }
 
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self prepareData];
+    [self initUI];
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self prepareData];
-    [self initUI];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -130,6 +141,7 @@
     [searchBtn addTarget:self action:@selector(showOrderingSearchMenu) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:searchBtn];
     
+    [_orderingSearchBg.layer setCornerRadius:15.0f];
     [self initTopBtns];
     
     [self initSearchMenu];
@@ -165,8 +177,6 @@
     [_typeTuanBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateSelected];
     [_typeTuanBtn setTag:ORDERING_TYPE_TUAN];
     [_typeBtnArray addObject:_typeTuanBtn];
-    
-    
     
     [_statusAllBtn setBackgroundImage:[UIImage imageNamed:@"1"] forState:UIControlStateNormal];
     [_statusAllBtn setBackgroundImage:[UIImage imageNamed:@"1-touch"] forState:UIControlStateHighlighted];
@@ -205,7 +215,7 @@
 {
     [self initArguments];
     [self getOrdering];
-    
+    [[CoreService sharedCoreService] setDelegate:self];
     _typeBtnArray = [[NSMutableArray alloc] init];
     _statusBtnArray = [[NSMutableArray alloc] init];
 }
@@ -216,10 +226,19 @@
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_orders"
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
-                                 [self.loadingView setHidden:YES];
-                                 self.orderingArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
-                                 [self.orderingArray removeObjectAtIndex:0];
-                                 [_myTableView reloadData];
+                                 
+                                 NSDictionary *result = [[CoreService sharedCoreService]  convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
+                                     return;
+                                 }else{
+                                     [self.loadingView setHidden:YES];
+                                     self.orderingArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
+                                     [self.orderingArray removeObjectAtIndex:0];
+                                     [_myTableView reloadData];
+
+                                 }
                              } withErrorBlock:^(NSError *error) {
                                  [self.loadingView setHidden:YES];
                              }];
@@ -306,6 +325,20 @@
         [btn setSelected:NO];
     }
     [btn setSelected:YES];
+}
+- (void)pushLoginVC
+{
+    
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)didTokenExpired
+{
+//    [self.loadingView setHidden:YES];
+//    [self pushLoginVC];
 }
 
 @end

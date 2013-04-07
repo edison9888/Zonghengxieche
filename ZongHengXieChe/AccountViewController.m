@@ -15,6 +15,8 @@
 #import "PointsViewController.h"
 #import "MyCarViewController.h"
 #import "CouponViewController.h"
+#import "MyOrderingViewController.h"
+#import "CustomTabBarController.h"
 enum {
     USER_INFO = 0,
     PASSWORD_CHANGE
@@ -98,16 +100,33 @@ enum {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier] autorelease];
     }
     
-    [cell.textLabel setText:[[_sectionTitleArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
-    [cell.imageView setImage:[[_sectionImageArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+    
+    
+    UIImageView *titleImageView = [[UIImageView alloc] initWithFrame:CGRectMake(15, 7, 25, 25)];
+    [titleImageView setImage:[[_sectionImageArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+    [cell addSubview:titleImageView];
+    [titleImageView release];
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, 250, 30)];
+    [titleLabel setText:[[_sectionTitleArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+    [titleLabel setBackgroundColor:[UIColor clearColor]];
+    [cell addSubview:titleLabel];
+    [titleLabel release];
+
     [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    if (![self isLogin]) {
+        LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+        [vc.navigationItem setHidesBackButton:YES];
+        [self.navigationController pushViewController:vc animated:YES];
+        return;
+    }
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
@@ -141,7 +160,7 @@ enum {
                         break;
                     case MY_ORDERING:
                     {
-                        PasswordModifyViewController *vc = [[[PasswordModifyViewController alloc] init] autorelease];
+                        MyOrderingViewController *vc = [[[MyOrderingViewController alloc] init] autorelease];
                         [vc.navigationItem setHidesBackButton:YES];
                         [self.navigationController pushViewController:vc animated:YES];
                     }
@@ -157,7 +176,11 @@ enum {
                     {
                         CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
                         [vc.navigationItem setHidesBackButton:YES];
+                        [vc initArguments];
+                        [vc.argumentsDic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+                        [vc.argumentsDic setObject:@"1" forKey:@"coupon_type"];
                         [vc setEntrance:ENTRANCE_MYCASH];
+                        [vc getCoupons];
                         [self.navigationController pushViewController:vc animated:YES];
                     }
                         break;
@@ -165,7 +188,11 @@ enum {
                     {
                         CouponViewController *vc = [[[CouponViewController alloc] init] autorelease];
                         [vc.navigationItem setHidesBackButton:YES];
+                        [vc initArguments];
+                        [vc.argumentsDic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+                        [vc.argumentsDic setObject:@"2" forKey:@"coupon_type"];
                         [vc setEntrance:ENTRANCE_MYTUAN];
+                        [vc getCoupons];
                         [self.navigationController pushViewController:vc animated:YES];
                     }
                         break;
@@ -196,12 +223,6 @@ enum {
     
 }
 
-#pragma mark- user delegate
-- (void)didLoginBackground:(NSString *)status withMessage:(NSString *)resultMsg
-{
-
-}
-
 
 #pragma mark- custom methods
 - (void)initUI
@@ -220,7 +241,6 @@ enum {
 
 - (void)prepareData
 {
-    [[CoreService sharedCoreService] setDelegate:self];
     _sectionTitleArray = [[NSMutableArray alloc] initWithObjects:[[[NSArray alloc] initWithObjects:@"用户信息", @"密码修改", nil] autorelease]
                      ,[[[NSArray alloc] initWithObjects:@"我的车辆", @"我的预约", nil] autorelease]
                      ,[[[NSArray alloc] initWithObjects:@"我的现金券", @"我的团购券", nil] autorelease]
@@ -236,6 +256,7 @@ enum {
 
 - (void)backToHome
 {
+    [((CustomTabBarController *)self.tabBarController) setSelectedTab :-1];
     MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:NO];
@@ -245,7 +266,12 @@ enum {
 {
     LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
-    [self.navigationController pushViewController:vc animated:YES];
-    
+    [self.navigationController pushViewController:vc animated:YES]; 
+}
+
+- (BOOL)isLogin
+{
+    NSString *token = [[[CoreService sharedCoreService] currentUser] token];
+    return  (token && ![token isEqualToString:@""]);
 }
 @end

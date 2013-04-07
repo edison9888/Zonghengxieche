@@ -20,6 +20,8 @@
 #import "CouponDetailsViewController.h"
 #import "ShopDetailsViewController.h"
 #import "ArticleDetailViewController.h"
+#import "CityViewController.h"
+#import "UserGuideViewController.h"
 #define KV_SWITCH_INTERVAL      2
 
 enum {
@@ -78,14 +80,35 @@ enum {
 - (void)viewWillAppear:(BOOL)animated
 {
     [self initUI];
+//    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+//    if (![userdefaults objectForKey:IsFirstLaunchKey]) {
+////        UserGuideViewController *userGuideVC = [[[UserGuideViewController alloc] init] autorelease];
+////        [self presentModalViewController:userGuideVC animated:NO];
+//        CityViewController *cityVC = [[[CityViewController alloc] init] autorelease];
+//        [cityVC.navigationItem setHidesBackButton:YES];
+//        [cityVC setEntrance:ENTRANCE_FIRST_TIME_LAUNCH];
+//        [self.navigationController pushViewController:cityVC animated:NO];
+//    }
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self initUI];
+//    [self initUI];
     [self prepareData];
+
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    if (![userdefaults objectForKey:IsFirstLaunchKey]) {
+        UserGuideViewController *userGuideVC = [[[UserGuideViewController alloc] init] autorelease];
+        [self presentModalViewController:userGuideVC animated:NO];
+        CityViewController *cityVC = [[[CityViewController alloc] init] autorelease];
+        [cityVC.navigationItem setHidesBackButton:YES];
+        [cityVC setEntrance:ENTRANCE_FIRST_TIME_LAUNCH];
+        [self.navigationController pushViewController:cityVC animated:NO];
+    }
+    
+    [userdefaults setObject:@"YES" forKey:IsFirstLaunchKey];
 }
 
 - (void)didReceiveMemoryWarning
@@ -134,6 +157,13 @@ enum {
             break;
         case MY_BOOKING:
         {
+            if (![self isLogin]) {
+                LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+                [vc.navigationItem setHidesBackButton:YES];
+                [self.navigationController pushViewController:vc animated:YES];
+                return;
+            }
+            
             MyOrderingViewController *vc = [[[MyOrderingViewController alloc] init] autorelease];
             [vc.navigationItem setHidesBackButton:YES];
             [self.navigationController pushViewController:vc animated:YES];
@@ -219,7 +249,7 @@ enum {
 
 - (void)logout
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"您是否确定要注销当前用户?" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"取消", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"您是否确定要注销当前用户?" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"取消", nil];
     [alert show];
     [alert release];
 }
@@ -255,25 +285,25 @@ enum {
             case UPKEEP:
             {
                 [option setTitle:@"预约维修保养"];
-                [option setDetails:@"      查询4S店最低预约折扣, 预约进店并享有预约专享工位."];
+                [option setDetails:@"查询4S店最低预约折扣, 预约进店并享有预约专享工位."];
             }
                 break;
             case MY_BOOKING:
             {
                 [option setTitle:@"我的预约"];
-                [option setDetails:@"      管理预约订单及服务点评, 售后维修记录一目了然."];
+                [option setDetails:@"管理预约订单及服务点评, 售后维修记录一目了然."];
             }
                 break;
             case COUPON:
             {
                 [option setTitle:@"优惠券"];
-                [option setDetails:@"      预约折扣还不够给力? 看看有没有折扣给力的优惠券."];
+                [option setDetails:@"预约折扣还不够给力? 看看有没有折扣给力的优惠券."];
             }
                 break;   
             case AFTER_SALE:
             {
-                [option setTitle:@"售后咨询"];
-                [option setDetails:@"      精选售后咨询及用车知识, 信息可筛选至您的爱车."];
+                [option setTitle:@"售后资讯"];
+                [option setDetails:@"精选售后咨询及用车知识, 信息可筛选至您的爱车."];
             }
                 break;    
             default:
@@ -387,6 +417,10 @@ enum {
     [NSTimer scheduledTimerWithTimeInterval:KV_SWITCH_INTERVAL target:self selector:@selector(switchKV) userInfo:nil repeats:YES];
 }
 
-
+- (BOOL)isLogin
+{
+    NSString *token = [[[CoreService sharedCoreService] currentUser] token];
+    return  (token && ![token isEqualToString:@""]);
+}
 
 @end

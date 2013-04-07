@@ -10,6 +10,8 @@
 #import "Ordering.h"
 #import "CoreService.h"
 #import "User.h"
+#import "MyAccountViewController.h"
+#import "CustomTabBarController.h"
 
 @interface InfoViewController ()
 {
@@ -99,6 +101,9 @@
     
     UIImage *confirm = [UIImage imageNamed:@"confirm_btn"];
     [_confirmBtn setBackgroundImage:[confirm stretchableImageWithLeftCapWidth:confirm.size.width/2 topCapHeight:confirm.size.height/2] forState:UIControlStateNormal];
+    
+    
+    _contentScrollView.contentSize = CGSizeMake(320, _contentScrollView.frame.size.height+10);
 }
 
 - (IBAction)confirm
@@ -162,6 +167,13 @@
 }
 - (IBAction)hidePickerView:(UIButton *)sender {
     [_pickerView setHidden:YES];
+}
+- (void)backToHome
+{
+    [((CustomTabBarController *)self.tabBarController) setSelectedTab :-1];
+    MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 @end

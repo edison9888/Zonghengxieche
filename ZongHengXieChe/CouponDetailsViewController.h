@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 #import "Coupon.h"
-@interface CouponDetailsViewController : BaseViewController
+@interface CouponDetailsViewController : BaseViewController<UIWebViewDelegate>
 
 @property (nonatomic, strong) NSString *coupon_id;
 @property (nonatomic, assign) enum ENTRANCE entrance;

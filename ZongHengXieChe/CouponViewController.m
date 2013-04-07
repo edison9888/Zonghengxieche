@@ -107,14 +107,23 @@
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
     }
+    [self initUI];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    
 }
 
 - (void)viewWillDisappear: (BOOL)animated
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
-    
 }
+
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -130,7 +139,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 80;
+    return 75;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -213,6 +222,14 @@
     [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:_myTableView];
 }
 
+- (void)reloacateUI{
+    [_topToolBar setHidden:YES];
+    CGRect frame = _myTableView.frame;
+    frame.origin.y -= 32;
+    frame.size.height +=32;
+    _myTableView.frame = frame;
+}
+
 #pragma  mark- custom methods
 - (void)initUI
 {
@@ -232,9 +249,30 @@
             break;
     }
     
+    
     [super changeTitleView];
     
     [[_searchMenuBackgroundView layer]setCornerRadius:15.0];
+    
+    if (IS_IPHONE_5) {
+        CGRect frame = _searchMenuView.frame;
+        frame.size.height+=88;
+        _searchMenuView.frame = frame;
+        
+        frame = _searchCouponTypeView.frame;
+        frame.size.height+=88;
+        _searchCouponTypeView.frame = frame;
+
+        frame = _searCarTypeView.frame;
+        frame.size.height+=88;
+        _searCarTypeView.frame = frame;
+        
+        frame = _myTableView.frame;
+        frame.size.height+=88;
+        _searCarTypeView.frame = frame;
+        
+    }
+    
     
     [self addNavigationBtn];
     [self configToolBar];
@@ -290,7 +328,7 @@
     [_forMeRecommedBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateHighlighted];
     [_forMeRecommedBtn setBackgroundImage:[UIImage imageNamed:@"4touch"] forState:UIControlStateSelected];
     
-    [_footCashBtn setBackgroundImage:[UIImage imageNamed:@"bottom_bg_left"] forState:UIControlStateSelected];
+    [_footCashBtn setBackgroundImage:[UIImage imageNamed:@"sale_btn_focus"] forState:UIControlStateSelected];
     [_footTuanBtn setBackgroundImage:[UIImage imageNamed:@"sale_btn_focus"] forState:UIControlStateSelected];
     
     
@@ -332,7 +370,6 @@
     [_couponKindsBtnArray addObject:_tuanKindBtn];
     
     [self createEGORefreshHeader];
-    [self createTableFooter];
 }
 
 - (void)createEGORefreshHeader
@@ -350,6 +387,7 @@
     _myTableView.tableFooterView = nil;
     UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _myTableView.bounds.size.width, 40.0f)];
     UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
+    [loadMoreText setBackgroundColor:[UIColor clearColor]];
     [loadMoreText setCenter:tableFooterView.center];
     [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
     [loadMoreText setText:@"上拉显示更多"];
@@ -363,7 +401,7 @@
 
 - (void)configToolBar
 {
-    if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
+    if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH || self.entrance == ENTRANCE_SHOP_DETAILS_TUAN || self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
         [_topToolBar setHidden:YES];
         [_myTableView setFrame:CGRectMake(0, 0, 320, 367)];
     }else{
@@ -374,56 +412,83 @@
 
 - (void)addNavigationBtn
 {
+    
+    if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
+        [self addHomeBtn];        
+        [self addSearchBtn];
+    }else if(self.entrance ==  ENTRANCE_SHOP_DETAILS_CASH || self.entrance ==  ENTRANCE_SHOP_DETAILS_TUAN){
+        [self addBackBtn];
+    }else{
+        [self addHomeBtn]; 
+        [self addSearchBtn];
+    }
+}
+
+- (void)addBackBtn
+{
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
+    [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:backBtn];
+
+}
+
+
+
+- (void)addHomeBtn
+{
+    UIButton *homeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [homeBtn setFrame:CGRectMake(0, 5, 35, 35)];
+    [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
+    [homeBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationItem.titleView addSubview:homeBtn];
+}
+
+- (void)addSearchBtn
+{
     UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [searchBtn setFrame:CGRectMake(280, 5, 35, 35)];
     [searchBtn setImage:[UIImage imageNamed:@"search_icon"] forState:UIControlStateNormal];
     [searchBtn addTarget:self action:@selector(searchBtbPressed) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:searchBtn];
-    
-    if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
-        UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [backBtn setFrame:CGRectMake(0, 3, 35, 35)];
-        [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
-        [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
-        [self.navigationItem.titleView addSubview:backBtn];
-    }else{
-        UIButton *homeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [homeBtn setFrame:CGRectMake(0, 5, 35, 35)];
-        [homeBtn setImage:[UIImage imageNamed:@"home_btn"] forState:UIControlStateNormal];
-        [homeBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
-        [self.navigationItem.titleView addSubview:homeBtn];
-    }
 }
 
 - (void)initArguments
 {
     p = 0;
-    if (!self.argumentsDic) {
-        self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
-        [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
-        
-        if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH) {
-            [self setLocationInfo];
+    NSString *cityId = nil;
+    if (self.argumentsDic && [self.argumentsDic objectForKey:@"city_id"]) {
+        cityId  = [[[NSString alloc] initWithString:[self.argumentsDic objectForKey:@"city_id"]] autorelease];
+    }
+    self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    if (cityId) {
+        [self.argumentsDic setObject:cityId forKey:@"city_id"];
+    }
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+    
+    if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH) {
+        [self setLocationInfo];
+        [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
+    }else if(self.entrance == ENTRANCE_SHOP_DETAILS_TUAN){
+        [self setLocationInfo];
+        [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
+    }
+    
+    if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
+        User *user = [[CoreService sharedCoreService] currentUser];
+        if (user.token) {
+            [_argumentsDic setObject:user.token forKey:@"tolken"];
+        }
+        if (self.entrance == ENTRANCE_MYCASH) {
             [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
-        }else if(self.entrance == ENTRANCE_SHOP_DETAILS_TUAN){
-            [self setLocationInfo];
+        }else{
             [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
         }
-        
-        if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
-            User *user = [[CoreService sharedCoreService] currentUser];
-            if (user.token) {
-                [_argumentsDic setObject:user.token forKey:@"tolken"];
-            }
-            if (self.entrance == ENTRANCE_MYCASH) {
-                [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
-            }else{
-                [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
-            }
-        }else{
-            [self setLocationInfo];
-        }
+    }else{
+        [self setLocationInfo];
     }
+    
 }
 
 - (void)setLocationInfo
@@ -439,8 +504,12 @@
     _couponTypeBtnArray = [[NSMutableArray alloc] init];
     _couponKindsBtnArray = [[NSMutableArray alloc] init];
     
-    [self initArguments];
-    [self getCoupons];
+    if (self.entrance == 0) {
+        [self initArguments];
+        [self getCoupons];
+    }
+    
+    
 }
 
 
@@ -514,22 +583,30 @@
     NSString *URLString = @"http://c.xieche.net/index.php/appandroid/get_couponlist";
     if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
         URLString = @"http://c.xieche.net/index.php/appandroid/get_mycoupon";
-
     }
-    
     [[CoreService sharedCoreService] loadHttpURL:URLString
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
-                                 NSDictionary *params = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                 p_count = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
-                                 p++;
-                                 if (p>1) {
-                                     [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
+                                 NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
                                  }else{
-                                     self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
+                                     NSDictionary *params = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                     p_count = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
+                                     p++;
+                                     if (p>1 && p <= p_count ) {
+                                         [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
+                                     }else{
+                                         if (p<p_count) {
+                                             [self createTableFooter];
+                                         }
+                                         self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
+                                     }
+                                     
+                                     [_myTableView reloadData];
+                                     [self.loadingView setHidden:YES];
                                  }
-                                 [_myTableView reloadData];
-                                 [self.loadingView setHidden:YES];
                              } withErrorBlock:^(NSError *error) {
                                  [self.loadingView setHidden:YES];
                              }];
@@ -614,6 +691,7 @@
 }
 
 - (IBAction)searchCoupons:(UIButton *)sender {
+    [_searchMenuView setHidden:YES];
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
     if (_cashBtn.selected) {
         [dic setObject:@"1" forKey:@"coupon_type"];
@@ -622,17 +700,22 @@
     }
     
     if (_forMeRecommedBtn.selected) {
-        [[CoreService sharedCoreService] loginInBackgroundwithCompletionBlock:^(id data) {
+        if ([[[CoreService sharedCoreService] currentUser] token]) {
             [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
             self.argumentsDic = dic;
             [self getCoupons];
-        }];
+        }else{
+            [self pushLoginVC];
+        }
+        
     }else{
         self.argumentsDic = dic;
         [self getCoupons];
-
+        [_searchMenuView setHidden:YES];
     }
 }
+
+
 - (IBAction)footBtnsPressed:(UIButton *)sender {
     [_footCashBtn setSelected:NO];
     [_footTuanBtn setSelected:NO];

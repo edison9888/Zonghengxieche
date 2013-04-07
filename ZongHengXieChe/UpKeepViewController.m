@@ -15,6 +15,7 @@
 #import "CarInfoViewController.h"
 #import "CityViewController.h"
 #import "MyCarViewController.h"
+#import "LoginViewController.h"
 
 enum {
     CAR_TYPE = 0,
@@ -35,7 +36,7 @@ enum {
     IBOutlet    UITableView *_shopTableView;
     IBOutlet    UIView      *_carTypeView;
     IBOutlet    UIButton    *_titleBtn;
-    
+    IBOutlet    UIImageView *_searchMenuWhiteBg;
     NSArray                 *_TopBtnArray;
     
     //EGO
@@ -76,18 +77,20 @@ enum {
     return self;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
-    [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self initUI];
     [self prepareData];
+    [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
+    [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning
@@ -104,7 +107,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 90;
+    return 70;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -127,6 +130,9 @@ enum {
     Shop *shop = [self.shopArray objectAtIndex:indexPath.row];
     ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
+    if ([self.argumentsDic objectForKey:@"model_id"]) {
+        [shop setModel_id:[self.argumentsDic objectForKey:@"model_id"]];
+    }
     [vc setShop:shop];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -178,7 +184,16 @@ enum {
 
 - (void)initUI
 {
+    
     [super changeTitleView];
+    
+    if (IS_IPHONE_5) {
+        CGRect frame = _carTypeView.frame;
+        frame.size.height+=88;
+        _carTypeView.frame = frame;
+    }
+    
+    
     UIButton *locationBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [locationBtn setFrame:CGRectMake(280, 5, 35, 35)];
     [locationBtn setImage:[UIImage imageNamed:@"map_btn"] forState:UIControlStateNormal];
@@ -196,6 +211,7 @@ enum {
     [_titleBtn.titleLabel setTextAlignment:NSTextAlignmentCenter];
     [_titleBtn.titleLabel setFont:[UIFont fontWithName:@"STHeitiSC-Medium" size:20]];
     [_titleBtn addTarget:self action:@selector(selectLocation) forControlEvents:UIControlEventTouchUpInside];
+    
     [self.navigationItem.titleView addSubview:_titleBtn];
     
     [_carTypeBtn setImage:[UIImage imageNamed:@"choose_car_off"] forState:UIControlStateNormal];
@@ -213,8 +229,9 @@ enum {
     [_distanceBtn setImage:[UIImage imageNamed:@"distance_on"] forState:UIControlStateSelected];
     [_distanceBtn setSelected:NO];
     
+    [_searchMenuWhiteBg.layer setCornerRadius:12];
+    
     [self createEGORefreshHeader];
-    [self createTableFooter];
 }
 
 - (void)createEGORefreshHeader
@@ -232,6 +249,7 @@ enum {
     _shopTableView.tableFooterView = nil;
     UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _shopTableView.bounds.size.width, 40.0f)];
     UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
+    [loadMoreText setBackgroundColor:[UIColor clearColor]];
     [loadMoreText setCenter:tableFooterView.center];
     [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
     [loadMoreText setText:@"上拉显示更多"];
@@ -246,8 +264,8 @@ enum {
 - (void)initLocation
 {
     if (!self.city) {
-        self.city = [[[City alloc] init] autorelease];
-        [self.city setCity_name:@"上海市"];
+        self.city = [[CoreService sharedCoreService] currentSelectedCity];
+        [self.argumentsDic setObject:self.city.uid forKey:@"city_id"];
     }
     if (!self.region) {
         self.region = [[[Region alloc] init] autorelease];
@@ -259,8 +277,13 @@ enum {
 {
     [self initLocation];
     _TopBtnArray = [[NSArray alloc] initWithObjects:_carTypeBtn, _ratingBtn, _distanceBtn, nil];
-    [self initArguments];
-    [self getShops];
+    
+    if (!self.argumentsDic) {
+        [self initArguments];
+        [self getShops];
+    }
+    
+    
 }
 
 - (void)getShops
@@ -269,20 +292,29 @@ enum {
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
-                                 [self.loadingView setHidden:YES];
-                                 
                                  NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                 p_count = [[[[result objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
-                                 p++;
-                                 
-                                 NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
-                                 [tempArray removeObjectAtIndex:0];
-                                 if (p>1) {
-                                     [self.shopArray addObjectsFromArray:tempArray];
+                                 NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 if ([status isEqualToString:@"1"]) {
+                                     [self pushLoginVC];
                                  }else{
-                                     self.shopArray = tempArray;
+                                     [self.loadingView setHidden:YES];
+                                     p_count = [[[[result objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
+                                     p++;
+                                     NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
+                                     if (tempArray.count>0) {
+                                         [tempArray removeObjectAtIndex:0];
+                                     }
+                                     
+                                     if (p>1 && p <= p_count) {
+                                         [self.shopArray addObjectsFromArray:tempArray];
+                                     }else{
+                                         if (p<p_count) {
+                                             [self createTableFooter];
+                                         }
+                                         self.shopArray = tempArray;
+                                     }
+                                     [_shopTableView reloadData];
                                  }
-                                 [_shopTableView reloadData];
                              }
                                   withErrorBlock:^(NSError *error) {
                                       [self.loadingView setHidden:YES];
@@ -296,11 +328,22 @@ enum {
 - (void)initArguments
 {
     p = 0;
+    NSString *cityId = nil;
+    if(self.city.uid){
+        cityId  = self.city.uid;
+    }else if (self.argumentsDic && [self.argumentsDic objectForKey:@"city_id"]) {
+      cityId  = [[[NSString alloc] initWithString:[self.argumentsDic objectForKey:@"city_id"]] autorelease];
+    }else{
+        cityId = [[[CoreService sharedCoreService] currentSelectedCity] uid];
+    }
     self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    if (cityId) {
+        [self.argumentsDic setObject:cityId forKey:@"city_id"];
+    }
     [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
-//    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-//    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-//    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
 }
 
 - (void)backToHome
@@ -343,22 +386,16 @@ enum {
 
 - (IBAction)sortShopsByRate
 {    
-    self.shopArray = [self.shopArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        Shop *shop1 = (Shop *)obj1;
-        Shop *shop2 = (Shop *)obj2;
-        
-        if ([shop1.comment_rate integerValue] > [shop2.comment_rate integerValue]) {
-            return NSOrderedAscending;
-        }
-        return NSOrderedDescending;
-    }];
-    [_shopTableView reloadData];
+    [self initArguments];
+    [self getShops];
 }
 
 
 - (IBAction)sortShopsByDistance
 {
     [self initArguments];
+    [self.argumentsDic setObject:@"distance" forKey:@"order"];
+//    [self.argumentsDic setObject:@"1" forKey:@"ios"];
     [self getShops];
 }
 
@@ -368,10 +405,17 @@ enum {
     switch (btn.tag) {
         case MY_TYPE:
         {
-            MyCarViewController *vc = [[[MyCarViewController alloc] init] autorelease];
-            [vc setEntrance:ENTRANCE_SHOP];
-            [vc.navigationItem setHidesBackButton:YES];
-            [self.navigationController pushViewController:vc animated:YES];
+            NSUserDefaults *userdefaluts = [NSUserDefaults standardUserDefaults];
+            NSDate *lastLoginDate = [userdefaluts objectForKey:LastLoginTimeKey];
+            
+            if (lastLoginDate && [lastLoginDate timeIntervalSinceNow]<600) {//10分钟
+                MyCarViewController *vc = [[[MyCarViewController alloc] init] autorelease];
+                [vc setEntrance:ENTRANCE_SHOP];
+                [vc.navigationItem setHidesBackButton:YES];
+                [self.navigationController pushViewController:vc animated:YES];
+            }else{
+                [self pushLoginVC];
+            }
         }
             break;
         case ALL_TYPE:
@@ -403,11 +447,15 @@ enum {
     
 }
 
-
-
 - (IBAction)hideCarTypeView
 {
     [_carTypeView setHidden:YES];
 }
 
+- (void)pushLoginVC
+{
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end
