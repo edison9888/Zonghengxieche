@@ -169,8 +169,9 @@ enum {
 
 - (void)reloadData
 {
-//[self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
-    [self initArguments];
+    p=1;
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+
     [self getShops];
     _reloading = YES;
 }
@@ -299,7 +300,7 @@ enum {
                                  }else{
                                      [self.loadingView setHidden:YES];
                                      p_count = [[[[result objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
-                                     p++;
+                                     
                                      NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
                                      if (tempArray.count>0) {
                                          [tempArray removeObjectAtIndex:0];
@@ -313,21 +314,18 @@ enum {
                                          }
                                          self.shopArray = tempArray;
                                      }
+                                     p++;
                                      [_shopTableView reloadData];
                                  }
                              }
                                   withErrorBlock:^(NSError *error) {
                                       [self.loadingView setHidden:YES];
                                   }];
-
-    
-    
-    
 }
 
 - (void)initArguments
 {
-    p = 0;
+    p = 1;
     NSString *cityId = nil;
     if(self.city.uid){
         cityId  = self.city.uid;
@@ -385,17 +383,22 @@ enum {
 }
 
 - (IBAction)sortShopsByRate
-{    
-    [self initArguments];
+{
+    p =  1;
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+    NSString *orderValue = [self.argumentsDic objectForKey:@"order"];
+    if (orderValue) {
+        [self.argumentsDic removeObjectForKey:@"order"];
+    }
     [self getShops];
 }
 
 
 - (IBAction)sortShopsByDistance
 {
-    [self initArguments];
+    p =  1;
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
     [self.argumentsDic setObject:@"distance" forKey:@"order"];
-//    [self.argumentsDic setObject:@"1" forKey:@"ios"];
     [self getShops];
 }
 

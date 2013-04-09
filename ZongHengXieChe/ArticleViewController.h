@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface ArticleViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
+#import "EGORefreshTableHeaderView.h"
+@interface ArticleViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate, EGORefreshTableHeaderDelegate>
 
 @end

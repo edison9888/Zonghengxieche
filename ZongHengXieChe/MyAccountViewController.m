@@ -230,7 +230,7 @@ enum {
         [nameLabel setBackgroundColor:[UIColor clearColor]];
         [nameLabel setFont:[UIFont fontWithName:@"Helvetica-blod" size:15]];
         [nameLabel setTextAlignment:NSTextAlignmentRight];
-        [nameLabel setText:user.truename];
+        [nameLabel setText:user.username];
         [self.navigationItem.titleView addSubview:nameLabel];
     }else{
         UIButton *userBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -239,11 +239,6 @@ enum {
         [userBtn addTarget:self action:@selector(calloutUserView) forControlEvents:UIControlEventTouchUpInside];
         [self.navigationItem.titleView addSubview:userBtn];
     }
-    
-    
-    
-   
-    
     
 }
 

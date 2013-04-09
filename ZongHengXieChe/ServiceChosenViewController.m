@@ -11,6 +11,7 @@
 #import "MyCalendarViewController.h"
 #import "OrderingDetailsViewController.h"
 #import "Service.h"
+#import "ServiceDetailsViewController.h"
 
 @interface ServiceChosenViewController ()
 {
@@ -18,12 +19,15 @@
     IBOutlet    UIView          *_contentView;
     IBOutlet    UIView          *_tipView;
     IBOutlet    UILabel         *_tipLabel;
+    IBOutlet    UIView          *_detailView;
     
     UIButton                    *_selectNoneBtn;
     
     NSMutableArray              *_buttonTitleStringArray;
     NSMutableArray              *_serviceIdsArray;
     NSMutableArray              *_buttonArray;
+    
+    
 }
 
 @property (nonatomic, strong) NSMutableArray  *serviceArray;
@@ -102,18 +106,14 @@
                                      withCompletionBlock:^(id data) {
                                          NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                          if (result) {
-                                             NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"services"];
+                                             NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"item"];
                                              if (services) {
-                                                 self.serviceArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
+                                                 self.serviceArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Service class]];
                                                  [self drawUI];
                                              }else{
                                                  [self serviceLocalInit];
-                                             }
-                                             
+                                             }   
                                          }
-                                         
-                                         
-                                         
                                      } withErrorBlock:nil];
     }else{
         [self serviceLocalInit];
@@ -148,7 +148,7 @@
         [serviceBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 18)];
         [serviceBtn.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:13]];
         [serviceBtn.titleLabel setTextAlignment:NSTextAlignmentLeft];
-        [serviceBtn setFrame:CGRectMake(50	+140*x, 55+45*y, 130, 35)];
+        [serviceBtn setFrame:CGRectMake(60+130*x, 55+45*y, 120, 35)];
         [serviceBtn setBackgroundImage:unselectedImage forState:UIControlStateNormal];
         [serviceBtn setBackgroundImage:selectedImage forState:UIControlStateSelected];
         [serviceBtn setTitle:[_buttonTitleStringArray objectAtIndex:index] forState:UIControlStateNormal];
@@ -156,6 +156,11 @@
         [serviceBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [serviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
         [serviceBtn addTarget:self action:@selector(serviceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        if (![[self.serviceArray objectAtIndex:0] allprice]) {
+            [serviceBtn setTag:[[_serviceIdsArray objectAtIndex:index] integerValue]];
+        }else{
+            [serviceBtn setTag:[[[self.serviceArray objectAtIndex:index] service_id] integerValue]];
+        }
         [_contentView addSubview:serviceBtn];
         [_buttonArray addObject:serviceBtn];
     }
@@ -187,9 +192,30 @@
 
 - (void)serviceButtonPressed:(UIButton *)serviceButton
 {
-    [_tipLabel setText:@"您尚未选择车型或该车型价格暂时无法提供"];
     [_selectNoneBtn setSelected:NO];
     [serviceButton setSelected:!serviceButton.selected];
+    
+    if ([_buttonArray indexOfObject:serviceButton]==0) {
+        [[_buttonArray objectAtIndex:1]setSelected:NO];
+    }
+    if ([_buttonArray indexOfObject:serviceButton]==1) {
+        [[_buttonArray objectAtIndex:0]setSelected:NO];
+    }
+    
+    if ([[self.serviceArray objectAtIndex:0] allprice]) {
+        double totalCost = 0;
+        for (NSInteger index=0; index < _buttonArray.count; index++) {
+            UIButton *btn = [_buttonArray objectAtIndex:index];
+            if (btn.selected) {
+                Service *service = [self.serviceArray objectAtIndex:index];
+                totalCost += [service.aftersaveprice doubleValue];
+            }
+        }
+        [_tipLabel setText:[NSString stringWithFormat:@"已选择服务总价为: ¥%.2f",totalCost]];
+        [_detailView setHidden:NO];
+    }else{
+        [_tipLabel setText:@"您尚未选择车型或该车型价格暂时无法提供"];
+    }
 }
 
 
@@ -223,6 +249,29 @@
 - (void)popToParent
 {
     [self.navigationController popViewControllerAnimated:YES];
+}
+- (IBAction)toDetailsView:(UIButton *)sender {
+    Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
+    NSMutableString *serviceIds = [[[NSMutableString alloc] init] autorelease];
+    for (NSInteger index=0; index < _buttonArray.count; index++) {
+        UIButton *btn = [_buttonArray objectAtIndex:index];
+        if (btn.selected) {
+            Service *service = [self.serviceArray objectAtIndex:index];
+            [serviceIds appendString:service.service_id];
+            [serviceIds appendString:@","];
+        }
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/get_pricedetail?model_id=%@&timesaleversion_id=%@&select_services_str=%@", myOrdering.model_id,myOrdering.timesaleversion_id, serviceIds];
+    
+    NSURL *url = [NSURL URLWithString:urlString];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        ServiceDetailsViewController *vc = [[[ServiceDetailsViewController alloc] init] autorelease];
+        [vc setUrl:url];
+        [vc.navigationItem setHidesBackButton: YES];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    
 }
 
 @end

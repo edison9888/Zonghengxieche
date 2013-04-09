@@ -34,12 +34,17 @@
     return self;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self initUI];
+    [self prepareData];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self initUI];
-    [self prepareData];
+    
 }
 
 - (void)didReceiveMemoryWarning

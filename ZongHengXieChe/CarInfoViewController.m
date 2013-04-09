@@ -133,6 +133,17 @@
                 [[[CoreService sharedCoreService] myCar] setBrand_id:carInfo.brand_id];
                 [[[CoreService sharedCoreService] myCar] setBrand_name:carInfo.brand_name];
             }
+            
+            if (_entrance == CAR_FOR_COUPON) {
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[CouponViewController class]]) {
+                        CouponViewController *couponVC = (CouponViewController *)v;
+                        [couponVC initArguments];
+                        [couponVC.argumentsDic setObject:carInfo.brand_id forKey:@"brand_id"];
+                    }
+                }
+            }
+            
             vc.carInfo = SERIES;
             vc.detailID = carInfo.brand_id;
             [self.navigationController pushViewController:vc animated:YES];
@@ -144,6 +155,16 @@
                 [[[CoreService sharedCoreService] myCar] setSeries_id:carInfo.series_id];
                 [[[CoreService sharedCoreService] myCar] setSeries_name:carInfo.series_name];
             }
+            
+            if (_entrance == CAR_FOR_COUPON) {
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[CouponViewController class]]) {
+                        CouponViewController *couponVC = (CouponViewController *)v;
+                        [couponVC.argumentsDic setObject:carInfo.series_id forKey:@"series_id"];
+                    }
+                }
+            }
+            
             vc.carInfo = MODEL;
             vc.detailID = carInfo.series_id;
             [self.navigationController pushViewController:vc animated:YES];
@@ -164,11 +185,11 @@
                 }
             }
             if (_entrance == CAR_FOR_COUPON){
+                
                 for (UIViewController *v in self.navigationController.viewControllers) {
                     if ([v isKindOfClass:[CouponViewController class]]) {
                         CouponViewController *couponVC = (CouponViewController *)v;
                         [couponVC setModelId:carInfo.model_id];
-                        [couponVC initArguments];
                         [couponVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
                         [couponVC getCoupons];
                         [self.navigationController popToViewController:v animated:YES];
@@ -180,6 +201,7 @@
                     if ([v isKindOfClass:[UpKeepViewController class]]) {
                         UpKeepViewController *shopVC = (UpKeepViewController *)v;
 //                        [shopVC initArguments];
+                        [shopVC.argumentsDic setObject:carInfo.series_id forKey:@"search"];
                         [shopVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
                         [shopVC getShops];
                         [self.navigationController popToViewController:v animated:YES];

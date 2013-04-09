@@ -61,6 +61,13 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [_nameField resignFirstResponder];
+    [_phoneField resignFirstResponder];
+    [_commentView resignFirstResponder];
+}
+
 #pragma mark- picker
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {

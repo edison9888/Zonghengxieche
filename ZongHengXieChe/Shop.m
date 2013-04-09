@@ -33,6 +33,7 @@
     [self.have_coupon2 release];
     [self.model_id release];
     [self.shop_maps release];
+    [self.distance release];
     [super dealloc];
 }
 

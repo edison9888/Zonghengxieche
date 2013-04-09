@@ -14,6 +14,7 @@
 #import "CoreService.h"
 #import "AccountViewController.h"
 #import "UserGuideViewController.h"
+#import "MobClick.h"
 
 @interface AppDelegate()
 
@@ -46,6 +47,11 @@
 
     
     return YES;
+}
+
+- (void)addYouMeng
+{
+    [MobClick startWithAppkey:@"50f8b4a25270157c7800001b"];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -14,6 +14,7 @@
 #import "ShopAnnotation.h"
 #import "ShopAnnotationView.h"
 #import "ShopDetailsViewController.h"
+#import "BMapKit.h"
 
 #define Discrepancy 0.05
 #define RegionWidth  3000

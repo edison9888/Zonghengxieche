@@ -28,6 +28,7 @@
 @property (nonatomic, copy) NSString *shop_class;
 @property (nonatomic, copy) NSString *model_id;
 @property (nonatomic, copy) NSString *shop_maps;
+@property (nonatomic, copy) NSString *distance;
 
 @property (nonatomic, copy) UIImage  *logoImage;
 @property (nonatomic, assign) CLLocationDegrees latitude;

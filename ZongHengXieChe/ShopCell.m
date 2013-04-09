@@ -55,7 +55,13 @@
     [_quanImage setHidden:![shop.have_coupon1 isEqualToString:@"1"]];
     [_tuanImage setHidden:![shop.have_coupon2 isEqualToString:@"1"]];
 
-    [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fkm",shop.distanceFromMyLocation/1000]];
+    if ([shop.distance doubleValue]<=1000) {
+        [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fm",[shop.distance doubleValue]]];
+    }else if ([shop.distance doubleValue]>100000) {
+        [_distanceLabel setText:[NSString stringWithFormat:@"距离:大于%.1fkm",100.00]];
+    }else{
+        [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fkm",[shop.distance doubleValue]/1000]];
+    }
     [_rateLabel setText:[NSString stringWithFormat:@"好评:%@ %%",shop.comment_rate]];
     [_productSaleLabel setText:[NSString stringWithFormat:@"工时费%@起",shop.workhours_sale]];
 }

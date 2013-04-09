@@ -241,7 +241,11 @@ enum {
 - (void)prepareData
 {
     [self.loadingView setHidden:NO];
-    self.shopDetails = [[ShopDetails alloc] init];
+    self.shopDetails = [[[ShopDetails alloc] init] autorelease];
+    
+    if (self.shop.model_id) {
+        [self.shopDetails setModel_id:self.shop.model_id];
+    }
     
     [[CoreService sharedCoreService] loadHttpURL:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/getshop_detail?shop_id=%@",self.shop?self.shop.shop_id:self.shop_id]
                                       withParams:nil

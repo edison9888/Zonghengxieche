@@ -456,7 +456,7 @@
 
 - (void)initArguments
 {
-    p = 0;
+    p = 1;
     NSString *cityId = nil;
     if (self.argumentsDic && [self.argumentsDic objectForKey:@"city_id"]) {
         cityId  = [[[NSString alloc] initWithString:[self.argumentsDic objectForKey:@"city_id"]] autorelease];
@@ -489,6 +489,10 @@
         [self setLocationInfo];
     }
     
+    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
+    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    
 }
 
 - (void)setLocationInfo
@@ -508,10 +512,7 @@
         [self initArguments];
         [self getCoupons];
     }
-    
-    
 }
-
 
 
 - (void)popToParent
@@ -538,10 +539,10 @@
     }
     
     if (btn == _distanceBtn) {
-        [_argumentsDic removeAllObjects];
-        CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-        [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-        [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+        p =  1;
+        [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
+        [self.argumentsDic setObject:@"distance" forKey:@"order"];
+        
         [self getCoupons];
     }
     
@@ -594,7 +595,6 @@
                                  }else{
                                      NSDictionary *params = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                      p_count = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
-                                     p++;
                                      if (p>1 && p <= p_count ) {
                                          [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
                                      }else{
@@ -603,7 +603,7 @@
                                          }
                                          self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
                                      }
-                                     
+                                     p++;
                                      [_myTableView reloadData];
                                      [self.loadingView setHidden:YES];
                                  }

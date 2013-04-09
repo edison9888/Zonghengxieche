@@ -179,11 +179,11 @@ enum ORDERING_CELL {
     bgimage = [bgimage stretchableImageWithLeftCapWidth:floorf(bgimage.size.width/2) topCapHeight:floorf(bgimage.size.height/2)];
     [_bgImageView setImage:bgimage];
     
-    [_orderingIdLabel setText:self.orderingDetails.uid];
+    [_orderingIdLabel setText:self.orderingDetails.order_id];
     [_createTimeLabel setText:[self formateDate:self.orderingDetails.create_time]];
     [_shopNameLabel setText:self.orderingDetails.shop_name];
     [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f折",[self.orderingDetails.workhours_sale doubleValue]]];
-    [_orderingTimeLabel setText:[self formateDate:self.orderingDetails.order_time]];
+    [_orderingTimeLabel setText:[self formateDateToMinutes:self.orderingDetails.order_time]];
     [_orderStatusLabel setText:[self getOrderingStatusDesc:self.orderingDetails.order_state]];
     [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
     [[CoreService sharedCoreService] loadDataWithURL:self.orderingDetails.logo
@@ -266,6 +266,16 @@ enum ORDERING_CELL {
     return formatedDate;
 }
 
+- (NSString *)formateDateToMinutes:(NSString *)time
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[time doubleValue]];
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:MM"];
+    NSString *formatedDate = [dateFormatter stringFromDate:date];
+    return formatedDate;
+}
+
+
 - (NSString *)formateServiceString
 {
     NSMutableString *serviceNames = [[[NSMutableString alloc] init] autorelease];
@@ -286,21 +296,5 @@ enum ORDERING_CELL {
     }else{
         [_arrowImageView setImage:[UIImage imageNamed:@"arrow_up_icon"]];
     }
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    CGRect frame = _myWebView.frame;
-    frame.size.height = 1;
-    _myWebView.frame = frame;
-    CGSize fittingSize = [_myWebView sizeThatFits:CGSizeZero];
-    frame.size = fittingSize;
-    _myWebView.frame = frame;
-
-    
-//    CGRect frame = _myWebView.frame;
-//    frame.size.height = _myWebView.scrollView.contentSize.height;
-    [_myScrollView setContentSize:CGSizeMake(320, _myWebView.frame.origin.y + _myWebView.frame.size.height)];
-
 }
 @end
