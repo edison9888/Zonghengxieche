@@ -37,6 +37,7 @@
 		17512F3D16F7187200115E4D /* 114.png in Resources */ = {isa = PBXBuildFile; fileRef = 17512F3C16F7187000115E4D /* 114.png */; };
 		17512F4216F71D7700115E4D /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 17512F4116F71D7600115E4D /* LoadingView.m */; };
 		17514C261713AC9000930CE9 /* NoUse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17514C251713AC9000930CE9 /* NoUse.mm */; };
+		17514C281713B0C600930CE9 /* libbaidumapapi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17514C271713B0C500930CE9 /* libbaidumapapi.a */; };
 		1769A0C716F4AF1F00BF2D52 /* City.m in Sources */ = {isa = PBXBuildFile; fileRef = 1769A0C616F4AF1F00BF2D52 /* City.m */; };
 		1769A0CB16F4B14D00BF2D52 /* Region.m in Sources */ = {isa = PBXBuildFile; fileRef = 1769A0CA16F4B14D00BF2D52 /* Region.m */; };
 		1769A0CF16F4B20900BF2D52 /* RegionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1769A0CD16F4B20900BF2D52 /* RegionViewController.m */; };
@@ -78,6 +79,8 @@
 		178C15DE16F49E0900DE6E29 /* ZhifubaoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 178C15DC16F49E0700DE6E29 /* ZhifubaoViewController.xib */; };
 		1790262617030A450081E980 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1790262517030A450081E980 /* Default-568h@2x.png */; };
 		1790262917034AC20081E980 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1790262817034AC10081E980 /* Default@2x.png */; };
+		179A41C71713DA0400FA21C0 /* BaiduShopAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 179A41C61713DA0400FA21C0 /* BaiduShopAnnotation.m */; };
+		179A41C91713F02B00FA21C0 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 179A41C81713F02B00FA21C0 /* mapapi.bundle */; };
 		179F358116B177F300A396FE /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F356316B177F300A396FE /* ASIAuthenticationDialog.m */; };
 		179F358216B177F300A396FE /* ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F356616B177F300A396FE /* ASIDataCompressor.m */; };
 		179F358316B177F300A396FE /* ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F356816B177F300A396FE /* ASIDataDecompressor.m */; };
@@ -141,6 +144,7 @@
 		17A18FB916DA51010024E071 /* reg_login_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A18FB716DA51010024E071 /* reg_login_bg.png */; };
 		17A18FBB16DA513F0024E071 /* reg_btn.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A18FBA16DA513F0024E071 /* reg_btn.png */; };
 		17A18FBD16DA523A0024E071 /* green_btn_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A18FBC16DA523A0024E071 /* green_btn_bg.png */; };
+		17A32D3F1713F4A200212A12 /* oringe_order_btn.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A32D3E1713F4A200212A12 /* oringe_order_btn.png */; };
 		17A7B87316BB996A0035E9A7 /* ShopCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A7B87216BB996A0035E9A7 /* ShopCell.m */; };
 		17A7B87616BB99810035E9A7 /* ShopCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A7B87516BB99810035E9A7 /* ShopCell.xib */; };
 		17A7B88D16BBA07F0035E9A7 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A7B87816BBA07F0035E9A7 /* arrow.png */; };
@@ -379,6 +383,7 @@
 		17514C231713A9FB00930CE9 /* BMKUserLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKUserLocation.h; sourceTree = "<group>"; };
 		17514C241713A9FB00930CE9 /* BMKVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKVersion.h; sourceTree = "<group>"; };
 		17514C251713AC9000930CE9 /* NoUse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NoUse.mm; sourceTree = "<group>"; };
+		17514C271713B0C500930CE9 /* libbaidumapapi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbaidumapapi.a; path = "libs/Release-iphoneos/libbaidumapapi.a"; sourceTree = "<group>"; };
 		1769A0C516F4AF1F00BF2D52 /* City.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = City.h; sourceTree = "<group>"; };
 		1769A0C616F4AF1F00BF2D52 /* City.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = City.m; sourceTree = "<group>"; };
 		1769A0C916F4B14D00BF2D52 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
@@ -441,6 +446,9 @@
 		178C15DC16F49E0700DE6E29 /* ZhifubaoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZhifubaoViewController.xib; sourceTree = "<group>"; };
 		1790262517030A450081E980 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1790262817034AC10081E980 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		179A41C51713DA0400FA21C0 /* BaiduShopAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaiduShopAnnotation.h; sourceTree = "<group>"; };
+		179A41C61713DA0400FA21C0 /* BaiduShopAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaiduShopAnnotation.m; sourceTree = "<group>"; };
+		179A41C81713F02B00FA21C0 /* mapapi.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = mapapi.bundle; sourceTree = "<group>"; };
 		179F356216B177F300A396FE /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		179F356316B177F300A396FE /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		179F356416B177F300A396FE /* ASICacheDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASICacheDelegate.h; sourceTree = "<group>"; };
@@ -533,6 +541,7 @@
 		17A18FB716DA51010024E071 /* reg_login_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reg_login_bg.png; sourceTree = "<group>"; };
 		17A18FBA16DA513F0024E071 /* reg_btn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reg_btn.png; sourceTree = "<group>"; };
 		17A18FBC16DA523A0024E071 /* green_btn_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_btn_bg.png; sourceTree = "<group>"; };
+		17A32D3E1713F4A200212A12 /* oringe_order_btn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oringe_order_btn.png; sourceTree = "<group>"; };
 		17A7B87116BB996A0035E9A7 /* ShopCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopCell.h; sourceTree = "<group>"; };
 		17A7B87216BB996A0035E9A7 /* ShopCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopCell.m; sourceTree = "<group>"; };
 		17A7B87516BB99810035E9A7 /* ShopCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShopCell.xib; sourceTree = "<group>"; };
@@ -749,6 +758,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17514C281713B0C600930CE9 /* libbaidumapapi.a in Frameworks */,
 				179F35A816B1828500A396FE /* libz.dylib in Frameworks */,
 				179F359516B181AA00A396FE /* CFNetwork.framework in Frameworks */,
 				17AA972016B4079200911DE2 /* CoreLocation.framework in Frameworks */,
@@ -1165,6 +1175,8 @@
 				17AA972816B4CD7400911DE2 /* ShopAnnotationView.m */,
 				17F1190316C3C9F900136AF8 /* ShopAnnotation.h */,
 				17F1190416C3C9F900136AF8 /* ShopAnnotation.m */,
+				179A41C51713DA0400FA21C0 /* BaiduShopAnnotation.h */,
+				179A41C61713DA0400FA21C0 /* BaiduShopAnnotation.m */,
 			);
 			name = Location;
 			sourceTree = "<group>";
@@ -1270,6 +1282,8 @@
 		17E77D2B16AED33E000F59D2 = {
 			isa = PBXGroup;
 			children = (
+				179A41C81713F02B00FA21C0 /* mapapi.bundle */,
+				17514C271713B0C500930CE9 /* libbaidumapapi.a */,
 				1790262817034AC10081E980 /* Default@2x.png */,
 				1790262517030A450081E980 /* Default-568h@2x.png */,
 				17E77D4016AED33E000F59D2 /* ZongHengXieChe */,
@@ -1391,6 +1405,7 @@
 		17E77D5C16AED39C000F59D2 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				17A32D3E1713F4A200212A12 /* oringe_order_btn.png */,
 				176A775C16FD146900164079 /* arrow_down_icon.png */,
 				176A776116FD152500164079 /* arrow_up_icon.png */,
 				17BCAA8116F85416005D5AAF /* dropdwon_select_btn.png */,
@@ -1807,6 +1822,8 @@
 				1790262917034AC20081E980 /* Default@2x.png in Resources */,
 				170D6AFA170DB9C90056456F /* pin@2x.png in Resources */,
 				176B56411712B38B0002B488 /* ServiceDetailsViewController.xib in Resources */,
+				179A41C91713F02B00FA21C0 /* mapapi.bundle in Resources */,
+				17A32D3F1713F4A200212A12 /* oringe_order_btn.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1914,6 +1931,7 @@
 				17DDE5EC1701C7F400CB5767 /* UserGuideViewController.m in Sources */,
 				176B56401712B38B0002B488 /* ServiceDetailsViewController.m in Sources */,
 				17514C261713AC9000930CE9 /* NoUse.mm in Sources */,
+				179A41C71713DA0400FA21C0 /* BaiduShopAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1998,10 +2016,13 @@
 				INFOPLIST_FILE = "ZongHengXieChe/ZongHengXieChe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
 					"\"$(SRCROOT)/ZongHengXieChe/Library/Youmeng\"",
+					"$(SRCROOT)/libs/Release-iphoneos",
 				);
-				OTHER_LDFLAGS = "-lxml2";
+				OTHER_LDFLAGS = (
+					"-lxml2",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "17553AAF-925E-4C37-9FDB-98E690E67279";
 				WRAPPER_EXTENSION = app;
@@ -2022,10 +2043,13 @@
 				INFOPLIST_FILE = "ZongHengXieChe/ZongHengXieChe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
 					"\"$(SRCROOT)/ZongHengXieChe/Library/Youmeng\"",
+					"$(SRCROOT)/libs/Release-iphoneos",
 				);
-				OTHER_LDFLAGS = "-lxml2";
+				OTHER_LDFLAGS = (
+					"-lxml2",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

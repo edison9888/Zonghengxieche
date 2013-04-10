@@ -109,8 +109,12 @@
     UIImage *confirm = [UIImage imageNamed:@"confirm_btn"];
     [_confirmBtn setBackgroundImage:[confirm stretchableImageWithLeftCapWidth:confirm.size.width/2 topCapHeight:confirm.size.height/2] forState:UIControlStateNormal];
     
+    if (IS_IPHONE_5) {
+        _contentScrollView.contentSize = CGSizeMake(320, 500);
+    }else{
+        _contentScrollView.contentSize = CGSizeMake(320, 400);
+    }
     
-    _contentScrollView.contentSize = CGSizeMake(320, _contentScrollView.frame.size.height+10);
 }
 
 - (IBAction)confirm

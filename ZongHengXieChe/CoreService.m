@@ -22,6 +22,7 @@
     CLLocation          *_myCurrentLocation;
     NSArray             *_plateProvinceArray;
     MKReverseGeocoder   *_geocoder;
+    BMKMapManager       *_mapManager;
 }
 
 @property (nonatomic, strong) NSString *address;
@@ -73,6 +74,11 @@
     [self startLocationManger];
     [self getStoredInfo];
     _plateProvinceArray = [[NSArray alloc] initWithObjects:@"京",@"沪",@"港",@"吉",@"鲁",@"冀",@"湘",@"青",@"苏",@"浙",@"粤",@"台",@"甘",@"川",@"黑",@"蒙",@"新",@"津",@"渝",@"澳",@"辽",@"豫",@"鄂",@"晋",@"皖",@"赣",@"闽",@"琼",@"陕",@"云",@"贵",@"藏",@"宁",@"桂", nil];
+    _mapManager = [[BMKMapManager alloc]init];
+	BOOL ret = [_mapManager start:@"6FD4C704FC90736DD731D866BCB9AF9B830FA112" generalDelegate:nil];
+	if (!ret) {
+		NSLog(@"manager start failed!");
+	}
     return self;
 }
 

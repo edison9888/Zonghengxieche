@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "BaseViewController.h"
+#import "BMapKit.h"
 
-@interface LocationViewController : BaseViewController<MKMapViewDelegate>
+@interface LocationViewController : BaseViewController<BMKMapViewDelegate>
 
 @property (nonatomic, strong) NSArray *shopArray;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;

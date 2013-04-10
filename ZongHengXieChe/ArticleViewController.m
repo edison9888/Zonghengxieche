@@ -208,6 +208,7 @@
     }
 }
 - (IBAction)getAllArticle:(id)sender {
+    [self initArguments];
     [_mineBtn setSelected:NO];
     [_allBtn setSelected:YES];
     [self loadArticles];

@@ -297,4 +297,19 @@ enum ORDERING_CELL {
         [_arrowImageView setImage:[UIImage imageNamed:@"arrow_up_icon"]];
     }
 }
+
+#pragma mark- UIWebViewDelegate
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    CGRect frame = _myWebView.frame;
+    frame.size.height = 1;
+    _myWebView.frame = frame;
+    CGSize fittingSize = [_myWebView sizeThatFits:CGSizeZero];
+    frame.size = fittingSize;
+    _myWebView.frame = frame;
+    
+    [_myScrollView setContentSize:CGSizeMake(320, _myWebView.frame.origin.y + _myWebView.frame.size.height)];
+    [self initUI];
+}
+
 @end

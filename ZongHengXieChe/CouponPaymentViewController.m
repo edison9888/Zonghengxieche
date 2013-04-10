@@ -12,6 +12,7 @@
 #import "AppDelegate.h"
 #import "CustomTabBarController.h"
 #import "ZhifubaoViewController.h"
+#import "LoginViewController.h"
 
 @interface CouponPaymentViewController ()
 {
@@ -127,29 +128,38 @@
     [self calculating];
 }
 - (IBAction)submit:(id)sender {
-    [[CoreService sharedCoreService] loginInBackgroundwithCompletionBlock:^(id data) {
-        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
-        [dic setObject:[[[CoreService sharedCoreService]currentUser] token] forKey:@"tolken"];
-        [dic setObject:self.coupon.uid forKey:@"coupon_id"];
-        [dic setObject:_mobileFiled.text forKey:@"mobile"];
-        [dic setObject:_countNumberLabel.text forKey:@"number"];
-        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/savecoupon"
-                                          withParams:dic withCompletionBlock:^(id data) {
-                                              NSDictionary *resultDic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                              NSString *status = [[[resultDic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
-                                              if ([status isEqualToString:@"0"]) {
-                                                  NSString *membercoupon_id = [[[resultDic objectForKey:@"XML"] objectForKey:@"membercoupon_id"] objectForKey:@"text"];
-                                                  NSString *urlStr = [NSString stringWithFormat:@"http://c.xieche.net/apppay/alipayto.php?membercoupon_id=%@",membercoupon_id];
-                                                  NSURL *URL = [NSURL URLWithString:urlStr];
-                                                  if ([[UIApplication sharedApplication] canOpenURL:URL]) {
-                                                      ZhifubaoViewController *vc = [[[ZhifubaoViewController alloc] init] autorelease];
-                                                      [vc setURL:URL];
-                                                      [vc.navigationItem setHidesBackButton:YES];
-                                                      [self.navigationController pushViewController:vc animated:YES];
-                                                  }
-                                               }
-                                          } withErrorBlock:nil];
-    }];
+    User *user = [[CoreService sharedCoreService]currentUser];
+    
+    if (!user.token) {
+        [self pushLoginVC];
+        return;
+    }
+    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    [dic setObject:[[[CoreService sharedCoreService]currentUser] token] forKey:@"tolken"];
+    [dic setObject:self.coupon.uid forKey:@"coupon_id"];
+    [dic setObject:_mobileFiled.text forKey:@"mobile"];
+    [dic setObject:_countNumberLabel.text forKey:@"number"];
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/savecoupon"
+                                      withParams:dic withCompletionBlock:^(id data) {
+                                          
+                                          NSDictionary *resultDic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                          NSString *status = [[[resultDic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                          if ([status isEqualToString:@"0"]) {
+                                              NSString *membercoupon_id = [[[resultDic objectForKey:@"XML"] objectForKey:@"membercoupon_id"] objectForKey:@"text"];
+                                              NSString *urlStr = [NSString stringWithFormat:@"http://c.xieche.net/apppay/alipayto.php?membercoupon_id=%@",membercoupon_id];
+                                              NSURL *URL = [NSURL URLWithString:urlStr];
+                                              if ([[UIApplication sharedApplication] canOpenURL:URL]) {
+                                                  ZhifubaoViewController *vc = [[[ZhifubaoViewController alloc] init] autorelease];
+                                                  [vc setURL:URL];
+                                                  [vc.navigationItem setHidesBackButton:YES];
+                                                  [self.navigationController pushViewController:vc animated:YES];
+                                              }
+                                          }else if ([status isEqualToString:@"1"]){
+                                              [self pushLoginVC];
+                                              return;
+                                          }
+                                      } withErrorBlock:nil];
+    
 }
 
 - (void)calculating
@@ -157,5 +167,12 @@
     [_mobileFiled resignFirstResponder];
     [_totalPriceLabel setText:[NSString stringWithFormat:@"%d",[_countNumberLabel.text integerValue] * [_priceLabel.text integerValue]]];
 }
-
+- (void)pushLoginVC
+{
+    
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end

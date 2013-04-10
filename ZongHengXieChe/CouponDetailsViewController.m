@@ -24,7 +24,6 @@
     IBOutlet    UIImageView     *_lineImage;
     IBOutlet    UITextView      *_detailDescribeTextView;
     IBOutlet    UIButton        *_functionBtn;
-    IBOutlet    UILabel         *_statusLabel;
     
     IBOutlet    UIWebView       *_detailsWebView;
 
@@ -90,7 +89,7 @@
     [backBtn setImage:[UIImage imageNamed:@"arrow"] forState:UIControlStateNormal];
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
-    
+    [_functionBtn.titleLabel setFrame:CGRectMake(10, 4, 90, 30)];
     [[_bgImage layer]setCornerRadius:12.0];
 }
 
@@ -155,7 +154,8 @@
     if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
         [_priceLabel setHidden:YES];
         [_lineImage setHidden:YES];
-        [_statusLabel setText:self.currentCoupon.state_str];
+        [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateNormal];
+        [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateHighlighted];
         if ([self.currentCoupon.is_pay isEqualToString:@"1"]) {
             [_discountLabel setText:[NSString stringWithFormat:@"消费码:%@", self.currentCoupon.coupon_code]];
             [_functionBtn setHidden:YES];
@@ -165,6 +165,8 @@
     }
     
     if (self.currentCoupon.coupon_pic) {
+        [_functionBtn setTitle:@"立即购买" forState:UIControlStateNormal];
+        [_functionBtn setTitle:@"立即购买" forState:UIControlStateHighlighted];
         [[CoreService sharedCoreService] loadDataWithURL:self.currentCoupon.coupon_pic withParams:nil withCompletionBlock:^(id data) {
             [_logoImage setImage:[UIImage imageWithData:data]];
         } withErrorBlock:nil];

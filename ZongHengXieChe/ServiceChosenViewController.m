@@ -223,12 +223,15 @@
 {
     Ordering *ordering = [[CoreService sharedCoreService] myOrdering];
     NSMutableString *selectedServiceIds = [[[NSMutableString alloc] init] autorelease];
-    NSMutableArray *selectedServiceIDArray = [[[NSMutableArray alloc] init] autorelease];
     for (NSInteger index = 0; index<_buttonArray.count; index++) {
         UIButton *btn = [_buttonArray objectAtIndex:index];
         if (btn.selected) {
-            [selectedServiceIDArray addObject:[_serviceIdsArray objectAtIndex:index]];
-            [selectedServiceIds appendString:[_serviceIdsArray objectAtIndex:index]];
+            
+            if (_serviceIdsArray&&_serviceIdsArray.count>0) {
+                [selectedServiceIds appendString:[_serviceIdsArray objectAtIndex:index]];
+            }else{
+                [selectedServiceIds appendString:[[self.serviceArray objectAtIndex:index] service_id]];
+            }
             [selectedServiceIds appendString:@","];
         }
     }

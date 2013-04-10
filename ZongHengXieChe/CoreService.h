@@ -16,6 +16,7 @@
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
 #import "ASINetworkQueue.h"
+#import "BMapKit.h"
 
 @protocol UserApiDelegate
 @optional

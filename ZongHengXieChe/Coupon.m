@@ -64,5 +64,18 @@
     }
 }
 
+- (NSString *)getState_str
+{
+    if (_is_overtime && [_is_overtime isEqualToString:@"1"]) {
+        return @"已过期";
+    }else if (_is_pay && [_is_pay isEqualToString:@"0"]) {
+        return @"未支付";
+    }else if (_is_use && [_is_use isEqualToString:@"0"]){
+        return @"未使用";
+    }else{
+        return @"已使用";
+    }
+}
+
 
 @end

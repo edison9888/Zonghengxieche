@@ -113,8 +113,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    
 }
 
 - (void)viewWillDisappear: (BOOL)animated
@@ -225,8 +223,8 @@
 - (void)reloacateUI{
     [_topToolBar setHidden:YES];
     CGRect frame = _myTableView.frame;
-    frame.origin.y -= 32;
-    frame.size.height +=32;
+    frame.origin.y -= 16;
+    frame.size.height +=16;
     _myTableView.frame = frame;
 }
 
@@ -269,8 +267,7 @@
         
         frame = _myTableView.frame;
         frame.size.height+=88;
-        _searCarTypeView.frame = frame;
-        
+        _myTableView.frame=frame;
     }
     
     
@@ -403,10 +400,9 @@
 {
     if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH || self.entrance == ENTRANCE_SHOP_DETAILS_TUAN || self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
         [_topToolBar setHidden:YES];
-        [_myTableView setFrame:CGRectMake(0, 0, 320, 367)];
+        [self reloacateUI];
     }else{
         [_topToolBar setHidden:NO];
-        [_myTableView setFrame:CGRectMake(0, 32, 320, 335)];
     }
 }
 
@@ -651,6 +647,7 @@
         }
     }
     [self getCoupons];
+    [_searchCouponTypeView setHidden:YES];
 }
 
 - (void)addArgumetsBySelectedKindsBtnIndex:(NSInteger)index
@@ -711,8 +708,9 @@
     }else{
         self.argumentsDic = dic;
         [self getCoupons];
-        [_searchMenuView setHidden:YES];
+       
     }
+     [_searchMenuView setHidden:YES];
 }
 
 

@@ -7,39 +7,65 @@
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/CouponViewController.m"
-         timestampString = "387016775.161111"
+         filePath = "ZongHengXieChe/CouponPaymentViewController.m"
+         timestampString = "387186123.853697"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "544"
-         endingLineNumber = "544"
-         landmarkName = "-btnPressed:"
+         startingLineNumber = "50"
+         endingLineNumber = "50"
+         landmarkName = "-viewDidLoad"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "ZongHengXieChe/ArticleViewController.m"
+         timestampString = "387190984.119324"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "153"
+         endingLineNumber = "153"
+         landmarkName = "-loadArticles"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "ZongHengXieChe/ArticleViewController.m"
+         timestampString = "387191614.718604"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "159"
+         endingLineNumber = "159"
+         landmarkName = "-loadArticles"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/CouponDetailsViewController.m"
-         timestampString = "387018920.486209"
+         filePath = "ZongHengXieChe/MyCalendarViewController.m"
+         timestampString = "387195866.045749"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "167"
-         endingLineNumber = "167"
-         landmarkName = "-fillInfo"
+         startingLineNumber = "84"
+         endingLineNumber = "84"
+         landmarkName = "-getWeekday:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/ServiceChosenViewController.m"
-         timestampString = "387102443.696444"
+         filePath = "ZongHengXieChe/MyCalendarViewController.m"
+         timestampString = "387195903.139509"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "265"
-         endingLineNumber = "265"
-         landmarkName = "-toDetailsView:"
+         startingLineNumber = "75"
+         endingLineNumber = "75"
+         landmarkName = "-getTimeInterval:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

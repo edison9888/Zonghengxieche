@@ -156,7 +156,7 @@
 					</object>
 					<object class="IBUITableView" id="573768534">
 						<reference key="NSNextResponder" ref="191373211"/>
-						<int key="NSvFlags">274</int>
+						<int key="NSvFlags">310</int>
 						<string key="NSFrame">{{0, 32}, {320, 335}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSNextKeyView" ref="882032779"/>
@@ -216,6 +216,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{160, 0}, {160, 49}}</string>
 								<reference key="NSSuperview" ref="882032779"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<reference key="IBUIBackgroundColor" ref="221885720"/>
 								<bool key="IBUIOpaque">NO</bool>

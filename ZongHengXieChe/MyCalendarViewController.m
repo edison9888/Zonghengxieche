@@ -11,6 +11,7 @@
 #import "CarDetailsViewController.h"
 #import "CoreService.h"
 #import "Ordering.h"
+#import "TimeSale.h"
 
 @interface MyCalendarViewController ()
 {
@@ -30,6 +31,32 @@
 @implementation MyCalendarViewController
 
 - (void)calendarViewDateSelected:(CalendarView *)calendarView date:(NSDate *)date {
+    
+    Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
+    TimeSale *timesale = myOrdering.selectedTimeSale;
+
+    NSInteger week = [self getWeekday:date];
+    if (week -1 >0) {
+        week -=1;
+    }else{
+        week = 7;
+    }
+    
+    if ([timesale.week rangeOfString:[NSString stringWithFormat:@"%d",week]].location == NSNotFound) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"当天该店不接受预约" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return;
+    }
+    
+    if ([self getTimeInterval:date]>15*24*3600) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"该店只接受15天之内的预约" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return;
+    }
+    
+    
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy-MM-dd"];
     self.dateString = [NSString stringWithFormat:@"%@", [formatter stringFromDate:date]];
@@ -38,8 +65,32 @@
     
     [_pickerView setHidden:NO];
     
+
+    
 //    NSLog(@"%@", date);
 }
+
+- (NSInteger)getTimeInterval:(NSDate *)date
+{
+    NSDate *now = [NSDate date];
+    NSInteger interval = [date timeIntervalSinceDate:now ];
+    return interval;
+    
+}
+
+
+- (NSInteger)getWeekday:(NSDate *)date
+{
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+	NSDateComponents *weekDayComponents = [gregorian components:NSWeekdayCalendarUnit fromDate:date];
+	NSInteger weekday = [weekDayComponents weekday];
+    
+    
+//    NSDateComponents *componets = [[NSCalendar autoupdatingCurrentCalendar] components:NSWeekdayCalendarUnit fromDate:[NSDate date]];
+//    NSInteger weekday = [componets weekday];
+    return weekday;
+}
+
 
 - (void)dealloc
 {
@@ -233,6 +284,13 @@
 
 - (IBAction)next
 {
+    if (!self.dateString) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"请选择预约时间" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return;
+    }
+    
     Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
     [myOrdering setOrder_date:self.dateString];
     [myOrdering setOrder_hours:self.hour];
