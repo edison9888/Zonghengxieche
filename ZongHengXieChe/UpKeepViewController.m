@@ -83,14 +83,15 @@ enum {
     // Do any additional setup after loading the view from its nib.
     [self initUI];
     [self prepareData];
-    [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
-    [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
+    
     
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
+    [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
 }
 
 - (void)didReceiveMemoryWarning
