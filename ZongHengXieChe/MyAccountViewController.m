@@ -95,6 +95,8 @@ enum {
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    [[CoreService sharedCoreService] setMyCar:[[[CarInfo alloc] init] autorelease]];
 //    [self initUI];
     [self prepareData];
 
@@ -126,7 +128,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70.0;
+    return 62.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -139,8 +141,8 @@ enum {
                 cell = (OptionCell *)aObj;
             }
         }
-        [cell applyCell:[self.optionArray objectAtIndex:indexPath.row]];
     }
+    [cell applyCell:[self.optionArray objectAtIndex:indexPath.row]];
     return cell;
 }
 
@@ -262,7 +264,7 @@ enum {
 {
     _currentPage = 0;
     _kvImageViewArray = [[NSMutableArray alloc] init];
-    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/index_inner"
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/index_inner?ios=1"
             withParams:nil
    withCompletionBlock:^(id data) {
        self.kvArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[KeyVision class]];
@@ -328,12 +330,21 @@ enum {
         [_kvScrollView addSubview:kvImageView];
         [kvImageView release];
         
-        [[CoreService sharedCoreService] loadDataWithURL:kv.pic
-                    withParams:nil
-           withCompletionBlock:^(id data) {
-               UIImage *image = [UIImage imageWithData:data];
-               [kvImageView  setImage:image];
-           } withErrorBlock:nil];
+        NSString *handledUrlString = [kv.pic stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+        handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            UIImage *kvImage = [UIImage imageWithContentsOfFile:path];
+            [kvImageView  setImage:kvImage];
+        }else{
+            [[CoreService sharedCoreService] loadDataWithURL:kv.pic
+                                                  withParams:nil
+                                         withCompletionBlock:^(id data) {
+                                             UIImage *image = [UIImage imageWithData:data];
+                                             [kvImageView  setImage:image];
+                                         } withErrorBlock:nil];
+        }
     }
 }
 
@@ -347,6 +358,7 @@ enum {
             CouponDetailsViewController *vc = [[[CouponDetailsViewController alloc] init] autorelease];
             [vc.navigationItem setHidesBackButton:YES];
             [vc setCoupon_id:kv.uid];
+            [vc setCoupon_type:@"1"];
             [self.navigationController pushViewController:vc animated:YES];
         }
             break;
@@ -355,6 +367,7 @@ enum {
             CouponDetailsViewController *vc = [[[CouponDetailsViewController alloc] init] autorelease];
             [vc.navigationItem setHidesBackButton:YES];
             [vc setCoupon_id:kv.uid];
+            [vc setCoupon_type:@"2"];
             [self.navigationController pushViewController:vc animated:YES];
         }
             break;

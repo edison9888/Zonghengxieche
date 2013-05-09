@@ -25,6 +25,7 @@ NSString *const UserTruenameKey = @"UserTruenameKey";
 NSString *const UserProvKey = @"UserProvKey";
 NSString *const UserCityKey = @"UserCityKey";
 NSString *const UserAreaKey = @"UserAreaKey";
+NSString *const LastLoginNameKey = @"LastLoginNameKey";
 
 //City
 NSString *const CityIdKey = @"CityIdKey";

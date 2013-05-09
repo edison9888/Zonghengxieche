@@ -146,14 +146,21 @@
     
     if(self.entrance != ENTRANCE_SETTING && self.entrance != ENTRANCE_FIRST_TIME_LAUNCH){
         CGRect frame = _contentTableView.frame;
-        frame.origin.y -= 83;
-        frame.size.height += 83;
+        frame.origin.y = 0;
+        frame.size.height = 367;
+        [_contentTableView setFrame:frame];
+    }else{
+        CGRect frame = _contentTableView.frame;
+        frame.origin.y = 83;
+        frame.size.height = 284;
         [_contentTableView setFrame:frame];
     }
 
     if([[[CoreService sharedCoreService] currentSelectedCity] city_name]){
         [_gpsLabel setText:[[[CoreService sharedCoreService] currentSelectedCity] city_name]];
         [_selectCityButton setEnabled:YES];
+    }else{
+        [self performSelector:@selector(initUI) withObject:nil afterDelay:0.5];
     }
 
 }
@@ -198,9 +205,9 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)didFindCurrentPlacemark:(MKPlacemark *)placemark
+- (void)didFindCurrentPlacemark:(NSString *)cityname
 {
-    [_gpsLabel setText:placemark.locality];
+    [_gpsLabel setText:cityname];
     [_selectCityButton setEnabled:YES];
     
 }

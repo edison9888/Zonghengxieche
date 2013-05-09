@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 #if defined ENVIRONMENT_DEVELOPMENT
         @try
         {
-            return UIApplicationMain(argc, argv, nil, NSStringFromClass([MGAppDelegate class]));
+            return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
         }
         @catch (NSException *e)
         {

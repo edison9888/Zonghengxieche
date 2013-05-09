@@ -16,10 +16,12 @@
 #import "ShopDetailsViewController.h"
 #import "BMapKit.h"
 #import "BaiduShopAnnotation.h"
+#import "CalloutMapAnnotationView.h"
+#import "CalloutMapAnnotation.h"
 
 #define Discrepancy 0.05
-#define RegionWidth  3000
-#define RegionHeight 3000
+#define RegionWidth  10000
+#define RegionHeight 10000
 
 @interface LocationViewController ()
 {
@@ -28,7 +30,10 @@
     NSMutableArray          *_shopAnnotationArray;
 //    MKReverseGeocoder       *_geocoder;
     BMKMapView  *_baiduMapView;
+    CalloutMapAnnotation *_calloutMapAnnotation;
 }
+@property (strong, nonatomic)CalloutMapAnnotation *calloutMapAnnotation;
+
 @end
 
 @implementation LocationViewController
@@ -43,6 +48,7 @@
     [_shopAnnotationArray release];
     [_cityLabel release];
     [_mapView release];
+    [_calloutMapAnnotation release];
     [super dealloc];
 }
 
@@ -119,57 +125,39 @@
 //    }
 //}
 
-- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
-{
-    NSString *annotationIndentifier;
-    if ([annotation isKindOfClass:[BaiduShopAnnotation class]]) {
-        annotationIndentifier = @"shopIdentifier";
-        BMKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:annotationIndentifier];
-        
-        NSString *annotationIndentifier;
-        if (annotation == mapView.userLocation) {
-            return  nil;
-        }else{
-            annotationIndentifier = @"shopIdentifier";
-            
-            if (!annotationView) {
-//                BMKPinAnnotationView *newAnnotation = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier];                 //初始化一个大头针标注
-//                NSLog(@"I'm coming!");
-//                newAnnotation.pinColor = BMKPinAnnotationColorPurple;
-//                newAnnotation.animatesDrop = YES;
-//                newAnnotation.draggable = YES;
-//                return newAnnotation;
-                annotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier];
-                annotationView.enabled = TRUE;
-//                [annotationView setCalloutOffset:CGPointMake(0, -50)];
-                [annotationView setAnnotation:annotation];
-                
-                CGRect frame = annotationView.frame;
-                frame.size = CGSizeMake(20, 32);
-                annotationView.frame = frame;
-                
-
-                [annotationView setImage:[UIImage imageNamed:@"pin"]];
-                [annotationView setCanShowCallout:YES];
-                
-                
-            UIImageView *leftCalloutAccessoryView = [[[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 30, 30)] autorelease];
-            [leftCalloutAccessoryView setImage: ((BaiduShopAnnotation *)annotation).shop.logoImage];
-            [annotationView setLeftCalloutAccessoryView:leftCalloutAccessoryView];
-                [annotationView.leftCalloutAccessoryView.superview.superview setBackgroundColor:[UIColor darkGrayColor]];
-                
-                UIButton *rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-                [rightCalloutAccessoryView setTag:[((BaiduShopAnnotation *)annotation).shop.shop_id integerValue]];
-                [rightCalloutAccessoryView addTarget:self action:@selector(goIntoShopDetail:) forControlEvents:UIControlEventTouchUpInside];
-                [annotationView setRightCalloutAccessoryView:rightCalloutAccessoryView];
-                
-            return annotationView;
-            }
-        
-        }
-    }
-    return nil;
-}
+//- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
+//{   
+//    NSString *annotationIndentifier;
+//    if ([annotation isKindOfClass:[BaiduShopAnnotation class]]) {
+//        annotationIndentifier = @"shopIdentifier";
+//        BMKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:annotationIndentifier];
+//        
+//        NSString *annotationIndentifier;
+//        if (annotation == mapView.userLocation) {
+//            return  nil;
+//        }else{
+//            annotationIndentifier = @"shopIdentifier";
+//            
+//            if (!annotationView) {
+//                annotationView = [[CalloutMapAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier];
+//                annotationView.enabled = TRUE;
+//                [annotationView setAnnotation:annotation];
+//                
+//                CGRect frame = annotationView.frame;
+//                frame.size = CGSizeMake(20, 32);
+//                annotationView.frame = frame;
+//                
+//
+//                [annotationView setImage:[UIImage imageNamed:@"pin"]];
+//                [annotationView setCanShowCallout:NO];
+//                
+//            return annotationView;
+//            }
+//        
+//        }
+//    }
+//    return nil;
+//}
 
         
 //        BMKPinAnnotationView *newAnnotation = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"shopIdentifier"];
@@ -319,11 +307,76 @@
 
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view
 {
-    DLog(@"didSelectAnnotationView");
-}
+    if ([view isKindOfClass:[CalloutMapAnnotationView class]]) {
+//        CalloutMapAnnotation *calloutMapAnnotation = (CalloutMapAnnotation *)view.annotation;
+        ShopDetailsViewController *vc = [[[ShopDetailsViewController alloc] init] autorelease];
+        [vc.navigationItem setHidesBackButton:YES];
+        [vc setShop:_calloutMapAnnotation.shop];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    if ([view.annotation isKindOfClass:[BaiduShopAnnotation class]]){
+        BaiduShopAnnotation *annn = (BaiduShopAnnotation *)view.annotation;
 
+        if (_calloutMapAnnotation) {
+            [mapView removeAnnotation:_calloutMapAnnotation];
+            _calloutMapAnnotation=nil;
+        }
+        _calloutMapAnnotation = [[CalloutMapAnnotation alloc] initWithLatitude:view.annotation.coordinate.latitude andLongitude:view.annotation.coordinate.longitude];
+        _calloutMapAnnotation.shop = annn.shop;
+        [mapView addAnnotation:_calloutMapAnnotation];
+        [mapView setCenterCoordinate:annn.coordinate];
+    }
+    
+    
+}
 - (void)mapView:(BMKMapView *)mapView annotationViewForBubble:(BMKAnnotationView *)view
 {
     DLog(@"annotationViewForBubble");
 }
+
+-(void)mapView:(BMKMapView *)mapView didDeselectAnnotationView:(BMKAnnotationView *)view
+{
+    DLog(@"didDeselectAnnotationView");
+    [mapView removeAnnotation:_calloutMapAnnotation];
+}
+- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
+{
+    NSString *annotationIndentifier;
+    if ([annotation isKindOfClass:[BaiduShopAnnotation class]]) {
+        annotationIndentifier = @"shopIdentifier";
+        BMKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:annotationIndentifier];
+        
+        NSString *annotationIndentifier;
+        if (annotation == mapView.userLocation) {
+            return  nil;
+        }else{
+            annotationIndentifier = @"shopIdentifier";
+            
+            if (!annotationView) {
+                annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier];
+                annotationView.enabled = TRUE;
+                [annotationView setAnnotation:annotation];
+                CGRect frame = annotationView.frame;
+                frame.size = CGSizeMake(20, 32);
+                annotationView.frame = frame;
+                [annotationView setImage:[UIImage imageNamed:@"pin"]];
+                [annotationView setCanShowCallout:NO];
+                return annotationView;
+            }
+            
+        }
+    }else if ([annotation isKindOfClass:[CalloutMapAnnotation class]]){
+        annotationIndentifier = @"CallOutAnnotationIdentifier";
+        CalloutMapAnnotation *ann = (CalloutMapAnnotation *)annotation;
+        CalloutMapAnnotationView *calloutAnnotationView = (CalloutMapAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:annotationIndentifier];
+        
+        if(!calloutAnnotationView){
+            calloutAnnotationView = [[[CalloutMapAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier] autorelease];
+        }
+        [calloutAnnotationView applyWithShop:ann.shop];
+        return calloutAnnotationView;
+    }
+    return nil;
+}
+
 @end

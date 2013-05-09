@@ -29,6 +29,7 @@
 @property (nonatomic, copy) NSString *shop_name;
 @property (nonatomic, copy) NSString *shop_address;
 @property (nonatomic, copy) NSString *shop_maps;
+@property (nonatomic, copy) NSString *workhours_sale;
 
 
 //我的优惠券

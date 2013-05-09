@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NSString *shop_id;
 
 - (IBAction)showComment;
+- (IBAction)pushToLocation;
 @end
 
 

@@ -9,8 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "Coupon.h"
 #import "BaseViewController.h"
+
+
 @interface CouponCell : UITableViewCell
 
 @property (nonatomic, assign) enum ENTRANCE entrance;
+@property (nonatomic, strong) Coupon *coupon;
 - (void)applyCell:(Coupon *)coupon;
 @end

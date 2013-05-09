@@ -17,6 +17,7 @@
     [_appname release];
     [_applogo release];
     [_appdes release];
+    [_url release];
     [_applogo_image release];
     
     [super dealloc];

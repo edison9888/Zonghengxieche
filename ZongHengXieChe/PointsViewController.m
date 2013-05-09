@@ -102,6 +102,7 @@
                                      NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
                                      
                                      self.pointsArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Points class]];
+                                     [self.pointsArray removeObjectAtIndex:0];
                                      NSString *totalNumber= [[[dic objectForKey:@"XML"] objectForKey:@"total_number"]objectForKey:@"text"];
                                      [_totalPointsLabel setText:totalNumber];
                                      [_contentTableView reloadData];

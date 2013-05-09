@@ -45,12 +45,17 @@ enum ORDERING_CELL {
     NSMutableArray              *_lowerUIArray;
 }
 @property (nonatomic, strong) Ordering *orderingDetails;
+@property (nonatomic, strong) UIImage  *shopImage;
 @end
 
 @implementation OrderingDetailsViewController
 - (void)dealloc
 {
     [_lowerUIArray release];
+    if (_shopImage) {
+        [_shopImage release];
+
+    }
     [self.ordering release];
     [self.orderingDetails release];
     [super dealloc];
@@ -138,6 +143,8 @@ enum ORDERING_CELL {
     [vc.navigationItem setHidesBackButton:YES];
     Shop *shop = [[[Shop alloc] init] autorelease];
     [shop setLogo:self.orderingDetails.logo];
+    [shop setLogoImage:self.shopImage];
+    [shop setWorkhours_sale:[NSString stringWithFormat:@"%.1f折",[self.ordering.workhours_sale doubleValue]*10]];
     [shop setShop_name:self.orderingDetails.shop_name];
     [shop setShop_address:self.orderingDetails.shop_address];
     [shop setShop_id:self.orderingDetails.shop_id];
@@ -185,13 +192,24 @@ enum ORDERING_CELL {
     [_timeSaleLabel setText:[NSString stringWithFormat:@"%.1f折",[self.orderingDetails.workhours_sale doubleValue]]];
     [_orderingTimeLabel setText:[self formateDateToMinutes:self.orderingDetails.order_time]];
     [_orderStatusLabel setText:[self getOrderingStatusDesc:self.orderingDetails.order_state]];
-    [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
-    [[CoreService sharedCoreService] loadDataWithURL:self.orderingDetails.logo
-                                          withParams:nil
-                                 withCompletionBlock:^(id data) {
-                                     [_shopImageView setImage:[UIImage imageWithData:data]];
-                                 } withErrorBlock:nil];
     [_addressLabel setText:self.orderingDetails.shop_address];
+    
+    NSString *handledUrlString = [self.orderingDetails.logo stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        UIImage *image = [UIImage imageWithContentsOfFile:path];
+        [_shopImageView  setImage:image];
+    }else{
+        [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
+        [[CoreService sharedCoreService] loadDataWithURL:self.orderingDetails.logo
+                                              withParams:nil
+                                     withCompletionBlock:^(id data) {
+                                         self.shopImage = [UIImage imageWithData:data];
+                                         [_shopImageView setImage:self.shopImage];
+                                     } withErrorBlock:nil];
+    }
     [self resizeUI];
 }
 
@@ -292,9 +310,9 @@ enum ORDERING_CELL {
     [_myWebView setHidden:!sender.selected];
     [sender setSelected:!sender.selected];
     if (sender.selected) {
-        [_arrowImageView setImage:[UIImage imageNamed:@"arrow_down_icon"]];
-    }else{
         [_arrowImageView setImage:[UIImage imageNamed:@"arrow_up_icon"]];
+    }else{
+        [_arrowImageView setImage:[UIImage imageNamed:@"arrow_down_icon"]];
     }
 }
 

@@ -12,6 +12,7 @@
 
 - (void)dealloc
 {
+    [_uid release];
     [_order_id release];
     [_point_number release];
     [_memo release];

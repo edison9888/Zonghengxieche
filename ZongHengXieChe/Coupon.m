@@ -34,6 +34,7 @@
     [_shop_maps release];
     [_coupon_code release];
     [_membercoupon_id release];
+    [_workhours_sale release];
     
     [_state_str release];
     [_coupon_id release];

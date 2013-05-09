@@ -16,6 +16,9 @@
 #import "CityViewController.h"
 #import "MyCarViewController.h"
 #import "LoginViewController.h"
+#import "CarInfo.h"
+#import "AppDelegate.h"
+#import "CustomTabBarController.h"
 
 enum {
     CAR_TYPE = 0,
@@ -30,6 +33,7 @@ enum {
 
 @interface UpKeepViewController ()
 {
+    UIButton    *locationBtn;
     IBOutlet    UIButton    *_carTypeBtn;
     IBOutlet    UIButton    *_ratingBtn;
     IBOutlet    UIButton    *_distanceBtn;
@@ -37,7 +41,9 @@ enum {
     IBOutlet    UIView      *_carTypeView;
     IBOutlet    UIButton    *_titleBtn;
     IBOutlet    UIImageView *_searchMenuWhiteBg;
+    IBOutlet    UILabel     *_noResultsLabel;
     NSArray                 *_TopBtnArray;
+    
     
     //EGO
     BOOL                        _reloading;
@@ -92,6 +98,8 @@ enum {
     [super viewDidAppear:animated];
     [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
     [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -196,7 +204,7 @@ enum {
     }
     
     
-    UIButton *locationBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    locationBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [locationBtn setFrame:CGRectMake(280, 5, 35, 35)];
     [locationBtn setImage:[UIImage imageNamed:@"map_btn"] forState:UIControlStateNormal];
     [locationBtn addTarget:self action:@selector(calloutLocationViewController) forControlEvents:UIControlEventTouchUpInside];
@@ -290,6 +298,7 @@ enum {
 
 - (void)getShops
 {
+    [locationBtn setEnabled:NO];
     [self.loadingView setHidden:NO];
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_shops"
                                       withParams:self.argumentsDic
@@ -300,20 +309,29 @@ enum {
                                      [self pushLoginVC];
                                  }else{
                                      [self.loadingView setHidden:YES];
+                                     [locationBtn setEnabled:YES];
                                      p_count = [[[[result objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
                                      
                                      NSMutableArray *tempArray = [[CoreService sharedCoreService] convertXml2Obj:(NSString *)data withClass:[Shop class]];
                                      if (tempArray.count>0) {
                                          [tempArray removeObjectAtIndex:0];
                                      }
+                                     if (tempArray.count>0) {
+                                         [_noResultsLabel setHidden:YES];
+                                     }else {
+                                         [_noResultsLabel setHidden:NO];
+                                     }
                                      
                                      if (p>1 && p <= p_count) {
                                          [self.shopArray addObjectsFromArray:tempArray];
                                      }else{
-                                         if (p<p_count) {
-                                             [self createTableFooter];
-                                         }
                                          self.shopArray = tempArray;
+                                          [_shopTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+                                     }
+                                     DLog(@"p=%d, p_count=%d",p, p_count);
+                                     _shopTableView.tableFooterView = nil;
+                                     if (p<p_count) {
+                                         [self createTableFooter];
                                      }
                                      p++;
                                      [_shopTableView reloadData];
@@ -335,14 +353,59 @@ enum {
     }else{
         cityId = [[[CoreService sharedCoreService] currentSelectedCity] uid];
     }
+    
+    
+    NSString *regionId = nil;
+    if(self.region.uid){
+        regionId  = self.region.uid;
+    }else if (self.argumentsDic && [self.argumentsDic objectForKey:@"area_id"]) {
+        regionId  = [[[NSString alloc] initWithString:[self.argumentsDic objectForKey:@"area_id"]] autorelease];
+    }else{
+        regionId = @"-1";
+    }
+    
+    NSString *brand_id = nil;
+    if ([self.argumentsDic objectForKey:@"brand_id"]) {
+        brand_id = [self.argumentsDic objectForKey:@"brand_id"];
+    }
+    NSString *series_id = nil;
+    if ([self.argumentsDic objectForKey:@"series_id"]) {
+        series_id = [self.argumentsDic objectForKey:@"series_id"];
+    }
+    NSString *model_id = nil;
+    if ([self.argumentsDic objectForKey:@"model_id"]) {
+        model_id = [self.argumentsDic objectForKey:@"model_id"];
+    }
+    
+    
     self.argumentsDic = [[[NSMutableDictionary alloc] init] autorelease];
+
+    
+    
     if (cityId) {
         [self.argumentsDic setObject:cityId forKey:@"city_id"];
     }
+    if (regionId) {
+        [self.argumentsDic setObject:regionId forKey:@"area_id"];
+    }
+    
     [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
     CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
     [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
     [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    
+    
+    if (brand_id) {
+        [self.argumentsDic setObject:brand_id forKey:@"brand_id"];
+    }
+    if (series_id) {
+        [self.argumentsDic setObject:series_id forKey:@"series_id"];
+        [self.argumentsDic setObject:series_id forKey:@"search"];
+    }
+    if (model_id) {
+        [self.argumentsDic setObject:model_id forKey:@"model_id"];
+    }
+    
 }
 
 - (void)backToHome

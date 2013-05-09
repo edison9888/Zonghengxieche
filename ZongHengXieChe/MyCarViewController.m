@@ -17,6 +17,7 @@
 @interface MyCarViewController ()
 {
     IBOutlet    UITableView     *_contentTableView;
+    IBOutlet    UILabel     *_noResultsLabel;
 }
 
 @property (nonatomic, strong)   NSMutableArray  *carArray;
@@ -45,6 +46,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear: animated];
+    
     [self prepareData];
 }
 
@@ -53,6 +55,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self initUI];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -88,9 +91,9 @@
     [cell.textLabel setText:car.car_name];
     [cell.detailTextLabel setText:[NSString stringWithFormat:@"%@ %@ %@", car.brand_name, car.series_name, car.model_name]];
     [cell.imageView setImage:[UIImage imageNamed:@"my_cars_icon"]];
-    [cell setTitleImageWithUrl:car.brand_logo withSize:CGSizeMake(40, 40)];
+    [cell setTitleImageWithUrl:car.brand_logo withSize:CGSizeMake(50, 50)];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    return cell;
+        return cell;
 }
 
 
@@ -101,8 +104,23 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        CarInfo *car = [self.carArray objectAtIndex:indexPath.row];
+        
+        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+        [dic setObject:car.u_c_id forKey:@"u_c_id"];
+        [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
+        
+        [[CoreService sharedCoreService]loadHttpURL:@"http://c.xieche.net/index.php/appandroid/delete_membercar"
+                                         withParams:dic
+                                withCompletionBlock:^(id data) {
+                                    [_contentTableView reloadData];
+                                }
+                                     withErrorBlock:nil];
+        
+        
         [self.carArray removeObjectAtIndex:indexPath.row];
         [_contentTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+       
         
     }
 }
@@ -151,6 +169,7 @@
                     [self.navigationController popToViewController:v animated:YES];
                 }
             }
+            [[CoreService sharedCoreService] setMyCar:car];
         }
             break;
             
@@ -190,6 +209,11 @@
                                      }else{
                                          [self.loadingView setHidden:YES]; 
                                          self.carArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[CarInfo class]];
+                                         if (self.carArray.count>0) {
+                                             [_noResultsLabel setHidden:YES];
+                                         }else {
+                                             [_noResultsLabel setHidden:NO];
+                                         }
                                          [_contentTableView reloadData];
                                      }
                                  }
@@ -230,6 +254,7 @@
 {
     CarDetailsViewController *vc = [[[CarDetailsViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
+    [vc setCrudType:ADD];
     [self.navigationController pushViewController:vc animated:YES];
 }
 - (void)pushLoginVC

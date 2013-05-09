@@ -19,19 +19,25 @@
     IBOutlet    UILabel         *_payCountLabel;
     IBOutlet    UILabel         *_couponDistanceLabel;
     IBOutlet    UILabel         *_endTimeLabel;
-
-
 }
 
-@end
+@end 
 
 @implementation CouponCell
+
+- (void)dealloc
+{
+    [_coupon release];
+    
+    [super dealloc];
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
+        self.opaque = YES;
     }
     return self;
 }
@@ -42,7 +48,6 @@
     
     // Configure the view for the selected state
 }
-
 
 - (void)applyCell:(Coupon *)coupon
 {
@@ -58,10 +63,22 @@
         [_costLabel setText:[NSString stringWithFormat:@"¥ %@", coupon.coupon_amount]];
         [_discountLabel setText:[NSString stringWithFormat:@"¥ %@", coupon.cost_price]];
         [_endTimeLabel setText:[NSString stringWithFormat:@"到期:%@", endTimeStr]];
-                [[CoreService sharedCoreService] loadDataWithURL:coupon.coupon_logo
-                                              withParams:nil withCompletionBlock:^(id data) {
-                                                  [_logoImage setImage:[UIImage imageWithData:data]];
-                                              } withErrorBlock:nil];
+        
+        
+        NSString *handledUrlString = [coupon.coupon_logo stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+        handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            UIImage *image = [UIImage imageWithContentsOfFile:path];
+            [_logoImage  setImage:image];
+        }else{
+            [[CoreService sharedCoreService] loadDataWithURL:coupon.coupon_logo
+                                                  withParams:nil withCompletionBlock:^(id data) {
+                                                      [_logoImage setImage:[UIImage imageWithData:data]];
+                                                  }
+                                              withErrorBlock:nil];
+        }
         
         if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
             [_couponDistanceLabel setText:[self getStatus:coupon]];
@@ -86,8 +103,6 @@
     }else{
         return @"已使用";
     }
-    
-
 }
 
 @end

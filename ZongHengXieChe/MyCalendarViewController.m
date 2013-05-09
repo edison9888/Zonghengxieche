@@ -30,20 +30,41 @@
 @end
 @implementation MyCalendarViewController
 
+- (BOOL)isBeforeToday:(NSDate *)date
+{
+    NSDate *now = [NSDate date];
+    return [now timeIntervalSinceDate:date]>0;
+}
+
+- (BOOL)isAfter4
+{
+    NSDate *now = [NSDate date];
+    return [self getHour:now]>16;
+}
+
+- (BOOL)isTomorrow:(NSDate *)date
+{
+    NSInteger today = [self getDay:[NSDate date]];
+    NSInteger selectedDay = [self getDay:date];
+    
+    return (selectedDay-today)==1;
+}
+
 - (void)calendarViewDateSelected:(CalendarView *)calendarView date:(NSDate *)date {
     
     Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
     TimeSale *timesale = myOrdering.selectedTimeSale;
 
     NSInteger week = [self getWeekday:date];
-    if (week -1 >0) {
+    if (week -1 >=0) {
         week -=1;
     }else{
-        week = 7;
+        week = 6; 
     }
     
-    if ([timesale.week rangeOfString:[NSString stringWithFormat:@"%d",week]].location == NSNotFound) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"当天该店不接受预约" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    
+    if ([self isBeforeToday:date]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"不能选择过去的时间" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
         [alert release];
         return;
@@ -56,6 +77,21 @@
         return;
     }
     
+    if ([timesale.week rangeOfString:[NSString stringWithFormat:@"%d",week]].location == NSNotFound) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"当天该店不接受预约" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return;
+    }
+    
+    if ([self isAfter4]) {
+        if([self isTomorrow:date]){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"4点之后需要隔天预约" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+            [alert release];
+            return;
+        }
+    }
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy-MM-dd"];
@@ -89,6 +125,22 @@
 //    NSDateComponents *componets = [[NSCalendar autoupdatingCurrentCalendar] components:NSWeekdayCalendarUnit fromDate:[NSDate date]];
 //    NSInteger weekday = [componets weekday];
     return weekday;
+}
+
+- (NSInteger)getHour:(NSDate *)date
+{
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+	NSDateComponents *weekDayComponents = [gregorian components:NSHourCalendarUnit fromDate:date];
+	NSInteger hour = [weekDayComponents hour];
+    return hour;
+}
+
+- (NSInteger)getDay:(NSDate *)date
+{
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+	NSDateComponents *weekDayComponents = [gregorian components:NSDayCalendarUnit fromDate:date];
+	NSInteger day = [weekDayComponents day];
+    return day;
 }
 
 
@@ -232,6 +284,10 @@
         maxMinutes = endMinutes;
     }
     
+    if (minMinutes == maxMinutes) {
+        [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",0]];
+    }
+    
     for (int minutes = minMinutes; minutes<maxMinutes; minutes+=10) {
         [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",minutes]];
     }
@@ -272,7 +328,7 @@
     NSInteger minInitMinites = [[[beginTime componentsSeparatedByString:@":"] objectAtIndex:1] integerValue];
 
     
-    for (int hour = beginHour; hour < endHour;  hour++ ) {
+    for (int hour = beginHour; hour <= endHour;  hour++ ) {
         [self.hoursArray addObject:[NSString stringWithFormat:@"%d",hour]];
     }
     self.hour = [NSString stringWithFormat:@"%d",beginHour];

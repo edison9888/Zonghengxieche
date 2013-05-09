@@ -34,11 +34,12 @@
     return self;
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [self initUI];
     [self prepareData];
+    [self initUI];   
 }
+
 
 - (void)viewDidLoad
 {
@@ -70,11 +71,11 @@
 - (void)prepareData
 {
 //    [self.loadingView setHidden:NO];
-    if (self.article) {
+//    if (self.article) {
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://c.xieche.net/index.php/appandroid/article?a_id=%@",self.article?self.article.article_id:self.article_id]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [_contentWebView loadRequest:request];
-    }
+//    }
 }
 
 - (void)popToParent

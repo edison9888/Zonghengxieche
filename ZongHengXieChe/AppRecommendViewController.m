@@ -84,11 +84,19 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    RecommendApp *app = [self.appArray objectAtIndex:indexPath.row];
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:app.url]]){
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
+    }
+}
+
 #pragma  mark- custom methods
 - (void)prepareData
 {
     [self.loadingView setHidden:NO];
-    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_otherapp"
+    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/app/get_otherapp"
                                       withParams:nil
                              withCompletionBlock:^(id data) {
                                  self.appArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[RecommendApp class]];

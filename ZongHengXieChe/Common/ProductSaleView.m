@@ -38,9 +38,12 @@
 
 - (void)setContentText:(NSString *)content
 {
-    if (![content isEqualToString:@"0.00"]) {
+    
+    if (content && ![content isEqualToString:@"0.00"]) {
         [_contentTextView setText:[NSString stringWithFormat:@"%.1f折优惠",[content doubleValue]*10]];
-    }
+    }else{
+        [_contentTextView setText:@"暂无折扣"];
+    }   
     
 
 }

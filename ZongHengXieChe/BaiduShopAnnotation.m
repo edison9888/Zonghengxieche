@@ -37,12 +37,19 @@
 // required if you set the MKPinAnnotationView's "canShowCallout" property to YES
 - (NSString *)title
 {
-    return _shop.shop_name;
+//    return _shop.shop_name;
+    return @"         ";
 }
 
 // optional
 - (NSString *)subtitle
 {
-    return _shop.shop_address;
+    return @"                        ";
+    
+    if (!self.shop.workhours_sale || [self.shop.workhours_sale isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"暂无工时折扣"];
+    }else{
+        return [NSString stringWithFormat:@"工时费%@起", self.shop.workhours_sale];
+    }
 }
 @end

@@ -45,9 +45,19 @@
 
 - (void)applyCell:(Shop *)shop
 {
-    [[CoreService sharedCoreService] loadDataWithURL:shop.logo withParams:nil withCompletionBlock:^(id data) {
-        [_shopImage setImage:[UIImage imageWithData:(NSData *)data]];
-    } withErrorBlock:nil];
+    NSString *handledUrlString = [shop.logo stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        UIImage *image = [UIImage imageWithContentsOfFile:path];
+        [_shopImage setImage:image];
+    }else{
+        [[CoreService sharedCoreService] loadDataWithURL:shop.logo withParams:nil withCompletionBlock:^(id data) {
+            [_shopImage setImage:[UIImage imageWithData:(NSData *)data]];
+        } withErrorBlock:nil];
+    }
+    
     [_titleLabel setText:shop.shop_name];
     [_addressLabel setText:shop.shop_address];
     
@@ -58,12 +68,19 @@
     if ([shop.distance doubleValue]<=1000) {
         [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fm",[shop.distance doubleValue]]];
     }else if ([shop.distance doubleValue]>100000) {
-        [_distanceLabel setText:[NSString stringWithFormat:@"距离:大于%.1fkm",100.00]];
+        [_distanceLabel setText:[NSString stringWithFormat:@"距离>%.1fkm",100.00]];
     }else{
         [_distanceLabel setText:[NSString stringWithFormat:@"距离:%.2fkm",[shop.distance doubleValue]/1000]];
     }
     [_rateLabel setText:[NSString stringWithFormat:@"好评:%@ %%",shop.comment_rate]];
-    [_productSaleLabel setText:[NSString stringWithFormat:@"工时费%@起",shop.workhours_sale]];
+    
+    if (!shop.workhours_sale || [shop.workhours_sale isEqualToString:@""]) {
+        [_productSaleLabel setText:[NSString stringWithFormat:@"暂无工时折扣",nil]];
+    }else{
+        [_productSaleLabel setText:[NSString stringWithFormat:@"工时费%@起",shop.workhours_sale]];
+    }
+    
+
 }
 
 @end

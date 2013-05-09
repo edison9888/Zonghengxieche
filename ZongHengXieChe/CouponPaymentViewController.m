@@ -59,6 +59,17 @@
     [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    User *user = [[CoreService sharedCoreService] currentUser];
+    if (!user.token) {
+        [self pushLoginVC];
+    }
+    if (user.mobile) {
+        [_mobileFiled setText:user.mobile];
+    }
+}
+
 - (void)viewWillDisappear: (BOOL)animated
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -105,13 +116,21 @@
     [_nameLabel setText:self.coupon.coupon_name];
     [_priceLabel setText:self.coupon.coupon_amount];
     [_countNumberLabel setText:@"1"];
+    [_mobileFiled  setKeyboardType:UIKeyboardTypeNumberPad];
     [self calculating];
     User *user = [[CoreService sharedCoreService] currentUser];
     if (user) {
         [_mobileFiled setText:user.mobile];
     }
     
-    [_contentScrollView setContentSize:CGSizeMake(320, 500)];
+    if (IS_IPHONE_5) {
+        [_contentScrollView setContentSize:CGSizeMake(320, 600)];
+    }else{
+        [_contentScrollView setContentSize:CGSizeMake(320, 500)];
+    }
+    
+    
+
     
 }
 
@@ -127,6 +146,11 @@
     [_countNumberLabel setText:[NSString stringWithFormat:@"%d",[_countNumberLabel.text integerValue]-1]];
     [self calculating];
 }
+- (BOOL)isPureInt:(NSString *)string{
+    NSScanner* scan = [NSScanner scannerWithString:string];
+    int val;
+    return [scan scanInt:&val] && [scan isAtEnd];
+}
 - (IBAction)submit:(id)sender {
     User *user = [[CoreService sharedCoreService]currentUser];
     
@@ -134,6 +158,18 @@
         [self pushLoginVC];
         return;
     }
+    
+    
+    if (!_mobileFiled.text || ![self isPureInt:_mobileFiled.text] || [_mobileFiled.text length] != 11) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"手机号码必须是的11位数字" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
+        [alert release];
+        [_mobileFiled becomeFirstResponder];
+        return;
+
+    }
+    
+    
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
     [dic setObject:[[[CoreService sharedCoreService]currentUser] token] forKey:@"tolken"];
     [dic setObject:self.coupon.uid forKey:@"coupon_id"];
@@ -150,6 +186,7 @@
                                               NSURL *URL = [NSURL URLWithString:urlStr];
                                               if ([[UIApplication sharedApplication] canOpenURL:URL]) {
                                                   ZhifubaoViewController *vc = [[[ZhifubaoViewController alloc] init] autorelease];
+                                                  [vc setEntrance:self.entrance];
                                                   [vc setURL:URL];
                                                   [vc.navigationItem setHidesBackButton:YES];
                                                   [self.navigationController pushViewController:vc animated:YES];
@@ -165,14 +202,12 @@
 - (void)calculating
 {
     [_mobileFiled resignFirstResponder];
-    [_totalPriceLabel setText:[NSString stringWithFormat:@"%d",[_countNumberLabel.text integerValue] * [_priceLabel.text integerValue]]];
+    [_totalPriceLabel setText:[NSString stringWithFormat:@"%.2f",[_countNumberLabel.text doubleValue] * [_priceLabel.text doubleValue]]];
 }
 - (void)pushLoginVC
 {
-    
     LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
-    
     [self.navigationController pushViewController:vc animated:YES];
 }
 @end

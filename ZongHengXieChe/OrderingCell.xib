@@ -66,9 +66,9 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">订单号:</string>
-								<object class="NSColor" key="IBUITextColor" id="1053143712">
+								<object class="NSColor" key="IBUITextColor" id="445480588">
 									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+									<bytes key="NSWhite">MC4zMzMzMzMzMzMzAA</bytes>
 								</object>
 								<object class="NSColor" key="IBUIHighlightedColor" id="345597371">
 									<int key="NSColorSpace">3</int>
@@ -100,7 +100,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">上海徐汇宝信-宝马4S店</string>
+								<string key="IBUIText"/>
 								<object class="NSColor" key="IBUITextColor">
 									<int key="NSColorSpace">1</int>
 									<bytes key="NSRGB">MCAwIDAAA</bytes>
@@ -134,7 +134,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">工时折扣:</string>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -154,7 +154,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">预约时间:</string>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -174,7 +174,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">订单状态: </string>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -188,7 +188,10 @@
 								<reference key="NSSuperview" ref="914698970"/>
 								<reference key="NSNextKeyView" ref="304308567"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<reference key="IBUIBackgroundColor" ref="1053143712"/>
+								<object class="NSColor" key="IBUIBackgroundColor">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+								</object>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 							</object>
@@ -261,7 +264,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText"/>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -281,7 +284,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">下单时间:</string>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -301,7 +304,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText"/>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -321,7 +324,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText"/>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -341,7 +344,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText"/>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>
@@ -360,7 +363,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText"/>
-								<reference key="IBUITextColor" ref="1053143712"/>
+								<reference key="IBUITextColor" ref="445480588"/>
 								<reference key="IBUIHighlightedColor" ref="345597371"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="550920929"/>

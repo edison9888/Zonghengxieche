@@ -21,7 +21,7 @@
 @protocol UserApiDelegate
 @optional
 - (void)didLoginBackground:(NSString *)status withMessage:(NSString *)resultMsg;
-- (void)didFindCurrentPlacemark:(MKPlacemark *)placemark;
+- (void)didFindCurrentPlacemark:(NSString *)cityName;
 - (void)didTokenExpired;
 
 @end

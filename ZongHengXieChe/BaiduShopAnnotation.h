@@ -15,5 +15,5 @@
 @property (nonatomic, strong) Shop *shop;
 
 - (id)initWithShopInfo:(Shop *)shop;
-
+- (id)initWithLatitude:(double)lat andLongitude:(double)lon;
 @end

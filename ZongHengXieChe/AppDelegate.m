@@ -39,17 +39,20 @@
     self.tabbarController.viewControllers = [self prepareViewControllers];
 
     self.window.rootViewController = self.tabbarController;
+    
+    [self addUMeng];
+    
     [self.tabbarController setSelectedTab:-1];
     [[CoreService sharedCoreService] startLocationManger];
     [self.window makeKeyAndVisible];
-    
+
     
 
     
     return YES;
 }
 
-- (void)addYouMeng
+- (void)addUMeng
 {
     [MobClick startWithAppkey:@"50f8b4a25270157c7800001b"];
 }

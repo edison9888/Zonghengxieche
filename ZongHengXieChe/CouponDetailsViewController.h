@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) NSString *coupon_id;
 @property (nonatomic, assign) enum ENTRANCE entrance;
-
+@property (nonatomic, strong) NSString *coupon_type;
 
 
 @end

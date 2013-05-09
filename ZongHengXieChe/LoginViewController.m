@@ -122,6 +122,12 @@ enum USER_INFO_TEXTFIELD {
     [backBtn addTarget:self action:@selector(popToParent) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationItem.titleView addSubview:backBtn];
     [_contentScrollView setContentSize:CGSizeMake(320, 400)];
+    
+    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+    NSString *lastLoginName = [userdefaults objectForKey:LastLoginNameKey];
+    if(lastLoginName){
+        [_usernameField setText:lastLoginName];
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -159,7 +165,7 @@ enum USER_INFO_TEXTFIELD {
                                      if ([status isEqualToString:@"0"]) {
                                          User *currentUser = [[CoreService sharedCoreService] currentUser];
                                          [currentUser setUid:[[[dic objectForKey:@"XML"] objectForKey:@"uid"] objectForKey:@"text"]];
-                                         [currentUser setUsername:[paramsDic objectForKey:@"username"]];
+                                         [currentUser setUsername:[[[dic objectForKey:@"XML"] objectForKey:@"username"] objectForKey:@"text"]];
                                          [currentUser setPassword:[paramsDic objectForKey:@"password"]];
                                          [currentUser setTruename:[[[dic objectForKey:@"XML"] objectForKey:@"truename"] objectForKey:@"text"]];
                                          [currentUser setToken:token];
@@ -173,6 +179,7 @@ enum USER_INFO_TEXTFIELD {
                                          NSDate *date = [NSDate date];
                                          NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
                                          [userdefaults setObject:date forKey:LastLoginTimeKey];
+                                         [userdefaults setObject:_usernameField.text forKey:LastLoginNameKey];
                                          
                                          [self popToParent];
                                      }else{

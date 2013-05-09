@@ -21,6 +21,7 @@
 @interface CouponViewController ()
 {
     IBOutlet    UIView          *_topToolBar;
+    IBOutlet    UILabel         *_noResultsLabel;
     
     IBOutlet    UITableView     *_myTableView;
     IBOutlet    UIButton        *_carTypeBtn;
@@ -97,22 +98,28 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self prepareData];
-    [self initUI];
+    
+//    [self initUI];
 }
 
 - (void)viewWillAppear: (BOOL)animated
 {
-    if (self.entrance != ENTRANCE_SHOP_DETAILS_CASH && self.entrance != ENTRANCE_SHOP_DETAILS_TUAN) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
-    }
-    [self initUI];
+    
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    if (self.entrance != ENTRANCE_SHOP_DETAILS_CASH && self.entrance != ENTRANCE_SHOP_DETAILS_TUAN) {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+    }
+    [self prepareData];
+    [self initUI];
+//    [self getCoupons];
+    
 }
 
 - (void)viewWillDisappear: (BOOL)animated
@@ -143,23 +150,22 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *identifier = @"COUPON_CELL_IDENTIFIER";
-    
     CouponCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         NSArray *nibArray = [[NSBundle mainBundle] loadNibNamed:@"CouponCell" owner:self options:nil];
         for (id aObj in nibArray) {
             if ([aObj isKindOfClass:[CouponCell class]]) {
                 cell = (CouponCell *)aObj;
+                if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
+                    [cell setEntrance:self.entrance];
+                }
                 break;
             }
         }
     }
-    if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
-        [cell setEntrance:self.entrance];
-    }
     [(CouponCell *)cell applyCell:[self.couponArray objectAtIndex:indexPath.row]];
-    return cell;
     
+    return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -168,9 +174,11 @@
     CouponDetailsViewController *vc = [[[CouponDetailsViewController alloc] init] autorelease];
     if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
         [vc setCoupon_id: coupon.membercoupon_id];
+        [vc setCoupon_type:coupon.coupon_type];
         [vc setEntrance:self.entrance];
     }else{
         [vc setCoupon_id: coupon.uid];
+        [vc setCoupon_type:coupon.coupon_type];
     }
     
     [vc.navigationItem setHidesBackButton:YES];
@@ -223,9 +231,13 @@
 - (void)reloacateUI{
     [_topToolBar setHidden:YES];
     CGRect frame = _myTableView.frame;
-    frame.origin.y -= 16;
-    frame.size.height +=16;
+    frame.origin.y = 0;
+    frame.size.height = 455;
     _myTableView.frame = frame;
+    
+    frame = _noResultsLabel.frame;
+    frame.origin.y = 30;
+    _noResultsLabel.frame = frame;
 }
 
 #pragma  mark- custom methods
@@ -254,20 +266,21 @@
     
     if (IS_IPHONE_5) {
         CGRect frame = _searchMenuView.frame;
-        frame.size.height+=88;
+        frame.size.height = 504;
         _searchMenuView.frame = frame;
         
         frame = _searchCouponTypeView.frame;
-        frame.size.height+=88;
+        frame.size.height = 592;
         _searchCouponTypeView.frame = frame;
 
         frame = _searCarTypeView.frame;
-        frame.size.height+=88;
+        frame.size.height = 592;
         _searCarTypeView.frame = frame;
         
         frame = _myTableView.frame;
-        frame.size.height+=88;
+        frame.size.height = 423;
         _myTableView.frame=frame;
+        
     }
     
     
@@ -453,6 +466,10 @@
 - (void)initArguments
 {
     p = 1;
+    NSString *coupon_type = nil;
+    if (self.argumentsDic && [_argumentsDic objectForKey:@"coupon_type"]) {
+        coupon_type = [[[NSString alloc] initWithString:[_argumentsDic objectForKey:@"coupon_type"]] autorelease];
+    }
     NSString *cityId = nil;
     if (self.argumentsDic && [self.argumentsDic objectForKey:@"city_id"]) {
         cityId  = [[[NSString alloc] initWithString:[self.argumentsDic objectForKey:@"city_id"]] autorelease];
@@ -482,12 +499,12 @@
             [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
         }
     }else{
-        [self setLocationInfo];
+        if (coupon_type) {
+            [_argumentsDic setObject:coupon_type forKey:@"coupon_type"];
+        }
     }
     
-    CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
-    [self.argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    [self setLocationInfo];
     
 }
 
@@ -496,6 +513,7 @@
     CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
     [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.latitude] forKey:@"lat"];
     [_argumentsDic setObject:[NSString stringWithFormat:@"%f",myCurrentLocation.coordinate.longitude] forKey:@"long"];
+    [self.argumentsDic setObject:@"distance" forKey:@"order"];
 }
 
 - (void)prepareData
@@ -593,13 +611,20 @@
                                      p_count = [[[[params objectForKey:@"XML"] objectForKey:@"p_count"] objectForKey:@"text"] integerValue];
                                      if (p>1 && p <= p_count ) {
                                          [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
-                                     }else{
-                                         if (p<p_count) {
-                                             [self createTableFooter];
-                                         }
+                                     }else{    
                                          self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
+                                         [_myTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+                                     }
+                                     _myTableView.tableFooterView = nil;
+                                     if (p<p_count) {
+                                         [self createTableFooter];
                                      }
                                      p++;
+                                     if (self.couponArray.count==0) {
+                                         [_noResultsLabel setHidden: NO];
+                                     }else{
+                                         [_noResultsLabel setHidden: YES];
+                                     }
                                      [_myTableView reloadData];
                                      [self.loadingView setHidden:YES];
                                  }
@@ -689,24 +714,22 @@
 
 - (IBAction)searchCoupons:(UIButton *)sender {
     [_searchMenuView setHidden:YES];
-    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+    [self initArguments];
     if (_cashBtn.selected) {
-        [dic setObject:@"1" forKey:@"coupon_type"];
+        [self.argumentsDic setObject:@"1" forKey:@"coupon_type"];
     }else if(_tuanBtn.selected){
-        [dic setObject:@"2" forKey:@"coupon_type"];
+        [self.argumentsDic setObject:@"2" forKey:@"coupon_type"];
     }
     
     if (_forMeRecommedBtn.selected) {
         if ([[[CoreService sharedCoreService] currentUser] token]) {
-            [dic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
-            self.argumentsDic = dic;
+            [self.argumentsDic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
             [self getCoupons];
         }else{
             [self pushLoginVC];
         }
         
     }else{
-        self.argumentsDic = dic;
         [self getCoupons];
        
     }

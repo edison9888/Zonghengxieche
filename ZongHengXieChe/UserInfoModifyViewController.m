@@ -143,4 +143,16 @@
     
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if (textField == _emailField) {
+        [_emailField resignFirstResponder];
+        [_phoneField becomeFirstResponder];
+    }
+    if (textField == _phoneField) {
+        [_phoneField resignFirstResponder];
+    }
+
+    return YES;
+}
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "ZhifubaoViewController.h"
+#import "CouponViewController.h"
 
 @interface ZhifubaoViewController ()
 {
@@ -65,4 +66,22 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+     NSString *url = [[request URL] absoluteString];
+    if ([url hasPrefix:@"xieche-uri://"]) {
+        for (UIViewController *v in self.navigationController.viewControllers) {
+            if ([v isKindOfClass:[CouponViewController class]]) {
+                CouponViewController *couponVC = (CouponViewController *)v;
+                [couponVC setEntrance:self.entrance];
+                [couponVC initArguments];
+                [couponVC getCoupons];
+                [self.navigationController popToViewController:couponVC animated:YES];
+            }
+        }
+        return NO;
+    }
+    return YES;
+}
 @end

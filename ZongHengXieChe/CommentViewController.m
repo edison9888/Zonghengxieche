@@ -35,6 +35,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     [self initUI];
     NSURLRequest *request = [NSURLRequest requestWithURL:self.url];
     [_myWebView loadRequest:request];
@@ -76,6 +82,8 @@
 
 - (void)popToParent
 {
+    [self.loadingView setHidden:YES];
+    [_myWebView stopLoading];
     [self.navigationController popViewControllerAnimated:YES];
 }
 @end

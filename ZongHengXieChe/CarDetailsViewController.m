@@ -9,6 +9,7 @@
 #import "CarDetailsViewController.h"
 #import "CoreService.h"
 #import "CarInfoViewController.h"
+#import "MyCarViewController.h"
 #import "Ordering.h"
 
 @interface CarDetailsViewController ()
@@ -21,6 +22,10 @@
     
     IBOutlet    UIPickerView    *_picker;
     IBOutlet    UIView          *_pickerView;
+    
+    
+    IBOutlet    UIImageView     *_arrowImage;
+    IBOutlet    UIButton        *_carTypeBtn;
     
     NSArray     *_regionArray;
 }
@@ -135,8 +140,12 @@
 {
     if (self.crudType == ADD) {
         [self setTitle:@"新增车辆"];
+        [_arrowImage setHidden:NO];
+        [_carTypeBtn setHidden:NO];
     }else{
         [self setTitle:@"编辑车辆"];
+        [_arrowImage setHidden:YES];
+        [_carTypeBtn setHidden:YES];
     }
     
     [super changeTitleView];
@@ -230,7 +239,12 @@
                        [alert show];
                        [alert release];
                        if ([status isEqualToString:@"0"]) {
-                           [self.navigationController popToRootViewControllerAnimated:YES];
+                           for (UIViewController *v in self.navigationController.viewControllers) {
+                               if ([v isKindOfClass:[MyCarViewController class]]) {
+                                   [self.navigationController popToViewController:v animated:YES];
+                               }
+                           }
+                           
                        }
                    }else{
                        [self.navigationController popViewControllerAnimated:YES];

@@ -12,6 +12,7 @@
 #import "User.h"
 #import "MyAccountViewController.h"
 #import "CustomTabBarController.h"
+#import "MyAccountViewController.h"
 
 @interface InfoViewController ()
 {
@@ -66,6 +67,7 @@
     [_nameField resignFirstResponder];
     [_phoneField resignFirstResponder];
     [_commentView resignFirstResponder];
+    [_carNumberField resignFirstResponder];
 }
 
 #pragma mark- picker
@@ -110,52 +112,111 @@
     [_confirmBtn setBackgroundImage:[confirm stretchableImageWithLeftCapWidth:confirm.size.width/2 topCapHeight:confirm.size.height/2] forState:UIControlStateNormal];
     
     if (IS_IPHONE_5) {
-        _contentScrollView.contentSize = CGSizeMake(320, 500);
+        _contentScrollView.contentSize = CGSizeMake(320, 600);
     }else{
-        _contentScrollView.contentSize = CGSizeMake(320, 400);
+        _contentScrollView.contentSize = CGSizeMake(320, 500);
+    }
+    
+    [self fillUserInfo];
+}
+
+
+- (void)fillUserInfo
+{
+    User *user = [[CoreService sharedCoreService] currentUser];
+    if (user.truename) {
+        [_nameField setText:user.truename];
+    }
+    if (user.mobile) {
+        [_phoneField setText:user.mobile];
+    }
+    
+    CarInfo *car = [[CoreService sharedCoreService] myCar];
+    if (car.car_number) {
+        [_carNumberField setText:car.car_number];
     }
     
 }
 
+- (BOOL)isRequiredInfoFilled
+{
+    if (!_nameField.text || [_nameField.text isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"请填写姓名" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return NO;
+    }
+    if (!_phoneField.text || [_phoneField.text isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"请填写手机号" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return NO;
+    }
+    
+    
+    if (![self isPureInt:_phoneField.text] || [_phoneField.text length] != 11) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"手机号码必须是的11位数字" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
+        [alert release];
+        [_phoneField becomeFirstResponder];
+        return NO;   
+    }
+    
+    if (!_carNumberField.text || [_carNumberField.text isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:@"请填写车牌号" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+        return NO;
+    }
+    return YES;
+}
+
+
+
 - (IBAction)confirm
 {
-    Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
-    [myOrdering setTruename:_nameField.text];
-    [myOrdering setMobile:_phoneField.text];
-    [myOrdering setCardqz:_carPlateBtn.titleLabel.text];
-    [myOrdering setLicenseplate:_carNumberField.text];
-    [myOrdering setRemark:_commentView.text];
-    
-    NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[Ordering class]];
-    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
-    for (NSString *propertyName in properties) {
-        id value = [myOrdering valueForKey:propertyName];
-        if (value && [value isKindOfClass:[NSString class]]) {
-            [dic setObject:(NSString *)value forKey:propertyName];
+    if ([self isRequiredInfoFilled]) {    
+        Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
+        [myOrdering setTruename:_nameField.text];
+        [myOrdering setMobile:_phoneField.text];
+        [myOrdering setCardqz:_carPlateBtn.titleLabel.text];
+        [myOrdering setLicenseplate:_carNumberField.text];
+        [myOrdering setRemark:_commentView.text];
+        
+        NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[Ordering class]];
+        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
+        for (NSString *propertyName in properties) {
+            id value = [myOrdering valueForKey:propertyName];
+            if (value && [value isKindOfClass:[NSString class]]) {
+                [dic setObject:(NSString *)value forKey:propertyName];
+            }
         }
+        User *user = [[CoreService sharedCoreService] currentUser];
+        if (user.token) {
+            [dic setObject:user.token forKey:@"tolken"];
+        }
+        
+        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/save_order"
+                                          withParams:dic
+                                 withCompletionBlock:^(id data) {
+                                     DLog(@"提交订单结果: %@",data);
+                                     NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                     NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                     NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                     [alert show];
+                                     [alert release];
+                                     if ([status isEqualToString:@"0"]) {
+                                         for (UIViewController *v in self.navigationController.viewControllers) {
+                                             if ([v isKindOfClass:[MyAccountViewController class]]) {
+                                                 [self.navigationController popToViewController:v animated:YES];
+                                             }
+                                         }
+                                    
+                                         [self.navigationController popToRootViewControllerAnimated:YES];
+                                     }
+                                } withErrorBlock:nil];
     }
-    User *user = [[CoreService sharedCoreService] currentUser];
-    if (user.token) {
-        [dic setObject:user.token forKey:@"tolken"];
-    }
-    
-    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/save_order"
-                                      withParams:dic
-                             withCompletionBlock:^(id data) {
-                                 DLog(@"提交订单结果: %@",data);
-                                 NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                 NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
-                                 NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
-                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"通知" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                                 [alert show];
-                                 [alert release];
-                                 if ([status isEqualToString:@"0"]) {
-                                     [self.navigationController popToRootViewControllerAnimated:YES];
-                                 }
-                                 
-                                 
-                                 
-                            } withErrorBlock:nil];
 }
 
 - (void)popToParent
@@ -185,6 +246,11 @@
     MyAccountViewController *vc = [[[MyAccountViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
     [self.navigationController pushViewController:vc animated:NO];
+}
+- (BOOL)isPureInt:(NSString *)string{
+    NSScanner* scan = [NSScanner scannerWithString:string];
+    int val;
+    return [scan scanInt:&val] && [scan isAtEnd];
 }
 
 @end

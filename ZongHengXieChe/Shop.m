@@ -61,17 +61,6 @@
     }
 }
 
-- (void)setLogo:(NSString *)logo
-{
-    if (_logo != logo) {
-        if (_logo) {
-            [_logo release];
-        }
-        _logo = [logo copy];
-    }
-    [self resetLogoImage:nil];
-}
-
 - (void)resetLogoImage:(void (^)(UIImage *image))completionHandler
 {
     if (self.logo) {

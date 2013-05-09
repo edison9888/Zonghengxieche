@@ -65,6 +65,7 @@
     [self initUI];
 }
 
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -108,7 +109,14 @@
                                          if (result) {
                                              NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"item"];
                                              if (services) {
-                                                 self.serviceArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Service class]];
+                                                 NSMutableArray *tempArray = [[[[CoreService sharedCoreService] convertXml2Obj:data withClass:[Service class]] retain] autorelease];
+                                                 
+                                                 self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
+                                                 [self.serviceArray addObject:[tempArray objectAtIndex:1]];
+                                                 [self.serviceArray addObject:[tempArray objectAtIndex:0]];
+                                                 for (NSInteger index = 2; index<tempArray.count; index++) {
+                                                     [self.serviceArray addObject:[tempArray objectAtIndex:index]];
+                                                 }
                                                  [self drawUI];
                                              }else{
                                                  [self serviceLocalInit];
@@ -118,12 +126,13 @@
     }else{
         [self serviceLocalInit];
     }
+
 }
 
 - (void)serviceLocalInit
 {
     self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
-    _serviceIdsArray = [[NSMutableArray alloc] initWithObjects:@"9", @"10", @"11", @"12",@"14",@"15",@"16",@"19",@"20",@"25",@"22",@"23",@"24",@"26",@"27",@"28",@"17",@"18",nil];
+    _serviceIdsArray = [[NSMutableArray alloc] initWithObjects:@"10", @"9", @"11", @"12",@"14",@"15",@"16",@"19",@"20",@"25",@"22",@"23",@"24",@"26",@"27",@"28",@"17",@"18",nil];
     for (NSInteger index = 0; index < _buttonTitleStringArray.count; index++) {
         Service *service = [[Service alloc] init];
         [service setService_id:[_serviceIdsArray objectAtIndex:index]];
@@ -178,6 +187,8 @@
     [_selectNoneBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [_selectNoneBtn addTarget:self action:@selector(selectNoService:) forControlEvents:UIControlEventTouchUpInside];
     [_contentView addSubview:_selectNoneBtn];
+    
+    [self performSelector:@selector(serviceButtonPressed:) withObject:[_buttonArray objectAtIndex:0] afterDelay:0.2];
 }
 
 

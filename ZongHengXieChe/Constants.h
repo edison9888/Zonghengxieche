@@ -13,6 +13,7 @@
 #define ZH_EXTERN extern
 #endif
 
+#define ENVIRONMENT_DEVELOPMENT
 
 ZH_EXTERN NSString *const IsFirstLaunchKey;
 
@@ -28,6 +29,9 @@ ZH_EXTERN NSString *const UserTruenameKey;
 ZH_EXTERN NSString *const UserProvKey;
 ZH_EXTERN NSString *const UserCityKey;
 ZH_EXTERN NSString *const UserAreaKey;
+ZH_EXTERN NSString *const LastLoginNameKey;
+
+
 
 ZH_EXTERN NSString *const CityIdKey;
 ZH_EXTERN NSString *const CityNameKey;

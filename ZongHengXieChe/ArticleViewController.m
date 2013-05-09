@@ -20,6 +20,7 @@
     IBOutlet    UITableView     *_myTableView;
     IBOutlet    UIButton        *_allBtn;
     IBOutlet    UIButton        *_mineBtn;
+    IBOutlet    UILabel         *_noResultsLabel;
     
     NSInteger       p_count;//总页数
     NSInteger       p;//当前页
@@ -98,7 +99,7 @@
     Article *article = [_dataArray objectAtIndex:indexPath.row];
     
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    [cell setTitleImageWithUrl:article.brand_logo withSize:CGSizeMake(60, 45)];
+    [cell setTitleImageWithUrl:article.brand_logo withSize:CGSizeMake(52, 39)];
     [cell.textLabel setText:article.article_title];
     [cell.detailTextLabel setText:article.article_des];
     
@@ -136,6 +137,7 @@
 - (void)prepareData
 {
     p = 1;
+    [self initArguments];
     [self loadArticles];
     
 }
@@ -168,7 +170,11 @@
                                      if (tempArray.count>0) {
                                          [tempArray removeObjectAtIndex:0];
                                      }
-
+                                     if (tempArray.count>0) {
+                                         [_noResultsLabel setHidden:YES];
+                                     }else {
+                                         [_noResultsLabel setHidden:NO];
+                                     }
                                      
                                      if (p>1 && p <= p_count ) {
                                          [self.dataArray addObjectsFromArray:tempArray];

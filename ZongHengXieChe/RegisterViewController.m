@@ -76,7 +76,7 @@
 #pragma mark- custom methods
 - (void)prepareData
 {
-    _textfiledArray = [[NSMutableArray alloc] initWithObjects:_email, _username, _password1, _password2, _phone, nil];
+    _textfiledArray = [[NSMutableArray alloc] initWithObjects: _username, _password1, _password2, _phone, nil];
 }
 
 
@@ -101,7 +101,7 @@
 - (IBAction)register:(id)sender {
     NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init] autorelease];
     [dic setObject:_username.text forKey:@"username"];
-    [dic setObject:_email.text forKey:@"email"];
+//    [dic setObject:_email.text forKey:@"email"];
     [dic setObject:_password1.text forKey:@"password"];
     [dic setObject:_password2.text forKey:@"repassword"];
     [dic setObject:_phone.text forKey:@"mobile"];
@@ -119,7 +119,7 @@
                                  [alert release];
                                  
                                  if ([status isEqualToString:@"0"]) {
-                                     [self popToParent];
+                                     [self login];                                     
                                  }
                                  
                              } withErrorBlock:^(NSError *error) {
@@ -128,5 +128,54 @@
                                  [alert release];
                              }];    
 }
+
+- (void)login
+{
+    NSMutableDictionary *paramsDic = [[[NSMutableDictionary alloc] init] autorelease];
+    [paramsDic setValue:_username.text forKey:@"username"];
+    [paramsDic setValue:_password1.text forKey:@"password"];
+    
+    [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/public/applogincheck"
+                                      withParams:paramsDic
+                             withCompletionBlock:^(id data) {
+                                 NSDictionary *dic = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                 NSString *status = [[[dic objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
+                                 NSString *token = [[[dic objectForKey:@"XML"] objectForKey:@"tolken"] objectForKey:@"text"];
+                                 NSString *desc = [[[dic objectForKey:@"XML"] objectForKey:@"desc"] objectForKey:@"text"];
+                                 
+                                 if ([status isEqualToString:@"0"]) {
+                                     User *currentUser = [[CoreService sharedCoreService] currentUser];
+                                     [currentUser setUid:[[[dic objectForKey:@"XML"] objectForKey:@"uid"] objectForKey:@"text"]];
+                                     [currentUser setUsername:[[[dic objectForKey:@"XML"] objectForKey:@"username"] objectForKey:@"text"]];
+                                     [currentUser setPassword:[paramsDic objectForKey:@"password"]];
+                                     [currentUser setTruename:[[[dic objectForKey:@"XML"] objectForKey:@"truename"] objectForKey:@"text"]];
+                                     [currentUser setToken:token];
+                                     [currentUser setEmail:[[[dic objectForKey:@"XML"] objectForKey:@"email"] objectForKey:@"text"]];
+                                     [currentUser setMobile:[[[dic objectForKey:@"XML"] objectForKey:@"mobile"] objectForKey:@"text"]];
+                                     [currentUser setProv:[[[dic objectForKey:@"XML"] objectForKey:@"prov"] objectForKey:@"text"]];
+                                     [currentUser setCity:[[[dic objectForKey:@"XML"] objectForKey:@"city"] objectForKey:@"text"]];
+                                     [currentUser setArea:[[[dic objectForKey:@"XML"] objectForKey:@"area"] objectForKey:@"text"]];
+                                     [[CoreService sharedCoreService] saveUserToLocal];
+                                     
+                                     NSDate *date = [NSDate date];
+                                     NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
+                                     [userdefaults setObject:date forKey:LastLoginTimeKey];
+                                     [userdefaults setObject:_username.text forKey:LastLoginNameKey];
+                                     
+                                     [self.navigationController popToRootViewControllerAnimated:YES];
+                                 }else{
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:desc delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                     [alert show];
+                                     [alert release];
+                                     
+                                     
+                                 }
+                             }    withErrorBlock:^(NSError *error) {
+                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"提交失败请稍候再试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                 [alert show];
+                                 [alert release];
+                             }];
+}
+
 
 @end

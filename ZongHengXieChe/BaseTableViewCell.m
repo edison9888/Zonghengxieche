@@ -36,11 +36,23 @@
     
     NSURL *url = [NSURL URLWithString:urlString];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
-        [[CoreService sharedCoreService] loadDataWithURL:urlString
-                                              withParams:nil
-                                     withCompletionBlock:^(id data) {
-                                         [self.imageView setImage:[UIImage imageWithData:data]];
-                                     } withErrorBlock:nil];
+        NSString *handledUrlString = [urlString stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+        handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            UIImage *image = [UIImage imageWithContentsOfFile:path];
+            image = [image imageByScalingToSize:size];
+            [self.imageView  setImage:image];
+        }else{
+            [[CoreService sharedCoreService] loadDataWithURL:urlString
+                                                  withParams:nil
+                                         withCompletionBlock:^(id data) {
+                                             UIImage *image = [UIImage imageWithData:data];
+                                             image = [image imageByScalingToSize:size];
+                                             [self.imageView setImage:image];
+                                         } withErrorBlock:nil];
+        }
     }
 }
 

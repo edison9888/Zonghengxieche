@@ -11,6 +11,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "LocationViewController.h"
 #import "CouponPaymentViewController.h"
+#import "ZhifubaoViewController.h"
+#import "LoginViewController.h"
+#import "Shop.h"
+#import "ShopDetails.h"
 
 @interface CouponDetailsViewController ()
 {
@@ -36,6 +40,7 @@
 
 - (void)dealloc
 {
+    [self.coupon_type release];
     [self.coupon_id release];
     [self.currentCoupon release];
     
@@ -81,7 +86,13 @@
 #pragma  mark- custom methods
 - (void)initUI
 {
-    [self setTitle:@"优惠券"];
+    if ([self.coupon_type isEqualToString:@"1"]) {
+        [self setTitle:@"现金券"];
+    }else if([self.coupon_type isEqualToString:@"2"]){
+        [self setTitle:@"团购券"];
+    }else{
+        [self setTitle:@"优惠券"];
+    }
     [super changeTitleView];
     
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -91,6 +102,8 @@
     [self.navigationItem.titleView addSubview:backBtn];
     [_functionBtn.titleLabel setFrame:CGRectMake(10, 4, 90, 30)];
     [[_bgImage layer]setCornerRadius:12.0];
+    
+    [self setFunctionBtnTitle];
 }
 
 - (void)prepareData
@@ -104,8 +117,10 @@
         urlStr = @"http://c.xieche.net/index.php/appandroid/get_mycoupondetail";
         [params setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
         [params setObject:self.coupon_id forKey:@"membercoupon_id"];
+        [params setObject:@"1" forKey:@"ios"];
     }else{
         [params setObject:self.coupon_id forKey:@"coupon_id"];
+        [params setObject:@"1" forKey:@"ios"];
     }
     
     [[CoreService sharedCoreService] loadHttpURL:urlStr
@@ -131,53 +146,129 @@
 }
 
 - (IBAction)addressBtnPressed:(UIButton *)sender {
+   
     NSArray *stringArray = [self.currentCoupon.shop_maps componentsSeparatedByString:@","];
     if ([stringArray count]>0) {
         double longitude = [[stringArray objectAtIndex:0] doubleValue];
         double latitude = [[stringArray objectAtIndex:1] doubleValue];
+        
         LocationViewController *vc = [[[LocationViewController alloc] init] autorelease];
         [vc.navigationItem setHidesBackButton:YES];
+        Shop *shop = [[[Shop alloc] init] autorelease];
+        [shop setLogo:self.currentCoupon.coupon_logo];
+        [shop setShop_name:self.currentCoupon.shop_name];
+        [shop setShop_address:self.currentCoupon.shop_address];
+        [shop setShop_id:self.currentCoupon.shop_id];
+        [shop setShop_maps:self.currentCoupon.shop_maps];
+        [shop setWorkhours_sale:self.currentCoupon.workhours_sale];
+        [shop setLongitude:longitude];
+        [shop setLatitude:latitude];
+        
+        
+        NSMutableArray *shopArray = [NSMutableArray  arrayWithObject:shop];
+        [vc setShopArray:shopArray];
         [vc setCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];
         [self.navigationController pushViewController:vc animated:YES];
     }
 }
 - (IBAction)buy:(UIButton *)sender {
-    CouponPaymentViewController *vc = [[[CouponPaymentViewController alloc] init] autorelease];
-    [vc.navigationItem setHidesBackButton:YES];
-    [vc setCoupon:self.currentCoupon];
-    [self.navigationController pushViewController:vc animated:YES];
+    
+    if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
+        if ([self.currentCoupon.state_str isEqualToString:@"未支付"]) {
+            User *user = [[CoreService sharedCoreService]currentUser];
+            if (!user.token) {
+                [self pushLoginVC];
+                return;
+            }
+            NSString *urlStr = [NSString stringWithFormat:@"http://c.xieche.net/apppay/alipayto.php?membercoupon_id=%@",self.coupon_id];
+            NSURL *URL = [NSURL URLWithString:urlStr];
+            if ([[UIApplication sharedApplication] canOpenURL:URL]) {
+                ZhifubaoViewController *vc = [[[ZhifubaoViewController alloc] init] autorelease];
+                [vc setURL:URL];
+                if ([self.currentCoupon.coupon_type isEqualToString:@"1"]) {
+                    [vc setEntrance:ENTRANCE_MYCASH];
+                }else{
+                    [vc setEntrance:ENTRANCE_MYTUAN];
+                }
+                [vc.navigationItem setHidesBackButton:YES];
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+        }
+        return;
+    }else{
+        CouponPaymentViewController *vc = [[[CouponPaymentViewController alloc] init] autorelease];
+        if ([self.currentCoupon.coupon_type isEqualToString:@"1"]) {
+            [vc setEntrance:ENTRANCE_MYCASH];
+        }else{
+             [vc setEntrance:ENTRANCE_MYTUAN];
+        }
+        [vc.navigationItem setHidesBackButton:YES];
+        [vc setCoupon:self.currentCoupon];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
+
+- (void)setFunctionBtnTitle
+{
+    if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
+        if ([self.currentCoupon.state_str isEqualToString:@"未支付"]) {
+            [_functionBtn setTitle:@"支付" forState:UIControlStateNormal];
+            [_functionBtn setTitle:@"支付" forState:UIControlStateHighlighted];
+        }else{
+            [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateNormal];
+            [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateHighlighted];
+        }
+    }else{
+        [_functionBtn setTitle:@"立即购买" forState:UIControlStateNormal];
+        [_functionBtn setTitle:@"立即购买" forState:UIControlStateHighlighted];
+    }
+    
 }
 
 
 - (void)fillInfo
 {
+    
     if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
         [_priceLabel setHidden:YES];
         [_lineImage setHidden:YES];
-        [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateNormal];
-        [_functionBtn setTitle:self.currentCoupon.state_str forState:UIControlStateHighlighted];
+        
+        [self setFunctionBtnTitle];
+        
         if ([self.currentCoupon.is_pay isEqualToString:@"1"]) {
             [_discountLabel setText:[NSString stringWithFormat:@"消费码:%@", self.currentCoupon.coupon_code]];
-            [_functionBtn setHidden:YES];
+            [_discountLabel setHidden:NO];
+            [_functionBtn setHidden:NO];
         }else{
-            [_discountLabel setHidden:YES];
+            
+            [_discountLabel setHidden:NO];
         }
+    }else{
+        [_discountLabel setText:[NSString stringWithFormat:@"¥ %@",self.currentCoupon.cost_price]];
     }
     
     if (self.currentCoupon.coupon_pic) {
-        [_functionBtn setTitle:@"立即购买" forState:UIControlStateNormal];
-        [_functionBtn setTitle:@"立即购买" forState:UIControlStateHighlighted];
-        [[CoreService sharedCoreService] loadDataWithURL:self.currentCoupon.coupon_pic withParams:nil withCompletionBlock:^(id data) {
-            [_logoImage setImage:[UIImage imageWithData:data]];
-        } withErrorBlock:nil];
+        NSString *handledUrlString = [self.currentCoupon.coupon_pic stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+        handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            UIImage *image = [UIImage imageWithContentsOfFile:path];
+            [_logoImage  setImage:image];
+        }else{
+            [[CoreService sharedCoreService] loadDataWithURL:self.currentCoupon.coupon_pic withParams:nil withCompletionBlock:^(id data) {
+                [_logoImage setImage:[UIImage imageWithData:data]];
+            } withErrorBlock:nil];
+        }
     }
     [_titleLabel setText:self.currentCoupon.shop_name];
     [_addressLabel setText:self.currentCoupon.shop_address];
-    [_priceLabel setText:[NSString stringWithFormat:@"¥%@",self.currentCoupon.coupon_amount]];
-    [_discountLabel setText:[NSString stringWithFormat:@"¥%@",self.currentCoupon.cost_price]];
+    [_priceLabel setText:[NSString stringWithFormat:@"¥ %@",self.currentCoupon.coupon_amount]];
     
     
-    NSURL *url = [NSURL URLWithString:self.currentCoupon.coupon_des];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",self.currentCoupon.coupon_des, @"/ios/1"]];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
         [_detailsWebView loadRequest:[NSURLRequest requestWithURL:url]];
     }
@@ -212,6 +303,14 @@
         [obj release];
     
     return objectArray;
+}
+- (void)pushLoginVC
+{
+    
+    LoginViewController *vc = [[[LoginViewController alloc] init] autorelease];
+    [vc.navigationItem setHidesBackButton:YES];
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

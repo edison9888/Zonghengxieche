@@ -76,7 +76,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 40;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -100,24 +100,34 @@
         default:
             break;
     }
-    
+
+        
     return  cell;
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    return _sectionTitleArray;
+    if (self.carInfo == BRAND) {
+        return _sectionTitleArray;
+    }
+    return [[[NSArray alloc]init] autorelease];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    return [_sectionTitleArray indexOfObject:title];
+    if (self.carInfo == BRAND) {
+        return [_sectionTitleArray indexOfObject:title];
+    }
+    return 0;
 
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return [_sectionTitleArray objectAtIndex:section];
+    if (self.carInfo == BRAND) {
+        return [_sectionTitleArray objectAtIndex:section];
+    }
+    return @"";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -144,6 +154,16 @@
                 }
             }
             
+            if (_entrance == CAR_FOR_SHOP) {
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[UpKeepViewController class]]) {
+                        UpKeepViewController *vc = (UpKeepViewController *)v;
+                        [vc initArguments];
+                        [vc.argumentsDic setObject:carInfo.brand_id forKey:@"brand_id"];
+                    }
+                }
+            }
+            
             vc.carInfo = SERIES;
             vc.detailID = carInfo.brand_id;
             [self.navigationController pushViewController:vc animated:YES];
@@ -154,6 +174,16 @@
             if (_entrance == ADD_MY_CAR) {
                 [[[CoreService sharedCoreService] myCar] setSeries_id:carInfo.series_id];
                 [[[CoreService sharedCoreService] myCar] setSeries_name:carInfo.series_name];
+            }
+            
+            if (_entrance == CAR_FOR_SHOP) {
+                for (UIViewController *v in self.navigationController.viewControllers) {
+                    if ([v isKindOfClass:[UpKeepViewController class]]) {
+                        UpKeepViewController *vc = (UpKeepViewController *)v;
+                        [vc initArguments];
+                        [vc.argumentsDic setObject:carInfo.series_id forKey:@"series_id"];
+                    }
+                }
             }
             
             if (_entrance == CAR_FOR_COUPON) {
@@ -200,7 +230,6 @@
                 for (UIViewController *v in self.navigationController.viewControllers) {
                     if ([v isKindOfClass:[UpKeepViewController class]]) {
                         UpKeepViewController *shopVC = (UpKeepViewController *)v;
-//                        [shopVC initArguments];
                         [shopVC.argumentsDic setObject:carInfo.series_id forKey:@"search"];
                         [shopVC.argumentsDic setObject:carInfo.model_id forKey:@"model_id"];
                         [shopVC getShops];
@@ -261,9 +290,13 @@
                                              NSMutableArray *array = [[NSMutableArray alloc] init];
                                              [_classifiedInfoArray addObject:array];
                                              [array release];
-                                         }        
-                                         NSInteger index = [_sectionTitleArray indexOfObject:info.word];
-                                         [[_classifiedInfoArray objectAtIndex:index] addObject:info];
+                                         }
+                                         if (self.carInfo == BRAND) {
+                                             NSInteger index = [_sectionTitleArray indexOfObject:info.word];
+                                             [[_classifiedInfoArray objectAtIndex:index] addObject:info];
+                                         }else{
+                                             [[_classifiedInfoArray objectAtIndex:0] addObject:info];
+                                         }
                                      }else{
                                          if (![_sectionTitleArray containsObject:@"ALL"]) {
                                              [_sectionTitleArray addObject:@"ALL"];
@@ -271,7 +304,13 @@
                                              [_classifiedInfoArray addObject:array];
                                              [array release];
                                          }
-                                         [[_classifiedInfoArray objectAtIndex:0] addObject:info];
+                                         if (self.carInfo == BRAND) {
+                                             NSInteger index = [_sectionTitleArray indexOfObject:info.word];
+                                             [[_classifiedInfoArray objectAtIndex:index] addObject:info];
+                                         }else{
+                                             [[_classifiedInfoArray objectAtIndex:0] addObject:info];
+                                         }
+
                                      }
                                  }
                                  [dataArray release];

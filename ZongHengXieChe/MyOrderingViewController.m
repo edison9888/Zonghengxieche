@@ -20,6 +20,7 @@
     IBOutlet    UIButton    *_allOrderBtn;
     IBOutlet    UIView      *_orderingSearchMenu;
     IBOutlet    UIImageView *_orderingSearchBg;
+    IBOutlet    UILabel     *_noResultsLabel;
     
     IBOutlet    UIButton    *_typeAllBtn;
     IBOutlet    UIButton    *_typeCrashBtn;
@@ -104,11 +105,11 @@
         for (id aObj in nibArray) {
             if ([aObj isKindOfClass:[OrderingCell class]]) {
                 cell = (OrderingCell *)aObj;
+                break;
             }
         }
     }
     [cell applyOrderingCell:[self.orderingArray objectAtIndex:indexPath.row]];
-    
     return cell;
 }
 
@@ -226,7 +227,6 @@
     [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_orders"
                                       withParams:self.argumentsDic
                              withCompletionBlock:^(id data) {
-                                 
                                  NSDictionary *result = [[CoreService sharedCoreService]  convertXml2Dic:data withError:nil];
                                  NSString *status = [[[result objectForKey:@"XML"] objectForKey:@"status"] objectForKey:@"text"];
                                  if ([status isEqualToString:@"1"]) {
@@ -236,6 +236,11 @@
                                      [self.loadingView setHidden:YES];
                                      self.orderingArray = [[CoreService sharedCoreService] convertXml2Obj:data withClass:[Ordering class]];
                                      [self.orderingArray removeObjectAtIndex:0];
+                                     if (self.orderingArray.count>0) {
+                                         [_noResultsLabel setHidden:YES];
+                                     }else {
+                                         [_noResultsLabel setHidden:NO];
+                                     }
                                      [_myTableView reloadData];
 
                                  }
@@ -261,12 +266,11 @@
     [_unpaidOrderBtn setSelected:NO];
     [_allOrderBtn setSelected:NO];
     [sender setSelected:YES];
-    
+    [self initArguments];
     if (sender == _unpaidOrderBtn) {
-        [self initArguments];
-        
-        [self getOrdering];
+        [self.argumentsDic setObject:@"1" forKey:@"order_state"];
     }
+    [self getOrdering];
 }
 
 - (void)backToHome
@@ -276,7 +280,22 @@
 
 - (void)showOrderingSearchMenu
 {
+    for (UIButton *btn in _statusBtnArray) {
+
+            switch (btn.tag) {
+                case ORDERING_STATUS_ALL:
+                    [btn setSelected:YES];
+                    break;
+                default:
+                    [btn setSelected:NO];
+                    break;
+            }
+    }
+    
+    
+    
     [_orderingSearchMenu setHidden:NO];
+    
 }
 
 - (IBAction)hideOrderingSearchMenu

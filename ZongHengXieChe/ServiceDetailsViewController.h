@@ -11,6 +11,6 @@
 
 @interface ServiceDetailsViewController : BaseViewController<UIWebViewDelegate>
 
-@property NSURL *url;
+@property (nonatomic, strong) NSURL *url;
 
 @end

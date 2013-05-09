@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface Points : NSObject
-
+@property (nonatomic, copy) NSString *uid;
 @property (nonatomic, copy) NSString *order_id;
 @property (nonatomic, copy) NSString *point_number;
 @property (nonatomic, copy) NSString *memo;

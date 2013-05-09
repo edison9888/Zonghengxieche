@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-@interface ZhifubaoViewController : BaseViewController
+
+@interface ZhifubaoViewController : BaseViewController<UIWebViewDelegate>
 
 @property (nonatomic, copy) NSURL   *URL;
+@property (nonatomic, assign) enum ENTRANCE entrance;
+
 
 
 @end

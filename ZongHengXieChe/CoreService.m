@@ -13,6 +13,7 @@
 #import "User.h"
 #import "LoginViewController.h"
 #import "City.h"
+#import "JSONKit.h"
 
 #define MaxConcurrentOperationCount 3
 
@@ -70,11 +71,12 @@
 {
     [self loadUserFromLocal];
     [self loadCityFromLocal];
-    self.myCar = [[CarInfo alloc] init];
+    
     [self startLocationManger];
     [self getStoredInfo];
     _plateProvinceArray = [[NSArray alloc] initWithObjects:@"京",@"沪",@"港",@"吉",@"鲁",@"冀",@"湘",@"青",@"苏",@"浙",@"粤",@"台",@"甘",@"川",@"黑",@"蒙",@"新",@"津",@"渝",@"澳",@"辽",@"豫",@"鄂",@"晋",@"皖",@"赣",@"闽",@"琼",@"陕",@"云",@"贵",@"藏",@"宁",@"桂", nil];
     _mapManager = [[BMKMapManager alloc]init];
+    _myCar = [[CarInfo alloc] init];
 	BOOL ret = [_mapManager start:@"6FD4C704FC90736DD731D866BCB9AF9B830FA112" generalDelegate:nil];
 	if (!ret) {
 		NSLog(@"manager start failed!");
@@ -253,7 +255,7 @@
 //        self.currentSelectedCity.city_name = cityname;
 //        self.currentSelectedCity.uid = @"-1";
 //    }
-    [_delegate didFindCurrentPlacemark:placemark];
+    [_delegate didFindCurrentPlacemark:placemark.locality];
 }
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
@@ -268,6 +270,33 @@
         [_myCurrentLocation release];
     }
     _myCurrentLocation = [[locations lastObject] retain];
+    
+    
+    if (!self.currentSelectedCity.city_name) {
+        double lat = _myCurrentLocation.coordinate.latitude;
+        double lng = _myCurrentLocation.coordinate.longitude;
+        NSString *url = [NSString stringWithFormat:@"http://api.map.baidu.com/geocoder?output=json&location=%f,%%20%f&key=%@",lat,lng,@"50f8b4a25270157c7800001b"];
+        
+        [self loadHttpURL:url
+               withParams:nil
+      withCompletionBlock:^(id data) {
+          if (data) {
+              id jsonObject = [data objectFromJSONString];
+              NSString *cityName = [[[jsonObject objectForKey:@"result"] objectForKey:@"addressComponent"] objectForKey:@"city"];
+              
+              [_delegate didFindCurrentPlacemark:cityName];
+          }
+           } withErrorBlock:nil];
+
+
+    }
+    
+          
+        
+//        NSString *cityname = results
+   
+    
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -337,6 +366,7 @@
         request = [ASIHTTPRequest requestWithURL:url];
     }
     
+    [request setTimeOutSeconds:30];
     [request setCompletionBlock:^{
         NSString *responseString = [request responseString];
         
@@ -379,10 +409,32 @@
     }else{
         request = [ASIHTTPRequest requestWithURL:url];
     }
-    
+    [request setTimeOutSeconds:30];
     [request setCompletionBlock:^{
-        
         completionHandler([request responseData]);
+        
+        NSString *handledUrlString = [urlString stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+        handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+        
+        UIImage *image = [[UIImage alloc] initWithData:[request responseData]];
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        DLog(@"%@",docDir);
+        DLog(@"%@",docDir);
+        if ([handledUrlString hasSuffix:@"jpg"]) {
+            NSString *jpegFilePath = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+            if (![[NSFileManager defaultManager] fileExistsAtPath: jpegFilePath]) {
+                NSData *data2 = [NSData dataWithData:UIImageJPEGRepresentation(image, 1.0f)];
+                BOOL isSuccessed = [data2 writeToFile:jpegFilePath atomically:YES];
+                DLog(@"%@", isSuccessed?@"yes":@"no");
+            }
+       }
+        if ([handledUrlString hasSuffix:@"png"]) {
+            NSString *pngFilePath = [NSString stringWithFormat:@"%@/%@", docDir, handledUrlString];
+            if (![[NSFileManager defaultManager] fileExistsAtPath: pngFilePath]) {
+                NSData *data1 = [NSData dataWithData:UIImagePNGRepresentation(image)];
+                [data1 writeToFile:pngFilePath atomically:YES];
+            }
+        }
     }];
     
     [request setFailedBlock:^{

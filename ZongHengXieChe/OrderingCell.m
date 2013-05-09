@@ -59,11 +59,22 @@
     [_orderingTimeLabel setText:orderingTime];
     [_orderStatusLabel setText:ordering.order_state_str];
      [_shopImageView setImage:[UIImage imageNamed:@"loading"]];
-    [[CoreService sharedCoreService] loadDataWithURL:ordering.logo
-                                          withParams:nil
-                                 withCompletionBlock:^(id data) {
-                                     [_shopImageView setImage:[UIImage imageWithData:data]];
-                                    } withErrorBlock:nil];    
+    
+    NSString *handledUrlString = [ordering.logo stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    handledUrlString = [handledUrlString stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
+    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *path = [NSString stringWithFormat:@"%@/%@",docDir, handledUrlString];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        UIImage *image = [UIImage imageWithContentsOfFile:path];
+        [_shopImageView  setImage:image];
+    }else{
+        [[CoreService sharedCoreService] loadDataWithURL:ordering.logo
+                                              withParams:nil
+                                     withCompletionBlock:^(id data) {
+                                         [_shopImageView setImage:[UIImage imageWithData:data]];
+                                     } withErrorBlock:nil];
+    }
+        
 }
 
 @end

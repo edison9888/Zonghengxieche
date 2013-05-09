@@ -12,5 +12,5 @@
 @interface CouponPaymentViewController : BaseViewController<UITextFieldDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) Coupon *coupon;
-
+@property (nonatomic, assign) enum ENTRANCE entrance;
 @end

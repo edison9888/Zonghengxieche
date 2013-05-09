@@ -91,7 +91,10 @@
     }
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setFrame:CGRectMake((_imageNameArray.count-1)*320+85, frame.size.height-70, 150, 44)];
+    [btn setFrame:CGRectMake((_imageNameArray.count-1)*320+85, frame.size.height-60, 150, 44)];
+    if (IS_IPHONE_5) {
+        [btn setFrame:CGRectMake((_imageNameArray.count-1)*320+85, frame.size.height-95, 150, 44)];
+    }
     [btn setImage:[UIImage imageNamed:@"guide_btn"] forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
     [_scrollView addSubview:btn];

@@ -23,7 +23,7 @@
 - (void)applyCell:(Points *)points
 {
     [_totalPoints setText:points.point_number];
-    [_orderID setText:points.order_id];
+    [_orderID setText:points.uid];
 }
 
 @end

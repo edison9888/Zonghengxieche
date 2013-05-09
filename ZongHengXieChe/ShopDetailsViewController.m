@@ -105,7 +105,7 @@ enum {
     
 //    [_contentScrollView setContentSize:CGSizeMake(320, 570)];
     
-    [self addGestures];
+//    [self addGestures];
 }
 
 - (void)fillInfo
@@ -218,7 +218,7 @@ enum {
 
 }
 
-- (void)pushToLocation
+- (IBAction)pushToLocation
 {
     double longitude = 0.0;
     double latitude = 0.0;
@@ -232,6 +232,20 @@ enum {
     
     LocationViewController *vc = [[[LocationViewController alloc] init] autorelease];
     [vc.navigationItem setHidesBackButton:YES];
+    
+//    [self.shop setWorkhours_sale:self.shopDetails.workhours_sale];
+    if (!self.shop) {
+        self.shop = [[[Shop alloc] init] autorelease];
+        [self.shop setShop_id: self.shop_id];
+        [self.shop setShop_name:self.shopDetails.shop_name];
+        [self.shop setShop_maps:self.shopDetails.shop_maps];
+        [self.shop setLogo:self.shopDetails.logo];
+        [self.shop setLatitude:latitude];
+        [self.shop setLongitude:longitude];
+        [self.shop setWorkhours_sale:self.shopDetails.workhours_sale];
+    }
+    
+    
     NSMutableArray *shopArray = [NSMutableArray  arrayWithObject:self.shop];
     [vc setShopArray:shopArray];
     [vc setCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];
@@ -349,7 +363,7 @@ enum {
     [ordering setShop_id:self.shopDetails.shopid];
     [ordering setTimesaleversion_id:[NSString stringWithFormat:@"%d",button.tag]];
     for (TimeSale *timesale in self.shopDetails.timesaleArray) {
-        if ([timesale.timesale_id integerValue] == button.tag) {
+        if ([timesale.timesaleversion_id integerValue] == button.tag) {
             [ordering setSelectedTimeSale:timesale];
             break;
         }
