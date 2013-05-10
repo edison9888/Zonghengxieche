@@ -47,25 +47,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "ZongHengXieChe/CouponPaymentViewController.m"
-         timestampString = "389522063.762025"
+         timestampString = "389807917.414139"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "163"
-         endingLineNumber = "163"
+         startingLineNumber = "153"
+         endingLineNumber = "153"
          landmarkName = "-submit:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/MyOrderingViewController.m"
-         timestampString = "389525794.698862"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "283"
-         endingLineNumber = "283"
-         landmarkName = "-showOrderingSearchMenu"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -125,11 +112,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "ZongHengXieChe/CouponViewController.m"
-         timestampString = "389781121.050236"
+         timestampString = "389810118.147574"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "717"
-         endingLineNumber = "717"
+         startingLineNumber = "714"
+         endingLineNumber = "714"
          landmarkName = "-searchCoupons:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -144,45 +131,6 @@
          startingLineNumber = "147"
          endingLineNumber = "147"
          landmarkName = "-textFieldShouldReturn:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/InfoViewController.m"
-         timestampString = "389784416.647646"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "126"
-         endingLineNumber = "126"
-         landmarkName = "-fillUserInfo"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/InfoViewController.m"
-         timestampString = "389784440.980593"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "134"
-         endingLineNumber = "134"
-         landmarkName = "-fillUserInfo"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "ZongHengXieChe/ServiceChosenViewController.m"
-         timestampString = "389802142.983427"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "108"
-         endingLineNumber = "108"
-         landmarkName = "-prepareData"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

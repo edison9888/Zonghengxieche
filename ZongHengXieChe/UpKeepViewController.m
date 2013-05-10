@@ -93,13 +93,14 @@ enum {
     
 }
 
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [_titleBtn.titleLabel setText:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name]];
     [_titleBtn setTitle:[NSString stringWithFormat:@"%@%@",self.city.city_name , self.region.region_name] forState:UIControlStateNormal];
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+    
 }
 
 - (void)didReceiveMemoryWarning

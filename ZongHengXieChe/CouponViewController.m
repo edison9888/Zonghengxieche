@@ -112,21 +112,12 @@
 {
     [super viewDidAppear:animated];
     
-    if (self.entrance != ENTRANCE_SHOP_DETAILS_CASH && self.entrance != ENTRANCE_SHOP_DETAILS_TUAN) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
-    }
     [self prepareData];
     [self initUI];
 //    [self getCoupons];
     
 }
 
-- (void)viewWillDisappear: (BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
-}
 
 
 
@@ -232,7 +223,12 @@
     [_topToolBar setHidden:YES];
     CGRect frame = _myTableView.frame;
     frame.origin.y = 0;
-    frame.size.height = 455;
+    if (IS_IPHONE_5) {
+        frame.size.height = 455;
+    }else{
+        frame.size.height = 385;
+    }
+    
     _myTableView.frame = frame;
     
     frame = _noResultsLabel.frame;
@@ -613,7 +609,7 @@
                                          [self.couponArray addObjectsFromArray:[self convertXml2Obj:data withClass:[Coupon class]]];
                                      }else{    
                                          self.couponArray = [self convertXml2Obj:data withClass:[Coupon class]];
-                                         [_myTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+                                         [_myTableView setContentOffset:CGPointMake(0, 0)];
                                      }
                                      _myTableView.tableFooterView = nil;
                                      if (p<p_count) {
@@ -628,6 +624,7 @@
                                      [_myTableView reloadData];
                                      [self.loadingView setHidden:YES];
                                  }
+                                 
                              } withErrorBlock:^(NSError *error) {
                                  [self.loadingView setHidden:YES];
                              }];

@@ -53,11 +53,6 @@
     [self initUI];
 }
 
-- (void)viewWillAppear: (BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
-}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -70,11 +65,6 @@
     }
 }
 
-- (void)viewWillDisappear: (BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
-}
 
 - (void)didReceiveMemoryWarning
 {

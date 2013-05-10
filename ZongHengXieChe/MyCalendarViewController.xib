@@ -128,6 +128,7 @@
 								<string key="NSFrame">{{273, 0}, {39, 30}}</string>
 								<reference key="NSSuperview" ref="1025856745"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -190,7 +191,7 @@
 								</object>
 							</object>
 						</object>
-						<string key="NSFrame">{{0, 337}, {320, 30}}</string>
+						<string key="NSFrame">{{0, 386}, {320, 30}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="729675053"/>
@@ -766,7 +767,7 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{378, 49}</string>
 				<string>{2, 49}</string>
-				<string>{238, 77}</string>
+				<string>{100, 100}</string>
 				<string>{172, 52}</string>
 				<string>{3, 3}</string>
 			</object>

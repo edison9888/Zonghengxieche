@@ -37,7 +37,7 @@
     
     UIImageView *bg = [[UIImageView alloc] initWithFrame: self.frame];
     if (IS_IPHONE_5) {
-        [bg setFrame:CGRectMake(0, 0, 320, 367+88)];
+        [bg setFrame:CGRectMake(0, 0, 320, 420+88)];
     }
     [bg setBackgroundColor:[UIColor blackColor]];
     [bg setAlpha:0.7];

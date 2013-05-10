@@ -51,17 +51,7 @@
     }
     return self;
 }
-- (void)viewWillAppear: (BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
-}
 
-- (void)viewWillDisappear: (BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];

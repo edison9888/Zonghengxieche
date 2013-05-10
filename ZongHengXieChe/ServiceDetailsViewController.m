@@ -37,6 +37,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self initUI];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     if (self.url) {
         [_serviceWebView loadRequest:[NSURLRequest requestWithURL:self.url]];
     }

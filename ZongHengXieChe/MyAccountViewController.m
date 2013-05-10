@@ -22,6 +22,9 @@
 #import "ArticleDetailViewController.h"
 #import "CityViewController.h"
 #import "UserGuideViewController.h"
+#import "AppDelegate.h"
+#import "CustomTabBarController.h"
+
 #define KV_SWITCH_INTERVAL      2
 
 enum {
@@ -80,15 +83,15 @@ enum {
 - (void)viewWillAppear:(BOOL)animated
 {
     [self initUI];
-//    NSUserDefaults *userdefaults = [NSUserDefaults standardUserDefaults];
-//    if (![userdefaults objectForKey:IsFirstLaunchKey]) {
-////        UserGuideViewController *userGuideVC = [[[UserGuideViewController alloc] init] autorelease];
-////        [self presentModalViewController:userGuideVC animated:NO];
-//        CityViewController *cityVC = [[[CityViewController alloc] init] autorelease];
-//        [cityVC.navigationItem setHidesBackButton:YES];
-//        [cityVC setEntrance:ENTRANCE_FIRST_TIME_LAUNCH];
-//        [self.navigationController pushViewController:cityVC animated:NO];
-//    }
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:NO];
+}
+
+- (void)viewWillDisappear: (BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+
 }
 
 - (void)viewDidLoad

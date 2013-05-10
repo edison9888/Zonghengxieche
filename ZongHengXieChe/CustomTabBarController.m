@@ -145,7 +145,7 @@
         [self.view addSubview:tabButton];
         [_tabButtons addObject:tabButton];
     }
-    [self.view addSubview:slideBg];
+//    [self.view addSubview:slideBg];
     UIImageView *imgFront = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"tabitem.png"]];
     imgFront.frame = tabbarBg.frame;
     [self.view addSubview:imgFront];

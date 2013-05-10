@@ -651,7 +651,7 @@
 								<bool key="IBUIDetectsPhoneNumbers">YES</bool>
 							</object>
 						</array>
-						<string key="NSFrameSize">{320, 367}</string>
+						<string key="NSFrameSize">{320, 416}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="678372718"/>

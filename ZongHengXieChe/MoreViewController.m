@@ -12,6 +12,7 @@
 #import "ApplicationViewController.h"
 #import "MyAccountViewController.h"
 #import "CustomTabBarController.h"
+#import "AppDelegate.h"
 
 #define APP_ID      588144466
 enum  {
@@ -61,6 +62,13 @@ enum  {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
+}
+
 
 #pragma mark- tableview delegate & datasource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

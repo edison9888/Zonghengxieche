@@ -11,6 +11,8 @@
 #import "MyAccountViewController.h"
 #import "CityViewController.h"
 #import "CustomTabBarController.h"
+#import "AppDelegate.h"
+
 
 enum  {
     LOCATION = 0,
@@ -55,6 +57,8 @@ enum  {
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [((CustomTabBarController *)[appDelegate tabbarController]) hideTabbar:YES];
     [self refreshCity];
 }
 

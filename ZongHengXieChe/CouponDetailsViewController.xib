@@ -347,10 +347,9 @@
 							<object class="IBUIWebView" id="265605237">
 								<reference key="NSNextResponder" ref="779262458"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{10, 355}, {300, 12}}</string>
+								<string key="NSFrame">{{10, 355}, {300, 54}}</string>
 								<reference key="NSSuperview" ref="779262458"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">1</int>
@@ -361,7 +360,7 @@
 								<bool key="IBUIDetectsPhoneNumbers">YES</bool>
 							</object>
 						</array>
-						<string key="NSFrameSize">{320, 367}</string>
+						<string key="NSFrameSize">{320, 416}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1000090050"/>
@@ -666,20 +665,6 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">CouponDetailsViewController</string>
 					<string key="superclassName">BaseViewController</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="addressBtnPressed:">UIButton</string>
-						<string key="buy:">UIButton</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="addressBtnPressed:">
-							<string key="name">addressBtnPressed:</string>
-							<string key="candidateClassName">UIButton</string>
-						</object>
-						<object class="IBActionInfo" key="buy:">
-							<string key="name">buy:</string>
-							<string key="candidateClassName">UIButton</string>
-						</object>
-					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="_addressLabel">UILabel</string>
 						<string key="_bgImage">UIView</string>
