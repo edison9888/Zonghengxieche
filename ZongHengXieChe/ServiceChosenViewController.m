@@ -95,37 +95,36 @@
 
 - (void)prepareData
 {
-    _buttonTitleStringArray = [[NSMutableArray alloc] initWithObjects:@"小保养",@"大保养",@"更换前制动片",@"更换后制动片",@"更换前制动盘片",@"更换后制动盘片",@"更换防冻液",@"更换空调滤清器",@"更换火花塞",@"更换正时皮带",@"更换雨刮",@"更换转向助动液",@"更换制动液",@"更换变速箱油",@"更换蓄电池",@"四轮定位",@"清洗喷油门",@"清洗节气门", nil];
+//    _buttonTitleStringArray = [[NSMutableArray alloc] initWithObjects:@"小保养",@"大保养",@"更换前制动片",@"更换后制动片",@"更换前制动盘片",@"更换后制动盘片",@"更换防冻液",@"更换空调滤清器",@"更换火花塞",@"更换正时皮带",@"更换雨刮",@"更换转向助动液",@"更换制动液",@"更换变速箱油",@"更换蓄电池",@"四轮定位",@"清洗喷油门",@"清洗节气门", nil];
     
     Ordering *myOrdering = [[CoreService sharedCoreService] myOrdering];
-    if (myOrdering && myOrdering.model_id && ![myOrdering.model_id isEqualToString:@""]) {
-        NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init]autorelease];
+
+    NSMutableDictionary *dic = [[[NSMutableDictionary alloc] init]autorelease];
+    if (myOrdering.model_id) {
         [dic setObject:myOrdering.model_id forKey:@"model_id"];
         [dic setObject:myOrdering.timesaleversion_id forKey:@"timesaleversion_id"];
-        [[CoreService sharedCoreService] loadHttpURL:@"http://c.xieche.net/index.php/appandroid/get_orderprice/"
-                                              withParams:dic
-                                     withCompletionBlock:^(id data) {
-                                         NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
-                                         if (result) {
-                                             NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"item"];
-                                             if (services) {
-                                                 NSMutableArray *tempArray = [[[[CoreService sharedCoreService] convertXml2Obj:data withClass:[Service class]] retain] autorelease];
-                                                 
-                                                 self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
-                                                 [self.serviceArray addObject:[tempArray objectAtIndex:1]];
-                                                 [self.serviceArray addObject:[tempArray objectAtIndex:0]];
-                                                 for (NSInteger index = 2; index<tempArray.count; index++) {
-                                                     [self.serviceArray addObject:[tempArray objectAtIndex:index]];
-                                                 }
-                                                 [self drawUI];
-                                             }else{
-                                                 [self serviceLocalInit];
-                                             }   
-                                         }
-                                     } withErrorBlock:nil];
-    }else{
-        [self serviceLocalInit];
     }
+    
+    [[CoreService sharedCoreService] loadHttpURL:@"http://www.xieche.net/index.php/app/get_orderprice"
+                                          withParams:dic
+                                 withCompletionBlock:^(id data) {
+                                     NSDictionary *result = [[CoreService sharedCoreService] convertXml2Dic:data withError:nil];
+                                     if (result) {
+                                         NSDictionary *services = [[result objectForKey:@"XML"] objectForKey:@"item"];
+                                         if (services) {
+                                             NSMutableArray *tempArray = [[[[CoreService sharedCoreService] convertXml2Obj:data withClass:[Service class]] retain] autorelease];
+                                             
+                                             self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
+                                             [self.serviceArray addObject:[tempArray objectAtIndex:1]];
+                                             [self.serviceArray addObject:[tempArray objectAtIndex:0]];
+                                             for (NSInteger index = 2; index<tempArray.count; index++) {
+                                                 [self.serviceArray addObject:[tempArray objectAtIndex:index]];
+                                             }
+                                             [self drawUI];
+                                         }  
+                                     }
+                                 } withErrorBlock:nil];
+
 
 }
 
@@ -143,6 +142,7 @@
 
 - (void)drawUI
 {
+    
     _buttonArray = [[NSMutableArray alloc] init];
     
     UIImage *unselectedImage = [UIImage imageNamed:@"service_unselected"];
@@ -150,7 +150,8 @@
     UIImage *selectedImage = [UIImage imageNamed:@"service_selected"];
     selectedImage = [selectedImage stretchableImageWithLeftCapWidth:floorf(selectedImage.size.width/2) topCapHeight:floorf(selectedImage.size.height/2)];
     
-    for (NSInteger index=0; index<_buttonTitleStringArray.count; index++) {
+    for (NSInteger index=0; index<self.serviceArray.count; index++) {
+        Service *service = [self.serviceArray objectAtIndex:index];
         NSInteger x = index%2;
         NSInteger y = index/2;
         UIButton *serviceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -160,16 +161,17 @@
         [serviceBtn setFrame:CGRectMake(60+130*x, 55+45*y, 120, 35)];
         [serviceBtn setBackgroundImage:unselectedImage forState:UIControlStateNormal];
         [serviceBtn setBackgroundImage:selectedImage forState:UIControlStateSelected];
-        [serviceBtn setTitle:[_buttonTitleStringArray objectAtIndex:index] forState:UIControlStateNormal];
-        [serviceBtn setTitle:[_buttonTitleStringArray objectAtIndex:index] forState:UIControlStateSelected];
+        [serviceBtn setTitle:service.service_name forState:UIControlStateNormal];
+        [serviceBtn setTitle:service.service_name forState:UIControlStateSelected];
         [serviceBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [serviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
         [serviceBtn addTarget:self action:@selector(serviceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        if (![[self.serviceArray objectAtIndex:0] allprice]) {
-            [serviceBtn setTag:[[_serviceIdsArray objectAtIndex:index] integerValue]];
-        }else{
-            [serviceBtn setTag:[[[self.serviceArray objectAtIndex:index] service_id] integerValue]];
-        }
+//        if (![[self.serviceArray objectAtIndex:0] allprice]) {
+//            [serviceBtn setTag:[[_serviceIdsArray objectAtIndex:index] integerValue]];
+//        }else{
+//            [serviceBtn setTag:[[[self.serviceArray objectAtIndex:index] service_id] integerValue]];
+//        }
+        [serviceBtn setTag:[service.service_id integerValue]];
         [_contentView addSubview:serviceBtn];
         [_buttonArray addObject:serviceBtn];
     }
@@ -213,7 +215,7 @@
         [[_buttonArray objectAtIndex:0]setSelected:NO];
     }
     
-    if ([[self.serviceArray objectAtIndex:0] allprice]) {
+    if ([[[self.serviceArray objectAtIndex:0] allprice] doubleValue] > 0) {
         double totalCost = 0;
         for (NSInteger index=0; index < _buttonArray.count; index++) {
             UIButton *btn = [_buttonArray objectAtIndex:index];
@@ -237,12 +239,7 @@
     for (NSInteger index = 0; index<_buttonArray.count; index++) {
         UIButton *btn = [_buttonArray objectAtIndex:index];
         if (btn.selected) {
-            
-            if (_serviceIdsArray&&_serviceIdsArray.count>0) {
-                [selectedServiceIds appendString:[_serviceIdsArray objectAtIndex:index]];
-            }else{
-                [selectedServiceIds appendString:[[self.serviceArray objectAtIndex:index] service_id]];
-            }
+            [selectedServiceIds appendString:[NSString stringWithFormat:@"%d",btn.tag]];
             [selectedServiceIds appendString:@","];
         }
     }

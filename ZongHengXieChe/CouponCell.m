@@ -84,6 +84,8 @@
             [_couponDistanceLabel setText:[self getStatus:coupon]];
             if ([coupon.is_pay isEqualToString:@"1"]) {
                 [_payCountLabel setText:[NSString stringWithFormat:@"消费码:%@",coupon.coupon_code]];
+            }else{
+                [_payCountLabel setText:[NSString stringWithFormat:@"已有%@人购买", coupon.pay_count]];
             }
         }else{
             [_couponDistanceLabel setText:[NSString stringWithFormat:@"距离:%.1fkm", [coupon.distance doubleValue]/1000]];

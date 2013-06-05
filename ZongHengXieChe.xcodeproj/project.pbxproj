@@ -2061,7 +2061,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Shanghai CheShuiMaLong IT Co. Ltd (W4XERNR257)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shanghai CheShuiMaLong IT Co. Ltd (W4XERNR257)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZongHengXieChe/ZongHengXieChe-Prefix.pch";
@@ -2078,7 +2078,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "10C5A103-86F0-46DF-A64D-5345F3B0A1BA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "10C5A103-86F0-46DF-A64D-5345F3B0A1BA";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

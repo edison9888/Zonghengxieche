@@ -13,6 +13,7 @@
 - (void)dealloc
 {
     [_service_id release];
+    [_service_name release];
     [_name release];
     [_allprice release];
     [_aftersaveprice release];

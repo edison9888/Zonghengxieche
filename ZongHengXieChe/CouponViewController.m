@@ -147,12 +147,13 @@
         for (id aObj in nibArray) {
             if ([aObj isKindOfClass:[CouponCell class]]) {
                 cell = (CouponCell *)aObj;
-                if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
-                    [cell setEntrance:self.entrance];
-                }
+                
                 break;
             }
         }
+    }
+    if (self.entrance == ENTRANCE_MYTUAN || self.entrance == ENTRANCE_MYCASH) {
+        [cell setEntrance:self.entrance];
     }
     [(CouponCell *)cell applyCell:[self.couponArray objectAtIndex:indexPath.row]];
     
@@ -476,28 +477,34 @@
     }
     [self.argumentsDic setObject:[NSString stringWithFormat:@"%d",p] forKey:@"p"];
     
-    if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH) {
-        [self setLocationInfo];
-        [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
-    }else if(self.entrance == ENTRANCE_SHOP_DETAILS_TUAN){
-        [self setLocationInfo];
-        [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
-    }
-    
     if (self.entrance == ENTRANCE_MYCASH || self.entrance == ENTRANCE_MYTUAN) {
         User *user = [[CoreService sharedCoreService] currentUser];
         if (user.token) {
             [_argumentsDic setObject:user.token forKey:@"tolken"];
         }
-        if (self.entrance == ENTRANCE_MYCASH) {
-            [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
-        }else{
-            [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
+        if (!coupon_type) {
+            if (self.entrance == ENTRANCE_MYCASH) {
+                [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
+            }else{
+                [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
+            }
         }
     }else{
         if (coupon_type) {
             [_argumentsDic setObject:coupon_type forKey:@"coupon_type"];
         }
+    }
+    
+    if (!coupon_type) {
+        if (self.entrance == ENTRANCE_SHOP_DETAILS_CASH) {
+            [self setLocationInfo];
+            [_argumentsDic setObject:@"1" forKey:@"coupon_type"];
+        }else if(self.entrance == ENTRANCE_SHOP_DETAILS_TUAN){
+            [self setLocationInfo];
+            [_argumentsDic setObject:@"2" forKey:@"coupon_type"];
+        }
+    }else{
+        [_argumentsDic setObject:coupon_type forKey:@"coupon_type"];
     }
     
     [self setLocationInfo];
@@ -720,6 +727,8 @@
     
     if (_forMeRecommedBtn.selected) {
         if ([[[CoreService sharedCoreService] currentUser] token]) {
+            [self initArguments];
+            [self.argumentsDic setObject:@"1" forKey:@"recommed"];
             [self.argumentsDic setObject:[[[CoreService sharedCoreService] currentUser] token] forKey:@"tolken"];
             [self getCoupons];
         }else{

@@ -14,4 +14,5 @@
 @property (nonatomic, copy) NSString *allprice;
 @property (nonatomic, copy) NSString *aftersaveprice;
 @property (nonatomic, copy) NSString *saveprice;
+@property (nonatomic, copy) NSString *service_name;
 @end

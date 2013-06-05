@@ -276,7 +276,7 @@
     NSInteger endMinutes = [[[endTime componentsSeparatedByString:@":"] objectAtIndex:1] integerValue];
     
     NSInteger minMinutes = 00;
-    NSInteger maxMinutes = 60;
+    NSInteger maxMinutes = 50;
     if (selectedhour == beginHour) {
         minMinutes = beginMinutes;
     }
@@ -284,11 +284,15 @@
         maxMinutes = endMinutes;
     }
     
-    if (minMinutes == maxMinutes) {
-        [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",0]];
+    if (selectedhour != endHour && maxMinutes !=00) {
+        if (minMinutes == maxMinutes) {
+            [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",0]];
+        }
     }
     
-    for (int minutes = minMinutes; minutes<maxMinutes; minutes+=10) {
+    
+    
+    for (int minutes = minMinutes; minutes<=maxMinutes; minutes+=10) {
         [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",minutes]];
     }
     [_picker reloadComponent:1];
@@ -329,11 +333,11 @@
 
     
     for (int hour = beginHour; hour <= endHour;  hour++ ) {
-        [self.hoursArray addObject:[NSString stringWithFormat:@"%d",hour]];
+        [self.hoursArray addObject:[NSString stringWithFormat:@"%2d",hour]];
     }
-    self.hour = [NSString stringWithFormat:@"%d",beginHour];
+    self.hour = [NSString stringWithFormat:@"%2d",beginHour];
     for (int minutes = minInitMinites; minutes<60; minutes+=10) {
-        [self.minutesArray addObject:[NSString stringWithFormat:@"%d",minutes]];
+        [self.minutesArray addObject:[NSString stringWithFormat:@"%02d",minutes]];
     }
     self.minute = [NSString stringWithFormat:@"%02d",minInitMinites];
 }
