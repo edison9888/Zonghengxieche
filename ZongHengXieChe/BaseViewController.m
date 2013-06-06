@@ -18,7 +18,7 @@
 
 - (void)dealloc
 {
-    [self.loadingView release];
+    [_loadingView release];
     [super dealloc];
 }
 

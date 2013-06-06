@@ -21,7 +21,7 @@
 - (void)dealloc
 {
     [_article release];
-    [self.article_id release];
+    [_article_id release];
     [super dealloc];
 }
 

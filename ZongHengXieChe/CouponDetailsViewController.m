@@ -40,9 +40,9 @@
 
 - (void)dealloc
 {
-    [self.coupon_type release];
-    [self.coupon_id release];
-    [self.currentCoupon release];
+    [_coupon_type release];
+    [_coupon_id release];
+    [_currentCoupon release];
     
     [super dealloc];
 }

@@ -44,7 +44,7 @@
 //    [_geocoder setDelegate:nil];
 //    [_geocoder release];
     [_baiduMapView release];
-    [self.shopArray release];
+    [_shopArray release];
     [_shopAnnotationArray release];
     [_cityLabel release];
     [_mapView release];
@@ -78,13 +78,22 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    [_baiduMapView viewWillAppear];
+    _baiduMapView.delegate = self;
     if (self.coordinate.latitude && self.coordinate.latitude != 0) {
         [self setMapCenter:self.coordinate];
     }else{
         CLLocation *myCurrentLocation = [[CoreService sharedCoreService] getMyCurrentLocation];
         [self setMapCenter:myCurrentLocation.coordinate];
     }
+}
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [_baiduMapView viewWillDisappear];
+    _baiduMapView.delegate = nil; // 不用时，置nil
 }
 
 #pragma mark- mapkit delegate
@@ -226,7 +235,7 @@
 {
     _shopAnnotationArray = [[NSMutableArray alloc] init];
     for (Shop *shop in self.shopArray) {
-        BaiduShopAnnotation *shopAnnotation = [[BaiduShopAnnotation alloc]initWithShopInfo:shop];
+        BaiduShopAnnotation *shopAnnotation = [[[BaiduShopAnnotation alloc]initWithShopInfo:shop] autorelease];
 //        CLLocationCoordinate2D coor1;
 //        coor1.latitude = shop.latitude;
 //        coor1.longitude = shop.longitude;
@@ -353,7 +362,7 @@
             annotationIndentifier = @"shopIdentifier";
             
             if (!annotationView) {
-                annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier];
+                annotationView = [[[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:annotationIndentifier] autorelease];
                 annotationView.enabled = TRUE;
                 [annotationView setAnnotation:annotation];
                 CGRect frame = annotationView.frame;

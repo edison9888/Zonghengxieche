@@ -19,7 +19,7 @@
 
 - (void)dealloc
 {
-    [self.url release];
+    [_url release];
     [super dealloc];
 }
 

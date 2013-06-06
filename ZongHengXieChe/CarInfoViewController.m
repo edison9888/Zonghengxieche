@@ -31,7 +31,7 @@
     [_sectionTitleArray release];
     [_classifiedInfoArray release];
     [_carTableView release];
-    [self.dataArray release];
+    [_dataArray release];
     
     [super dealloc];
 }
@@ -84,7 +84,7 @@
     NSString *indentifier = @"CAR_TYPE_INDENTIFIER";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:indentifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:indentifier]autorelease];
     }
     switch (self.carInfo) {
         case BRAND:

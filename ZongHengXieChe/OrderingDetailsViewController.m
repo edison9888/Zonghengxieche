@@ -56,8 +56,8 @@ enum ORDERING_CELL {
         [_shopImage release];
 
     }
-    [self.ordering release];
-    [self.orderingDetails release];
+    [_ordering release];
+    [_orderingDetails release];
     [super dealloc];
 }
 

@@ -40,7 +40,7 @@
 {
     [_serviceIdsArray release];
     if (self.serviceArray != nil) {
-        [self.serviceArray release];
+        [_serviceArray release];
     }
     [_buttonArray release];
     [_buttonTitleStringArray release];
@@ -133,7 +133,7 @@
     self.serviceArray = [[[NSMutableArray alloc] init] autorelease];
     _serviceIdsArray = [[NSMutableArray alloc] initWithObjects:@"10", @"9", @"11", @"12",@"14",@"15",@"16",@"19",@"20",@"25",@"22",@"23",@"24",@"26",@"27",@"28",@"17",@"18",nil];
     for (NSInteger index = 0; index < _buttonTitleStringArray.count; index++) {
-        Service *service = [[Service alloc] init];
+        Service *service = [[[Service alloc] init] autorelease];
         [service setService_id:[_serviceIdsArray objectAtIndex:index]];
         [self.serviceArray addObject:service];
     }

@@ -65,8 +65,8 @@ enum {
     [_kvPageControl release];
     [_optionTableView release];
     
-    [self.kvArray release];
-    [self.optionArray release];
+    [_kvArray release];
+    [_optionArray release];
     
     [super dealloc];
 }
@@ -230,7 +230,7 @@ enum {
         [logoutBtn addTarget:self action:@selector(logout) forControlEvents:UIControlEventTouchUpInside];
         [self.navigationItem.titleView addSubview:logoutBtn];
         
-        UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(170, 3, 100, 40)];
+        UILabel *nameLabel = [[[UILabel alloc] initWithFrame:CGRectMake(170, 3, 100, 40)] autorelease];
         [nameLabel setTextColor:[UIColor whiteColor]];
         [nameLabel setBackgroundColor:[UIColor clearColor]];
         [nameLabel setFont:[UIFont fontWithName:@"Helvetica-blod" size:15]];

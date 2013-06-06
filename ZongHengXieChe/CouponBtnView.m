@@ -40,9 +40,10 @@
 
 - (id)initCouponBtnViewWithFrame:(CGRect)frame withType:(enum COUPON_TYPE )type
 {
-    self.type = type;
-    [self initWithFrame:frame];
+    
+    self = [super initWithFrame:frame];
     if (self) {
+        self.type = type;
         [self initUI];
     }
 

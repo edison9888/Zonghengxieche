@@ -130,7 +130,7 @@
     //创建按钮
     NSUInteger viewCount = MIN([self.viewControllers count], BUTTON_COUNT);
     self.tabButtons = [[NSMutableArray alloc] initWithCapacity:viewCount];
-    double _width = viewCount == 0 ? 0 : 320 / viewCount;
+    double _width = viewCount == 0 ? 0 : (320 / viewCount);
     double _height = self.tabBar.frame.size.height;
     for (NSUInteger index = 0; index < viewCount; index++) {
         UIButton *tabButton = [UIButton buttonWithType:UIButtonTypeCustom];

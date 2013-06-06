@@ -147,11 +147,11 @@
 - (void)dealloc
 {
 //    [calendarView release];
-    [self.dateString release];
-    [self.hoursArray release];
-    [self.minutesArray release];
-    [self.hour release];
-    [self.minute release];
+    [_dateString release];
+    [_hoursArray release];
+    [_minutesArray release];
+    [_hour release];
+    [_minute release];
 //    [selectedDateLabel release];
 //    [selectedYearLabel release];
     [super dealloc];
@@ -319,8 +319,8 @@
 
 - (void)prepareData
 {
-    self.hoursArray = [[NSMutableArray alloc] init];
-    self.minutesArray = [[NSMutableArray alloc] init];
+    self.hoursArray = [[[NSMutableArray alloc] init] autorelease];
+    self.minutesArray = [[[NSMutableArray alloc] init] autorelease];
     
     Ordering *ordering = [[CoreService sharedCoreService] myOrdering];
     TimeSale *timesale = ordering.selectedTimeSale;

@@ -84,7 +84,7 @@
     NSString *indentifier = @"AFTER_SALE_INDENTIFIER";
     BaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier];
+        cell = [[[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier] autorelease];
     }
     Article *article = [_dataArray objectAtIndex:indexPath.row];
     
@@ -229,14 +229,14 @@
 - (void) createTableFooter
 {
     _myTableView.tableFooterView = nil;
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _myTableView.bounds.size.width, 40.0f)];
-    UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
+    UIView *tableFooterView = [[[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _myTableView.bounds.size.width, 40.0f)] autorelease];
+    UILabel *loadMoreText = [[[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)] autorelease];
     [loadMoreText setBackgroundColor:[UIColor clearColor]];
     [loadMoreText setCenter:tableFooterView.center];
     [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
     [loadMoreText setText:@"上拉显示更多"];
     [tableFooterView addSubview:loadMoreText];
-    _refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _refreshSpinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     [_refreshSpinner setFrame: CGRectMake(190, _myTableView.tableFooterView.frame.size.height/2+10,20,20)];
     [_refreshSpinner setHidesWhenStopped: YES];
     [tableFooterView addSubview:_refreshSpinner];

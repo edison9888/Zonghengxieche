@@ -30,7 +30,7 @@
 
 - (void)dealloc
 {
-    [self.coupon release];
+    [_coupon release];
     
     [super dealloc];
 }

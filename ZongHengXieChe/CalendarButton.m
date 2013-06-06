@@ -2,7 +2,6 @@
 
 @implementation CalendarButton
 
-@synthesize date;
 
 
 + (CalendarButton *)createCalendarButton:(NSDate *)date gray:(BOOL)gray {
@@ -39,7 +38,7 @@
 }
 
 - (void)dealloc {
-    [self.date release];
+    [_date release];
     [super dealloc];
 }
 

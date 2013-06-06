@@ -15,25 +15,25 @@
 
 - (void)dealloc
 {
-    [self.shop_id release];
-    [self.show_title release];
-    [self.shop_name release];
-    [self.shop_address release];
-    [self.shop_phone release];
-    [self.area release];
-    [self.logo release];
-    [self.logoImage release];
-    [self.region release];
-    [self.comment_rate release];
-    [self.comment_number release];
-    [self.product_sale release];
-    [self.workhours_sale release];
-    [self.shop_class release];
-    [self.have_coupon1 release];
-    [self.have_coupon2 release];
-    [self.model_id release];
-    [self.shop_maps release];
-    [self.distance release];
+    [_shop_id release];
+    [_show_title release];
+    [_shop_name release];
+    [_shop_address release];
+    [_shop_phone release];
+    [_area release];
+    [_logo release];
+    [_logoImage release];
+    [_region release];
+    [_comment_rate release];
+    [_comment_number release];
+    [_product_sale release];
+    [_workhours_sale release];
+    [_shop_class release];
+    [_have_coupon1 release];
+    [_have_coupon2 release];
+    [_model_id release];
+    [_shop_maps release];
+    [_distance release];
     [super dealloc];
 }
 

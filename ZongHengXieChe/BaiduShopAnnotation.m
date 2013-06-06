@@ -11,16 +11,16 @@
 @implementation BaiduShopAnnotation
 - (void)dealloc
 {
-    [self.shop release];
+    [_shop release];
     [super dealloc];
 }
 
 
 - (id)initWithShopInfo:(Shop *)shop
 {
-    self.shop = shop;
-    if ([super init]) {
-        
+    self = [super init];
+    if (self) {
+        self.shop = shop;
     }
     return self;
 }

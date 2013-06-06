@@ -69,7 +69,7 @@
     NSString *indentifier = @"REGTION_CELL_INDENTIFIER";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier] autorelease];
     }
     Region *region = [_regtionArray objectAtIndex:indexPath.row];
     [cell.textLabel setTextAlignment:NSTextAlignmentCenter];

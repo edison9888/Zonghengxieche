@@ -62,7 +62,7 @@ enum {
 
 - (void)dealloc
 {
-    [self.shopArray release];
+    [_shopArray release];
     [_refreshHeaderView release];
     [_carTypeBtn release];
     [_ratingBtn release];
@@ -258,18 +258,18 @@ enum {
 - (void) createTableFooter
 {
     _shopTableView.tableFooterView = nil;
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _shopTableView.bounds.size.width, 40.0f)];
+    UIView *tableFooterView = [[[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _shopTableView.bounds.size.width, 40.0f)] autorelease];
     UILabel *loadMoreText = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 116.0f, 40.0f)];
     [loadMoreText setBackgroundColor:[UIColor clearColor]];
     [loadMoreText setCenter:tableFooterView.center];
     [loadMoreText setFont:[UIFont fontWithName:@"Helvetica Neue" size:14]];
     [loadMoreText setText:@"上拉显示更多"];
     [tableFooterView addSubview:loadMoreText];
-    _refreshSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _refreshSpinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
     [_refreshSpinner setFrame: CGRectMake(190, _shopTableView.tableFooterView.frame.size.height/2+10,20,20)];
     [_refreshSpinner setHidesWhenStopped: YES];
     [tableFooterView addSubview:_refreshSpinner];
-    [_shopTableView setTableFooterView: tableFooterView]; 
+    [_shopTableView setTableFooterView: tableFooterView];
 }
 
 - (void)initLocation

@@ -12,10 +12,10 @@
 
 - (void)dealloc
 {
-    [self.pic release];
-    [self.type release];
-    [self.uid release];
-    [self.kvImage release];
+    [_pic release];
+    [_type release];
+    [_uid release];
+    [_kvImage release];
     
     [super dealloc];
 }

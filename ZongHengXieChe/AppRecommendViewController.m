@@ -67,7 +67,7 @@
     BaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
     if (!cell) {
-        cell = [[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+        cell = [[[BaseTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier]autorelease];
     }
     [cell setBackgroundColor:[UIColor whiteColor]];
     [cell.imageView setContentMode:UIViewContentModeCenter];

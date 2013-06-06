@@ -37,9 +37,9 @@
     [_currentSelectedCity release];
     [_currentLocationCityName release];
     
-    if (self.networkQueue) {
-        [self.networkQueue cancelAllOperations];
-        [self.networkQueue release];
+    if (_networkQueue) {
+        [_networkQueue cancelAllOperations];
+        [_networkQueue release];
     }
     if (_address) {
         [_address release];
@@ -69,19 +69,24 @@
 
 - (id)init
 {
-    [self loadUserFromLocal];
-    [self loadCityFromLocal];
+    self = [super init];
+    if (self) {
+        [self loadUserFromLocal];
+        [self loadCityFromLocal];
+        
+        [self startLocationManger];
+        [self getStoredInfo];
+        _plateProvinceArray = [[NSArray alloc] initWithObjects:@"京",@"沪",@"港",@"吉",@"鲁",@"冀",@"湘",@"青",@"苏",@"浙",@"粤",@"台",@"甘",@"川",@"黑",@"蒙",@"新",@"津",@"渝",@"澳",@"辽",@"豫",@"鄂",@"晋",@"皖",@"赣",@"闽",@"琼",@"陕",@"云",@"贵",@"藏",@"宁",@"桂", nil];
+        _mapManager = [[BMKMapManager alloc]init];
+        _myCar = [[CarInfo alloc] init];
+        BOOL ret = [_mapManager start:@"6FD4C704FC90736DD731D866BCB9AF9B830FA112" generalDelegate:nil];
+        if (!ret) {
+            NSLog(@"manager start failed!");
+        }
+
+    }
     
-    [self startLocationManger];
-    [self getStoredInfo];
-    _plateProvinceArray = [[NSArray alloc] initWithObjects:@"京",@"沪",@"港",@"吉",@"鲁",@"冀",@"湘",@"青",@"苏",@"浙",@"粤",@"台",@"甘",@"川",@"黑",@"蒙",@"新",@"津",@"渝",@"澳",@"辽",@"豫",@"鄂",@"晋",@"皖",@"赣",@"闽",@"琼",@"陕",@"云",@"贵",@"藏",@"宁",@"桂", nil];
-    _mapManager = [[BMKMapManager alloc]init];
-    _myCar = [[CarInfo alloc] init];
-	BOOL ret = [_mapManager start:@"6FD4C704FC90736DD731D866BCB9AF9B830FA112" generalDelegate:nil];
-	if (!ret) {
-		NSLog(@"manager start failed!");
-	}
-    return self;
+        return self;
 }
 
 - (void)startLocationManger

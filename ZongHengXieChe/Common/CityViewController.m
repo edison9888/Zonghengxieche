@@ -71,7 +71,7 @@
     NSString *indentifier = @"CITY_CELL_INDENTIFIER";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:indentifier]autorelease];
     }
     City *city = [_cityArray objectAtIndex:indexPath.row];
     [cell.textLabel setTextAlignment:NSTextAlignmentCenter];

@@ -90,7 +90,7 @@
     NSString *indentifier = @"CAR_INFO_INDENTIFIER";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:indentifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:indentifier]autorelease];
     }
     [cell.textLabel setText:[[[_classifiedInfoArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row ] brand_name]];
     

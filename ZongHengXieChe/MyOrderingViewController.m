@@ -47,8 +47,8 @@
     [_typeBtnArray release];
     [_statusBtnArray release];
     
-    [self.argumentsDic release];
-    [self.orderingArray release];
+    [_argumentsDic release];
+    [_orderingArray release];
     
     [super dealloc];
 }
