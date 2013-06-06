@@ -1,19 +1,19 @@
-/*
- *  BMKTypes.h
- *  BMapKit
- *
- *  Copyright 2011 Baidu Inc. All rights reserved.
- *
- */
+//
+//  BMKType.h
+//  MapPlatform
+//
+//  Created by BaiduMapAPI on 13-3-26.
+//  Copyright (c) 2013年 baidu. All rights reserved.
+//
 
 #import <UIKit/UIKit.h>
 
 
 enum {
-    BMKMapTypeStandard   = 1,	       ///< 标准地图    0X00000001
-    BMKMapTypeTrafficOn  = 2,	       ///< 打开实时路况 0X00000010
-    BMKMapTypeSatellite  = 4,          ///< 卫星地图    0X00000100
-    BMKMapTypeTrafficOff = 5,          ///< 关闭实时路况 0X00000101
+    BMKMapTypeStandard   = 1,               ///< 标准地图    
+    BMKMapTypeTrafficOn  = 2,               ///< 实时路况 
+    BMKMapTypeSatellite  = 4,               ///< 卫星地图
+    BMKMapTypeTrafficAndSatellite  = 8,     ///< 同时打开实时路况和卫星地图
 };
 typedef NSUInteger BMKMapType;
 

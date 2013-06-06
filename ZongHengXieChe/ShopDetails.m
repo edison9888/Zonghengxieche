@@ -51,8 +51,10 @@
 
 - (id)init
 {
-    [super init];
-    _timesaleArray = [[NSMutableArray alloc] init];
+    self = [super init];
+    if (self) {
+        _timesaleArray = [[NSMutableArray alloc] init];
+    }
     return self;
 }
 

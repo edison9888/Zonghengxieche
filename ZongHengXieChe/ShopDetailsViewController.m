@@ -56,9 +56,9 @@ enum {
 
 - (void) dealloc
 {
-    [self.shop_id release];
-    [self.shopDetails release];
-    [self.shop release];
+    [_shop_id release];
+    [_shopDetails release];
+    [_shop release];
     [super dealloc];
 }
 
@@ -294,7 +294,7 @@ enum {
 {
     NSArray *properties = [[CoreService sharedCoreService] getPropertyList:[ShopDetails class]];
     NSError *error;
-    GDataXMLDocument *document = [[[GDataXMLDocument alloc] initWithXMLString:xmlString options:1 error:&error] autorelease];
+    GDataXMLDocument *document = [[GDataXMLDocument alloc] initWithXMLString:xmlString options:1 error:&error];
     GDataXMLElement *rootElement = [document rootElement];
     [self ergodic:rootElement withObj:nil withPropertyList:properties];
 

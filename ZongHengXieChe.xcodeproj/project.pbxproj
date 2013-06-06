@@ -14,6 +14,7 @@
 		1709CFD616FC0FE7002BBD9E /* CommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1709CFD416FC0FE7002BBD9E /* CommentViewController.m */; };
 		1709CFD716FC0FE7002BBD9E /* CommentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1709CFD516FC0FE7002BBD9E /* CommentViewController.xib */; };
 		170D6AFA170DB9C90056456F /* pin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 170D6AF9170DB9C90056456F /* pin@2x.png */; };
+		1713449D1760BA59000B361F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1713449C1760BA59000B361F /* OpenGLES.framework */; };
 		171E88DB16FA2FCC002A0C3F /* TimeSale.m in Sources */ = {isa = PBXBuildFile; fileRef = 171E88DA16FA2FCC002A0C3F /* TimeSale.m */; };
 		171E88DF16FAD4B0002A0C3F /* CouponBtnView.m in Sources */ = {isa = PBXBuildFile; fileRef = 171E88DE16FAD4B0002A0C3F /* CouponBtnView.m */; };
 		173326DE16BA34990025515E /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 173326DD16BA34990025515E /* User.m */; };
@@ -94,7 +95,6 @@
 		179F358B16B177F300A396FE /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F357C16B177F300A396FE /* FMDatabasePool.m */; };
 		179F358C16B177F300A396FE /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F357E16B177F300A396FE /* FMDatabaseQueue.m */; };
 		179F358D16B177F300A396FE /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F358016B177F300A396FE /* FMResultSet.m */; };
-		179F359116B1817200A396FE /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 179F359016B1817200A396FE /* Reachability.m */; };
 		179F359316B181A100A396FE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 179F359216B181A100A396FE /* libsqlite3.dylib */; };
 		179F359516B181AA00A396FE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179F359416B181AA00A396FE /* CFNetwork.framework */; };
 		179F359716B181D100A396FE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179F359616B181D100A396FE /* SystemConfiguration.framework */; };
@@ -323,6 +323,7 @@
 		1709CFD416FC0FE7002BBD9E /* CommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentViewController.m; sourceTree = "<group>"; };
 		1709CFD516FC0FE7002BBD9E /* CommentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentViewController.xib; sourceTree = "<group>"; };
 		170D6AF9170DB9C90056456F /* pin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pin@2x.png"; sourceTree = "<group>"; };
+		1713449C1760BA59000B361F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		171E88D916FA2FCC002A0C3F /* TimeSale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSale.h; sourceTree = "<group>"; };
 		171E88DA16FA2FCC002A0C3F /* TimeSale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSale.m; sourceTree = "<group>"; };
 		171E88DD16FAD4B0002A0C3F /* CouponBtnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CouponBtnView.h; path = ../CouponBtnView.h; sourceTree = "<group>"; };
@@ -483,7 +484,6 @@
 		179F357F16B177F300A396FE /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
 		179F358016B177F300A396FE /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
 		179F358F16B1817200A396FE /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		179F359016B1817200A396FE /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		179F359216B181A100A396FE /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		179F359416B181AA00A396FE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		179F359616B181D100A396FE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -767,13 +767,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				179F35A616B1826D00A396FE /* QuartzCore.framework in Frameworks */,
+				1713449D1760BA59000B361F /* OpenGLES.framework in Frameworks */,
+				17E77D3F16AED33E000F59D2 /* CoreGraphics.framework in Frameworks */,
 				17514C281713B0C600930CE9 /* libbaidumapapi.a in Frameworks */,
 				179F35A816B1828500A396FE /* libz.dylib in Frameworks */,
 				179F359516B181AA00A396FE /* CFNetwork.framework in Frameworks */,
 				17AA972016B4079200911DE2 /* CoreLocation.framework in Frameworks */,
-				17E77D3F16AED33E000F59D2 /* CoreGraphics.framework in Frameworks */,
 				17E77D3D16AED33E000F59D2 /* Foundation.framework in Frameworks */,
-				179F35A616B1826D00A396FE /* QuartzCore.framework in Frameworks */,
 				17AA971E16B402C100911DE2 /* MapKit.framework in Frameworks */,
 				179F359916B181F800A396FE /* MobileCoreServices.framework in Frameworks */,
 				179F359716B181D100A396FE /* SystemConfiguration.framework in Frameworks */,
@@ -1023,7 +1024,6 @@
 			isa = PBXGroup;
 			children = (
 				179F358F16B1817200A396FE /* Reachability.h */,
-				179F359016B1817200A396FE /* Reachability.m */,
 			);
 			path = Reachability;
 			sourceTree = "<group>";
@@ -1305,6 +1305,7 @@
 		17E77D2B16AED33E000F59D2 = {
 			isa = PBXGroup;
 			children = (
+				1713449C1760BA59000B361F /* OpenGLES.framework */,
 				17E77D4016AED33E000F59D2 /* ZongHengXieChe */,
 				17E77D3916AED33E000F59D2 /* Frameworks */,
 				17E77D3716AED33E000F59D2 /* Products */,
@@ -1882,7 +1883,6 @@
 				179F358B16B177F300A396FE /* FMDatabasePool.m in Sources */,
 				179F358C16B177F300A396FE /* FMDatabaseQueue.m in Sources */,
 				179F358D16B177F300A396FE /* FMResultSet.m in Sources */,
-				179F359116B1817200A396FE /* Reachability.m in Sources */,
 				177E504016B23CCB001D0B2D /* Shop.m in Sources */,
 				177E504D16B240D2001D0B2D /* GDataXMLNode.m in Sources */,
 				177E505116B299D9001D0B2D /* XMLReader.m in Sources */,
